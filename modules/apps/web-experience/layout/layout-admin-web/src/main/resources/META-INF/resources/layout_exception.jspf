@@ -14,6 +14,12 @@
  */
 --%>
 
+<%
+Layout selLayout = layoutsTreeDisplayContext.getSelLayout();
+
+String targetNode = "#controlMenuAlertsContainer";
+%>
+
 <liferay-ui:error exception="<%= LayoutTypeException.class %>" targetNode="<%= targetNode %>">
 
 	<%
