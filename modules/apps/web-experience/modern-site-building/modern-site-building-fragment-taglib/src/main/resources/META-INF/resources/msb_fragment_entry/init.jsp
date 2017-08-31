@@ -18,6 +18,11 @@
 
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 
+<%@ page import="com.liferay.modern.site.building.fragment.model.MSBFragmentEntry" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
+page import="com.liferay.portal.kernel.util.StringPool" %><%@
+page import="com.liferay.portal.kernel.util.StringUtil" %>
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />

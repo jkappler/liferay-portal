@@ -15,3 +15,27 @@
 --%>
 
 <%@ include file="/msb_fragment_entry/init.jsp" %>
+
+<%
+MSBFragmentEntry msbFragmentEntry = (MSBFragmentEntry)request.getAttribute("liferay-modern-site-building-fragment:msb-fragment-entry-renderer:msbFragmentEntry");
+
+String _RANDOM_KEY_INPUT = "msb_fragment_entry_" + StringUtil.randomString();
+
+String randomNamespace = PortalUtil.generateRandomKey(request, _RANDOM_KEY_INPUT) + StringPool.UNDERLINE + msbFragmentEntry.getName();
+%>
+
+<liferay-util:html-top outputKey="<%= randomNamespace %>">
+	<style type="text/css">
+		<%= msbFragmentEntry.getCss() %>
+	</style>
+</liferay-util:html-top>
+
+<div id="<%= randomNamespace %>">
+	<%= msbFragmentEntry.getHtml() %>
+</div>
+
+<liferay-util:html-bottom outputKey="<%= randomNamespace %>">
+	<script type="text/javascript">
+		<%= msbFragmentEntry.getJs() %>
+	</script>
+</liferay-util:html-bottom>
