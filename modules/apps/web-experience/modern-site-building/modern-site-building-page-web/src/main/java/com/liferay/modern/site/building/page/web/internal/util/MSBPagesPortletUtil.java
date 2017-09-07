@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author Pavel Savinov
  */
-public class PagesPortletUtil {
+public class MSBPagesPortletUtil {
 
 	public static JSONObject getActionsJSONObject(
 			Layout layout, HttpServletRequest request)

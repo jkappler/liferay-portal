@@ -17,15 +17,60 @@
 <%@ include file="/init.jsp" %>
 
 <%
-renderResponse.setTitle(LanguageUtil.get(request, "pages"));
+String toolbarItem = ParamUtil.getString(request, "toolbarItem", "view-pages");
 %>
 
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
 	<aui:nav cssClass="navbar-nav">
+		<portlet:renderURL var="viewPagesTreeURL">
+			<portlet:param name="toolbarItem" value="view-pages" />
+		</portlet:renderURL>
+
 		<aui:nav-item
+			href="<%= viewPagesTreeURL %>"
 			label="pages"
+			selected='<%= toolbarItem.equals("view-pages") %>'
+		/>
+
+		<portlet:renderURL var="viewMSBPageTemplatesTreeURL">
+			<portlet:param name="toolbarItem" value="view-page-templates" />
+		</portlet:renderURL>
+
+		<aui:nav-item
+			href="<%= viewMSBPageTemplatesTreeURL %>"
+			label="page-templates"
+			selected='<%= toolbarItem.equals("view-page-templates") %>'
 		/>
 	</aui:nav>
+
+	<portlet:renderURL var="portletURL">
+		<portlet:param name="mvcPath" value="/view.jsp" />
+		<portlet:param name="redirect" value="<%= currentURL %>" />
+		<portlet:param name="toolbarItem" value="<%= toolbarItem %>" />
+	</portlet:renderURL>
+
+	<aui:nav-bar-search>
+		<aui:form action="<%= portletURL.toString() %>" method="post" name="fm1">
+			<liferay-ui:input-search markupView="lexicon" />
+		</aui:form>
+	</aui:nav-bar-search>
 </aui:nav-bar>
 
-<%@ include file="/view_pages.jspf" %>
+<c:choose>
+	<c:when test='<%= toolbarItem.equals("view-pages") %>'>
+
+		<%
+		renderResponse.setTitle(LanguageUtil.get(request, "pages"));
+		%>
+
+		<%@ include file="/view_pages.jspf" %>
+	</c:when>
+	<c:otherwise>
+
+		<%
+		renderResponse.setTitle(LanguageUtil.get(request, "page-templates"));
+		%>
+
+		<%@ include file="/view_page_templates.jspf" %>
+	</c:otherwise>
+</c:choose>

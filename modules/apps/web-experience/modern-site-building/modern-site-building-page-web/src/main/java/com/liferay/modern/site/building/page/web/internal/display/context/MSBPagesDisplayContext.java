@@ -15,7 +15,7 @@
 package com.liferay.modern.site.building.page.web.internal.display.context;
 
 import com.liferay.modern.site.building.page.web.constants.PagesPortletKeys;
-import com.liferay.modern.site.building.page.web.internal.util.PagesPortletUtil;
+import com.liferay.modern.site.building.page.web.internal.util.MSBPagesPortletUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -48,9 +48,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author Pavel Savinov
  */
-public class PagesDisplayContext {
+public class MSBPagesDisplayContext {
 
-	public PagesDisplayContext(
+	public MSBPagesDisplayContext(
 		RenderRequest renderRequest, RenderResponse renderResponse,
 		HttpServletRequest request) {
 
@@ -161,7 +161,7 @@ public class PagesDisplayContext {
 		dynamicQuery.add(parentLayoutIdProperty.eq(parentLayoutId));
 
 		OrderByComparator orderByComparator =
-			PagesPortletUtil.getLayoutOrderByComparator(
+			MSBPagesPortletUtil.getLayoutOrderByComparator(
 				getOrderByCol(), getOrderByType());
 
 		List<Layout> layouts = LayoutLocalServiceUtil.dynamicQuery(
@@ -172,7 +172,7 @@ public class PagesDisplayContext {
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 			JSONObject actionsJSONObject =
-				PagesPortletUtil.getActionsJSONObject(layout, _request);
+				MSBPagesPortletUtil.getActionsJSONObject(layout, _request);
 
 			if (actionsJSONObject.length() > 0) {
 				jsonObject.put("actions", actionsJSONObject);
