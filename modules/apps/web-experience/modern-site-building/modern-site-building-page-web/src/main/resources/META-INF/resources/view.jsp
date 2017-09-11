@@ -73,14 +73,12 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 	<%
 	Map<String, Object> context = new HashMap<>();
 
-	context.put("breadcrumbEntries", pageDisplayContext.getBreadcrumbEntriesJSONArray());
-	context.put("firstLevelNodes", pageDisplayContext.getLayoutsJSONArray(false));
-	context.put("getLayoutsURL", getLayoutsURL);
-	context.put("orderBy", pageDisplayContext.getOrderByJSONObject());
+	context.put("layoutBlocks", pagesDisplayContext.getLayoutBlocksJSONArray());
+	context.put("orderBy", pagesDisplayContext.getOrderByJSONObject());
 	context.put("pathThemeImages", themeDisplay.getPathThemeImages());
 	context.put("portletNamespace", renderResponse.getNamespace());
+	context.put("portletURL", msbPagesDisplayContext.getPortletURL().toString());
 	context.put("searchContainerId", "pages");
-	context.put("secondLevelNodes", pageDisplayContext.getLayoutsJSONArray(true));
 	%>
 
 	<soy:template-renderer
