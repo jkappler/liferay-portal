@@ -9,6 +9,8 @@
 	{@param? _handleModalHidden: any}
 	{@param? _handleSubmitForm: any}
 	{@param? error: string}
+	{@param? fragmentEntryId: string}
+	{@param? initialValue: string}
 
 	{call Modal.render}
 		{param body kind="html"}
@@ -33,7 +35,20 @@
 						<span class="hide-accessible">{msg desc=""}required{/msg}</span>
 					</label>
 
-					<input class="field form-control" name="{$namespace}name" type="text">
+					{if $fragmentEntryId}
+						<input
+							name="{$namespace}msbFragmentEntryId"
+							type="hidden"
+							value="{$fragmentEntryId}"
+						>
+					{/if}
+
+					<input
+						class="field form-control"
+						name="{$namespace}name"
+						type="text"
+						value="{$initialValue}"
+					>
 
 					{if $error}
 						<div class="form-validator-stack help-block">
