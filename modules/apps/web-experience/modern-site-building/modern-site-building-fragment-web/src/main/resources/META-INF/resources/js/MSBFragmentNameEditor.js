@@ -40,7 +40,10 @@ class MSBFragmentNameEditor extends Component {
 			.then((jsonResponse) => {
 				this.error = jsonResponse.error;
 
-				if (jsonResponse.msbFragmentEntryId) {
+				if (
+					jsonResponse.msbFragmentEntryId &&
+					this.editMSBFragmentEntryURL
+				) {
 					const uri = new Uri(this.editMSBFragmentEntryURL);
 
 					uri.addParameterValue(
@@ -56,6 +59,8 @@ class MSBFragmentNameEditor extends Component {
 					} else {
 						location.href = uriString;
 					}
+				} else if (!this.error) {
+					this.disposeInternal();
 				}
 			});
 	}
@@ -96,6 +101,27 @@ MSBFragmentNameEditor.STATE = {
 	 * @type {?string}
 	 */
 	error: Config.string().value(''),
+
+	/**
+	 * When specified, this value will be sent within the formData,
+	 * so an existing fragment can be edited instead of creating a new one.
+	 * @default ''
+	 * @instance
+	 * @memberOf MSBFragmentNameEditor
+	 * @type {?string}
+	 */
+	fragmentEntryId: Config.string().value(''),
+
+	/**
+	 * Initial name of the fragment.
+	 * This value should be specified if the fragment has already
+	 * been created.
+	 * @default ''
+	 * @instance
+	 * @memberOf MSBFragmentNameEditor
+	 * @type {?string}
+	 */
+	initialName: Config.string().value(''),
 
 	/**
 	 * Portlet namespace needed for prefixing form inputs
