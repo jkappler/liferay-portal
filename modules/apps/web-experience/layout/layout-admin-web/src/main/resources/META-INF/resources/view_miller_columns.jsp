@@ -14,6 +14,8 @@
  */
 --%>
 
+<%@ include file="/init.jsp" %>
+
 <%
 renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 %>
@@ -64,8 +66,8 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 
 <aui:form action="<%= deleteLayoutURL %>" name="fm">
 	<liferay-portlet:resourceURL id="getLayouts" var="getLayoutsURL">
-		<liferay-portlet:param name="groupId" value="<%= String.valueOf(pageDisplayContext.getGroupId()) %>" />
-		<liferay-portlet:param name="privateLayout" value="<%= String.valueOf(pageDisplayContext.isPrivateLayout()) %>" />
+		<liferay-portlet:param name="groupId" value="<%= String.valueOf(layoutsAdminDisplayContext.getGroupId()) %>" />
+		<liferay-portlet:param name="privateLayout" value="<%= String.valueOf(layoutsAdminDisplayContext.isPrivateLayout()) %>" />
 	</liferay-portlet:resourceURL>
 
 	<%
