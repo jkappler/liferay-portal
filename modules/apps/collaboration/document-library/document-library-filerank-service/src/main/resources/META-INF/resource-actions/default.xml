@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE resource-action-mapping PUBLIC "-//Liferay//DTD Resource Action Mapping 7.0.0//EN" "http://www.liferay.com/dtd/liferay-resource-action-mapping_7_0_0.dtd">
+
+<resource-action-mapping>
+	<model-resource>
+		<model-name>com.liferay.document.library.filerank.model.DLFileRank</model-name>
+		<portlet-ref>
+			<portlet-name>com_liferay_document_library_web_portlet_DLAdminPortlet</portlet-name>
+			<portlet-name>com_liferay_document_library_web_portlet_DLPortlet</portlet-name>
+			<portlet-name>com_liferay_document_library_web_portlet_IGDisplayPortlet</portlet-name>
+		</portlet-ref>
+		<root>true</root>
+		<weight>1</weight>
+		<permissions>
+			<supports>
+				<action-key>ADD_DOCUMENT</action-key>
+				<action-key>ADD_DOCUMENT_TYPE</action-key>
+				<action-key>ADD_FOLDER</action-key>
+				<action-key>ADD_REPOSITORY</action-key>
+				<action-key>ADD_SHORTCUT</action-key>
+				<action-key>ADD_STRUCTURE</action-key>
+				<action-key>PERMISSIONS</action-key>
+				<action-key>SUBSCRIBE</action-key>
+				<action-key>UPDATE</action-key>
+				<action-key>VIEW</action-key>
+			</supports>
+			<site-member-defaults>
+				<action-key>ADD_DOCUMENT</action-key>
+				<action-key>ADD_FOLDER</action-key>
+				<action-key>ADD_SHORTCUT</action-key>
+				<action-key>SUBSCRIBE</action-key>
+				<action-key>VIEW</action-key>
+			</site-member-defaults>
+			<guest-defaults>
+				<action-key>VIEW</action-key>
+			</guest-defaults>
+			<guest-unsupported>
+				<action-key>ADD_DOCUMENT</action-key>
+				<action-key>ADD_DOCUMENT_TYPE</action-key>
+				<action-key>ADD_FOLDER</action-key>
+				<action-key>ADD_REPOSITORY</action-key>
+				<action-key>ADD_SHORTCUT</action-key>
+				<action-key>ADD_STRUCTURE</action-key>
+				<action-key>PERMISSIONS</action-key>
+				<action-key>SUBSCRIBE</action-key>
+				<action-key>UPDATE</action-key>
+			</guest-unsupported>
+		</permissions>
+	</model-resource>
+</resource-action-mapping>
