@@ -1,0 +1,17 @@
+Bundle-Name: Liferay Modern Site Building Page API
+Bundle-SymbolicName: com.liferay.modern.site.building.page.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.modern.site.building.page.constants,\
+	com.liferay.modern.site.building.page.exception,\
+	com.liferay.modern.site.building.page.model,\
+	com.liferay.modern.site.building.page.service,\
+	com.liferay.modern.site.building.page.service.persistence,\
+	com.liferay.modern.site.building.page.util.comparator
+
+Import-Package:\
+	com.liferay.portal.kernel.model;version="[1.0,1.2)",\
+	\
+	*
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Modern Site Building

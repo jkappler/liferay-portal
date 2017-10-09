@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-destroy-method="destroy" default-init-method="afterPropertiesSet" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean class="com.liferay.modern.site.building.page.service.impl.MSBPageTemplateLocalServiceImpl" id="com.liferay.modern.site.building.page.service.MSBPageTemplateLocalService" />
+	<bean class="com.liferay.modern.site.building.page.service.impl.MSBPageTemplateServiceImpl" id="com.liferay.modern.site.building.page.service.MSBPageTemplateService" />
+	<bean class="com.liferay.modern.site.building.page.service.persistence.impl.MSBPageTemplatePersistenceImpl" id="com.liferay.modern.site.building.page.service.persistence.MSBPageTemplatePersistence" parent="basePersistence" />
+	<bean class="com.liferay.modern.site.building.page.service.impl.MSBPageTemplateFolderLocalServiceImpl" id="com.liferay.modern.site.building.page.service.MSBPageTemplateFolderLocalService" />
+	<bean class="com.liferay.modern.site.building.page.service.impl.MSBPageTemplateFolderServiceImpl" id="com.liferay.modern.site.building.page.service.MSBPageTemplateFolderService" />
+	<bean class="com.liferay.modern.site.building.page.service.persistence.impl.MSBPageTemplateFolderPersistenceImpl" id="com.liferay.modern.site.building.page.service.persistence.MSBPageTemplateFolderPersistence" parent="basePersistence" />
+</beans>

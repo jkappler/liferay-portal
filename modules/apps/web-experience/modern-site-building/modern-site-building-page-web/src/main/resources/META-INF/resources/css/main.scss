@@ -1,0 +1,8 @@
+@import "mixins";
+@import "PageList";
+@import "PageListBlock";
+
+#wrapper .portlet-layout,
+.portlet {
+	margin-bottom: 0;
+}
