@@ -1,0 +1,90 @@
+{namespace NavigationMenuContainer}
+
+/**
+ * This renders the main element of NavigationMenuContainer.
+ */
+{template .render}
+	{@param? items: list<?>}
+	{@param? pathThemeImages: string}
+	{@param? selectedId: string}
+
+	<div class="navigation-menu-container" ref="menuBuilderContainer">
+		{if $items and length($items) > 0}
+			{foreach $item in $items}
+				{call .menuItem}
+					{param item: $item /}
+					{param indent: 0 /}
+					{param pathThemeImages: $pathThemeImages /}
+					{param selectedId: $selectedId /}
+				{/call}
+			{/foreach}
+		{else}
+			<div class="text-center">
+				<h3>
+					<span class="d-block mt-xl-3">
+						{msg desc=""}this-menu-is-empty{/msg}
+					</span>
+
+					<span class="d-block mt-xl-3">
+						{msg desc=""}please-add-elements-like-pages-categories-urls{/msg}
+					</span>
+				</h3>
+			</div>
+		{/if}
+	</div>
+{/template}
+
+/**
+ * Renders a single menu item.
+ */
+{template .menuItem}
+	{@param item: ?}
+	{@param indent: number}
+	{@param? pathThemeImages: string}
+	{@param? selectedId: string}
+
+	<div class="card card-horizonal{$indent > 0 ? ' card-indent-' + $indent : ''}{$selectedId == $item.id ? ' selected' : ''}">
+		<a class="card-focus-link" href="#1" onclick="javascript:;" data-onfocus="_handleFocus" data-onkeyup="_handleKeyUp" data-id="{$item.id}">
+			<div class="card-row card-row-padded">
+				{if $item.icon}
+					<div class="card-col-field">
+						<div class="sticker sticker-default sticker-lg sticker-static">
+							<svg class="lexicon-icon lexicon-icon-{$item.icon}" role="img" title="{$item.name}">
+								<use xlink:href="{$pathThemeImages}{$item.icon}"></use>
+							</svg>
+						</div>
+					</div>
+				{/if}
+
+				<div class="card-col-content card-col-gutters draggable">
+					<span class="lfr-card-title-text text-default treeview-node-name truncate-text">
+						{$item.name}
+					</span>
+					<div>
+						<span class="lfr-card-title-text text-muted treeview-node-name truncate-text">
+							{$item.typeLabel}
+						</span>
+					</div>
+				</div>
+
+				<div class="card-col-field delete-item-icon" data-id="{$item.id}" data-onclick="_handleDeleteItem">
+					<a href="#1" onclick="javascript:;">
+						<svg class="lexicon-icon lexicon-icon-trash" role="img">
+							<use xlink:href="{$pathThemeImages}trash"></use>
+						</svg>
+					</a>
+				</div>
+			</div>
+		</a>
+	</div>
+
+	{if $item.children and length($item.children) > 0}
+		{foreach $child in $item.children}
+			{call .menuItem}
+				{param item: $child /}
+				{param indent: $indent + 1 /}
+				{param pathThemeImages: $pathThemeImages /}
+			{/call}
+		{/foreach}
+	{/if}
+{/template}
