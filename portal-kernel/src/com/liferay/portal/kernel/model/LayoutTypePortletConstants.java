@@ -14,10 +14,13 @@
 
 package com.liferay.portal.kernel.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 /**
  * @author Alexander Chow
  * @author Juan Fernández
  */
+@ProviderType
 public class LayoutTypePortletConstants {
 
 	public static final String COLUMN_PREFIX = "column-";
@@ -26,6 +29,8 @@ public class LayoutTypePortletConstants {
 		"default-asset-publisher-portlet-id";
 
 	public static final String LAYOUT_TEMPLATE_ID = "layout-template-id";
+
+	public static final String LINK_TO_LAYOUT_ID = "linkToLayoutId";
 
 	public static final String MODE_ABOUT = "mode-about";
 
