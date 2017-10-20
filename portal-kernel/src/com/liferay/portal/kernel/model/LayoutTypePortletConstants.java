@@ -14,10 +14,13 @@
 
 package com.liferay.portal.kernel.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 /**
  * @author Alexander Chow
  * @author Juan Fernández
  */
+@ProviderType
 public class LayoutTypePortletConstants {
 
 	public static final String COLUMN_PREFIX = "column-";

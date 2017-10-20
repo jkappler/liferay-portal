@@ -14,6 +14,8 @@
 
 package com.liferay.layouts.admin.kernel.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.util.SetUtil;
 
 import java.util.Set;
@@ -21,6 +23,7 @@ import java.util.Set;
 /**
  * @author Michael Bowerman
  */
+@ProviderType
 public class LayoutTypePortletConstants
 	extends com.liferay.portal.kernel.model.LayoutTypePortletConstants {
 
