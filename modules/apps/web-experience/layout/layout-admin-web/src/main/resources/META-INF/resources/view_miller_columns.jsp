@@ -14,8 +14,6 @@
  */
 --%>
 
-<%@ include file="/init.jsp" %>
-
 <%
 renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 %>
@@ -34,22 +32,22 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 	<liferay-frontend:management-bar-buttons>
 		<liferay-frontend:management-bar-display-buttons
 			displayViews='<%= new String[] {"icon"} %>'
-			portletURL="<%= pageDisplayContext.getPortletURL() %>"
-			selectedDisplayStyle="<%= pageDisplayContext.getDisplayStyle() %>"
+			portletURL="<%= layoutsAdminDisplayContext.getPortletURL() %>"
+			selectedDisplayStyle="<%= layoutsAdminDisplayContext.getDisplayStyle() %>"
 		/>
 	</liferay-frontend:management-bar-buttons>
 
 	<liferay-frontend:management-bar-filters>
 		<liferay-frontend:management-bar-navigation
 			navigationKeys='<%= new String[] {"public-pages", "private-pages"} %>'
-			portletURL="<%= pageDisplayContext.getPortletURL() %>"
+			portletURL="<%= layoutsAdminDisplayContext.getPortletURL() %>"
 		/>
 
 		<liferay-frontend:management-bar-sort
-			orderByCol="<%= pageDisplayContext.getOrderByCol() %>"
-			orderByType="<%= pageDisplayContext.getOrderByType() %>"
-			orderColumns="<%= pageDisplayContext.getOrderColumns() %>"
-			portletURL="<%= pageDisplayContext.getPortletURL() %>"
+			orderByCol="<%= layoutsAdminDisplayContext.getOrderByCol() %>"
+			orderByType="<%= layoutsAdminDisplayContext.getOrderByType() %>"
+			orderColumns="<%= layoutsAdminDisplayContext.getOrderColumns() %>"
+			portletURL="<%= layoutsAdminDisplayContext.getPortletURL() %>"
 		/>
 	</liferay-frontend:management-bar-filters>
 
@@ -59,8 +57,8 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 </liferay-frontend:management-bar>
 
 <portlet:actionURL name="/pages/delete_layout" var="deleteLayoutURL">
-	<portlet:param name="groupId" value="<%= String.valueOf(pageDisplayContext.getGroupId()) %>" />
-	<portlet:param name="privateLayout" value="<%= String.valueOf(pageDisplayContext.isPrivateLayout()) %>" />
+	<portlet:param name="groupId" value="<%= String.valueOf(layoutsAdminDisplayContext.getGroupId()) %>" />
+	<portlet:param name="privateLayout" value="<%= String.valueOf(layoutsAdminDisplayContext.isPrivateLayout()) %>" />
 	<portlet:param name="redirect" value="<%= currentURL %>" />
 </portlet:actionURL>
 
@@ -73,11 +71,11 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 	<%
 	Map<String, Object> context = new HashMap<>();
 
-	context.put("layoutBlocks", pagesDisplayContext.getLayoutBlocksJSONArray());
-	context.put("orderBy", pagesDisplayContext.getOrderByJSONObject());
+	context.put("layoutBlocks", layoutsAdminDisplayContext.getLayoutBlocksJSONArray());
+	context.put("orderBy", layoutsAdminDisplayContext.getOrderByJSONObject());
 	context.put("pathThemeImages", themeDisplay.getPathThemeImages());
 	context.put("portletNamespace", renderResponse.getNamespace());
-	context.put("portletURL", msbPagesDisplayContext.getPortletURL().toString());
+	context.put("portletURL", layoutsAdminDisplayContext.getPortletURL().toString());
 	context.put("searchContainerId", "pages");
 	%>
 
@@ -89,10 +87,11 @@ renderResponse.setTitle(LanguageUtil.get(request, "pages"));
 </aui:form>
 
 <liferay-frontend:add-menu>
-	<liferay-portlet:renderURL portletName="<%= PortletProviderUtil.getPortletId(Layout.class.getName(), PortletProvider.Action.EDIT) %>" var="addLayoutURL">
+	<liferay-portlet:renderURL var="addLayoutURL">
 		<portlet:param name="mvcPath" value="/add_layout.jsp" />
 		<portlet:param name="redirect" value="<%= currentURL %>" />
 		<portlet:param name="groupId" value="<%= String.valueOf(scopeGroupId) %>" />
+		<portlet:param name="selPlid" value="0" />
 	</liferay-portlet:renderURL>
 
 	<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "page") %>' type="<%= AddMenuKeys.AddMenuType.PRIMARY %>" url="<%= addLayoutURL.toString() %>" />

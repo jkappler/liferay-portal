@@ -12,8 +12,9 @@
  * details.
  */
 
-package com.liferay.modern.site.building.page.web.internal.util;
+package com.liferay.layout.admin.web.internal.util;
 
+import com.liferay.layout.admin.web.internal.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.util.comparator.LayoutCreateDateComparator;
 import com.liferay.modern.site.building.page.web.constants.PagesPortletKeys;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -58,11 +59,12 @@ public class PagesPortletUtil {
 			Layout.class.getName(), PortletProvider.Action.EDIT);
 
 		PortletURL redirectURL = PortalUtil.getControlPanelPortletURL(
-			portletRequest, PagesPortletKeys.PAGES,
+			portletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
 			PortletRequest.RENDER_PHASE);
 
 		redirectURL.setParameter(
 			"groupId", String.valueOf(layout.getGroupId()));
+		redirectURL.setParameter("millerColumns", String.valueOf(Boolean.TRUE));
 		redirectURL.setParameter(
 			"privateLayout", String.valueOf(layout.isPrivateLayout()));
 
@@ -121,7 +123,7 @@ public class PagesPortletUtil {
 				portletRequest, portletId, PortletRequest.ACTION_PHASE);
 
 			deleteLayoutURL.setParameter(
-				ActionRequest.ACTION_NAME, "deleteLayout");
+				ActionRequest.ACTION_NAME, "/layout/delete_layout");
 			deleteLayoutURL.setParameter("mvcPath", "/edit_layout.jsp");
 
 			redirectURL.setParameter(
@@ -131,7 +133,7 @@ public class PagesPortletUtil {
 			deleteLayoutURL.setParameter(
 				"groupId", String.valueOf(layout.getGroupId()));
 			deleteLayoutURL.setParameter(
-				"selPlid", String.valueOf(layout.getPlid()));
+				"layoutId", String.valueOf(layout.getLayoutId()));
 			deleteLayoutURL.setParameter(
 				"privateLayout", String.valueOf(layout.isPrivateLayout()));
 
