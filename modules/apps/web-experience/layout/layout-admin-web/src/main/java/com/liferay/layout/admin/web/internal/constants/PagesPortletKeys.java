@@ -12,17 +12,14 @@
  * details.
  */
 
-package com.liferay.layout.admin.web.internal.constants;
+package com.liferay.modern.site.building.page.web.constants;
 
 /**
- * @author Julio Camarero
+ * @author Pavel Savinov
  */
-public class LayoutAdminWebKeys {
+public class PagesPortletKeys {
 
-	public static final String CONTROL_MENU_ENTRY = "CONTROL_MENU_ENTRY";
-
-	public static final String ITEM_SELECTOR = "ITEM_SELECTOR";
-
-	public static final String MILLER_COLUMNS = "MILLER_COLUMNS";
+	public static final String PAGES =
+		"com_liferay_modern_site_building_page_web_portlet_PagesPortlet";
 
 }
