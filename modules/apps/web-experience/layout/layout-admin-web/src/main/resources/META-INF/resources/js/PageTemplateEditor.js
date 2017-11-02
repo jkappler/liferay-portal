@@ -20,6 +20,15 @@ class PageTemplateEditor extends Component {
 			}
 		];
 	}
+
+	_handleFragmentRemoveButtonClick (event) {
+		const index = event.fragmentIndex;
+
+		this.fragments = [
+			...this.fragments.slice(0, index),
+			...this.fragments.slice(index + 1)
+		];
+	}
 }
 
 /**
