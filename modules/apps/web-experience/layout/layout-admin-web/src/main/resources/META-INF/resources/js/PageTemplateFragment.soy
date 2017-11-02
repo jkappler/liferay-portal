@@ -5,10 +5,23 @@
  */
 {template .render}
 	{@param name: string}
+	{@param spritemap: string}
+	{@param? _handleFragmentRemoveButtonClick: any}
 
 	<div class="card card-horizontal">
 		<div class="card-body">
-			{$name}
+			<div class="card-row">
+				<div class="flex-col flex-col-expand">
+					{$name}
+				</div>
+				<div class="flex-col">
+					<a data-onclick="{$_handleFragmentRemoveButtonClick}" href="javascript:void(0)">
+						<svg class="lexicon-icon collapse-icon-open">
+							<use xlink:href="{$spritemap}#times-circle"></use>
+						</svg>
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
 {/template}

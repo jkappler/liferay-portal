@@ -8,6 +8,16 @@ import templates from './PageTemplateFragment.soy';
  * PageTemplateFragment
  */
 class PageTemplateFragment extends Component {
+	/**
+	 * Callback executed when the fragment remove button is clicked.
+	 * It emits a 'fragmentRemoveButtonClick' event with the fragment index.
+	 * @private
+	 */
+	_handleFragmentRemoveButtonClick () {
+		this.emit('fragmentRemoveButtonClick', {
+			fragmentIndex: this.index
+		});
+	}
 }
 
 /**
@@ -17,6 +27,15 @@ class PageTemplateFragment extends Component {
  */
 PageTemplateFragment.STATE = {
 	/**
+	 * Fragment index
+	 * @default undefined
+	 * @instance
+	 * @memberOf PageTemplateFragment
+	 * @type {!number}
+	 */
+	index: Config.number().required(),
+
+	/**
 	 * Fragment name
 	 * @default undefined
 	 * @instance
@@ -24,6 +43,15 @@ PageTemplateFragment.STATE = {
 	 * @type {!string}
 	 */
 	name: Config.string().required(),
+
+	/**
+	 * Fragment spritemap
+	 * @default undefined
+	 * @instance
+	 * @memberOf PageTemplateFragment
+	 * @type {!string}
+	 */
+	spritemap: Config.string().required(),
 };
 
 Soy.register(PageTemplateFragment, templates);
