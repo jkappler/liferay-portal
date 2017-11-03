@@ -1,5 +1,6 @@
 import Component from 'metal-component';
 import { Config } from 'metal-state';
+import debounce from 'metal-debounce';
 import Soy from 'metal-soy';
 
 import './PageTemplateFragment';
@@ -10,6 +11,27 @@ import templates from './PageTemplateEditor.soy';
  * Component that allows creating/editing Page Templates
  */
 class PageTemplateEditor extends Component {
+	constructor(...args) {
+		super(...args);
+
+		this._updatePageTemplate = this._updatePageTemplate.bind(this);
+		this._updatePageTemplate = debounce(this._updatePageTemplate, 1000);
+	}
+
+	/**
+	 * @inheritDoc
+	 * If there are changes on any fragment, it sets the _dirty property
+	 * to true and queues an update.
+	 */
+	shouldUpdate (changes) {
+		if (changes.fragments) {
+			this._dirty = true;
+			this._updatePageTemplate();
+		}
+
+		return true;
+	}
+
 	/**
 	 * Callback executed when a fragment entry of a collection is clicked.
 	 * It receives fragmentId and fragmentName as event data.
@@ -40,6 +62,34 @@ class PageTemplateEditor extends Component {
 			...this.fragments.slice(0, index),
 			...this.fragments.slice(index + 1)
 		];
+	}
+
+	/**
+	 * Sends the page template accumulated changes to the server and, if
+	 * success, sets the _dirty property to false.
+	 * @private
+	 */
+	_updatePageTemplate () {
+		this._dirty = false;
+
+		const body = new FormData();
+
+		body.append('pageTemplateId', this.pageTemplateId);
+
+		this.fragments.forEach((fragment) => {
+			body.append('fragments[]', fragment.id);
+		});
+
+		fetch(this.updatePageTemplateURL, {
+			body,
+			credentials: 'include',
+			method: 'POST'
+		})
+			.then((response) => {
+				this._lastSaveDate = new Date().toLocaleTimeString();
+				this._dirty = false;
+			})
+		;
 	}
 }
 
@@ -87,6 +137,15 @@ PageTemplateEditor.STATE = {
 	).value([]),
 
 	/**
+	 * Page template id used for storing changes.
+	 * @default undefined
+	 * @instance
+	 * @memberOf PageTemplateEditor
+	 * @type {!string}
+	 */
+	pageTemplateId: Config.string().required(),
+
+	/**
 	 * Portlet namespace needed for prefixing form inputs
 	 * @default undefined
 	 * @instance
@@ -102,7 +161,29 @@ PageTemplateEditor.STATE = {
 	 * @memberOf PageTemplateEditor
 	 * @type {!string}
 	 */
-	spritemap: Config.string().required()
+	spritemap: Config.string().required(),
+
+	updatePageTemplateURL: Config.string().required(),
+
+	/**
+	 * When true, it indicates that are changes pending to save.
+	 * @default false
+	 * @instance
+	 * @memberOf PageTemplateEditor
+	 * @private
+	 * @type {bool}
+	 */
+	_dirty: Config.bool().internal().value(false),
+
+	/**
+	 * Last data when the autosave has been executed.
+	 * @default ''
+	 * @instance
+	 * @memberOf PageTemplateEditor
+	 * @private
+	 * @type {string}
+	 */
+	_lastSaveDate: Config.string().internal().value('')
 };
 
 Soy.register(PageTemplateEditor, templates);
