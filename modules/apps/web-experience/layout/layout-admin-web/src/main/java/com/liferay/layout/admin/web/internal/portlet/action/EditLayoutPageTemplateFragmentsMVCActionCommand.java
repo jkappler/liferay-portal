@@ -15,16 +15,21 @@
 package com.liferay.layout.admin.web.internal.portlet.action;
 
 import com.liferay.layout.admin.web.internal.constants.LayoutAdminPortletKeys;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.util.ParamUtil;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Jürgen Kappler
@@ -45,6 +50,17 @@ public class EditLayoutPageTemplateFragmentsMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			actionRequest);
+
+		long layoutPageTemplateId = ParamUtil.getLong(
+			actionRequest, "pageTemplateId");
+		long[] fragments = ParamUtil.getLongValues(
+			actionRequest, "fragments[]");
+
+		_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
+			layoutPageTemplateId, fragments, serviceContext);
+
 		hideDefaultSuccessMessage(actionRequest);
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
@@ -52,5 +68,8 @@ public class EditLayoutPageTemplateFragmentsMVCActionCommand
 		JSONPortletResponseUtil.writeJSON(
 			actionRequest, actionResponse, jsonObject);
 	}
+
+	@Reference
+	private LayoutPageTemplateEntryService _layoutPageTemplateEntryService;
 
 }

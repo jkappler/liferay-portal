@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -228,7 +229,7 @@ public class LayoutPageTemplateEntryServiceImpl
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutPageTemplateEntryServiceImpl.class);
 
-	@Reference
+	@ServiceReference(type = FragmentEntryService.class)
 	private FragmentEntryService _fragmentEntryService;
 
 }
