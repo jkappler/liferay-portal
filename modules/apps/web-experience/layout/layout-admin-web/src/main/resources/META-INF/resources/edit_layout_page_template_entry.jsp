@@ -42,6 +42,20 @@ renderResponse.setTitle(layoutPageTemplateDisplayContext.getLayoutPageTemplateEn
 
 	<aui:input autoFocus="<%= true %>" name="name" placeholder="name" />
 
+	<%
+	Map<String, Object> pageTemplateEditorContext = new HashMap<>();
+
+	pageTemplateEditorContext.put("fragmentCollections", layoutPageTemplateDisplayContext.getFragmentCollections());
+	pageTemplateEditorContext.put("portletNamespace", renderResponse.getNamespace());
+	pageTemplateEditorContext.put("spritemap", themeDisplay.getPathThemeImages() + "/lexicon/icons.svg");
+	%>
+
+	<soy:template-renderer
+		context="<%= pageTemplateEditorContext %>"
+		module="layout-admin-web/js/PageTemplateEditor"
+		templateNamespace="PageTemplateEditor.render"
+	/>
+
 	<aui:button-row>
 		<aui:button cssClass="btn-lg" type="submit" />
 
