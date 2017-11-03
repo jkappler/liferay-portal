@@ -1,0 +1,59 @@
+{namespace PageTemplateEditor}
+
+/**
+ * PageTemplateEditor
+ */
+{template .render}
+	{@param fragmentCollections: list<?>}
+	{@param portletNamespace: string}
+	{@param spritemap: string}
+	{@param? fragments: list<?>}
+	{@param? _dirty: bool}
+	{@param? _handleFragmentCollectionEntryClick: any}
+	{@param? _handleFragmentRemoveButtonClick: any}
+
+	<div class="container-fluid-1280">
+		<div class="row mr-0">
+			<div class="col-lg-9 col-md-8 fragment-panel-target">
+				{if $_dirty}
+					<svg class="lexicon-icon collapse-icon-open">
+						<use xlink:href="{$spritemap}#time"></use>
+					</svg>
+				{else}
+					<svg class="lexicon-icon collapse-icon-open">
+						<use xlink:href="{$spritemap}#check-circle-full"></use>
+					</svg>
+				{/if}
+				{if $fragments}
+					{foreach $fragment in $fragments}
+						<div class="fragment-panel-item-instance" data-position="{index($fragment)}">
+							{call PageTemplateFragment.render}
+								{param events: [ 'fragmentRemoveButtonClick': $_handleFragmentRemoveButtonClick ] /}
+								{param index: index($fragment) /}
+								{param name: $fragment.name /}
+								{param spritemap: $spritemap /}
+							{/call}
+						</div>
+					{/foreach}
+				{/if}
+			</div>
+			<div class="col-lg-3 col-md-4 sidebar sidebar-light sidebar-light-bg fragment-panel-sidebar">
+				<div class="px-0 sidebar-header">
+					<div class="sidebar-section">
+						<h4 class="sidebar-title">Fragments</h4>
+					</div>
+				</div>
+				<div class="px-0 sidebar-body">
+					{foreach $fragmentCollection in $fragmentCollections}
+						{call PageTemplateFragmentCollection.render}
+							{param collection: $fragmentCollection /}
+							{param events: [ 'collectionEntryClick': $_handleFragmentCollectionEntryClick ]/}
+							{param portletNamespace: $portletNamespace /}
+							{param spritemap: $spritemap /}
+						{/call}
+					{/foreach}
+				</div>
+			</div>
+		</div>
+	</div>
+{/template}
