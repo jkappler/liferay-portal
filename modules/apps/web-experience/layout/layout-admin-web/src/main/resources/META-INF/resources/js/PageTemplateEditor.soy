@@ -43,7 +43,11 @@
 									{param spritemap: $spritemap /}
 								{/call}
 							</div>
+						{ifempty}
+							{call .noFragmentsMessage /}
 						{/foreach}
+					{else}
+						{call .noFragmentsMessage /}
 					{/if}
 				</div>
 				<div class="col-lg-3 col-md-4 sidebar sidebar-light sidebar-light-bg fragment-panel-sidebar">
@@ -65,5 +69,16 @@
 				</div>
 			</div>
 		</div>
+	</div>
+{/template}
+
+/**
+ * No fragments message
+ */
+{template .noFragmentsMessage}
+	<div class="taglib-empty-result-message">
+		<div class="taglib-empty-result-message-header"></div>
+		<div class="text-center text-muted">This Page is empty.</div>
+		<div class="text-center text-muted">Please, add some Fragments.</div>
 	</div>
 {/template}
