@@ -21,30 +21,28 @@ LayoutPageTemplateDisplayContext layoutPageTemplateDisplayContext = new LayoutPa
 
 String redirect = layoutPageTemplateDisplayContext.getEditLayoutPageTemplateEntryRedirect();
 
-LayoutPageTemplateEntry layoutPageTemplateEntry = layoutPageTemplateDisplayContext.getLayoutPageTemplateEntry();
-
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
 
 renderResponse.setTitle(layoutPageTemplateDisplayContext.getLayoutPageTemplateEntryTitle());
 %>
 
-<portlet:actionURL name="/layout/edit_layout_page_template_entry" var="editLayoutPageTemplateEntryURL">
+<portlet:actionURL name="/layout/edit_layout_page_template_fragments" var="editLayoutPageTemplateFragmentsURL">
 	<portlet:param name="mvcPath" value="/edit_layout_page_template_entry.jsp" />
 </portlet:actionURL>
 
-<aui:form action="<%= editLayoutPageTemplateEntryURL %>" cssClass="container-fluid-1280" enctype="multipart/form-data" method="post" name="fm">
-	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
-	<aui:input name="layoutPageTemplateEntryId" type="hidden" value="<%= layoutPageTemplateDisplayContext.getLayoutPageTemplateEntryId() %>" />
-	<aui:input name="layoutPageTemplateCollectionId" type="hidden" value="<%= layoutPageTemplateDisplayContext.getLayoutPageTemplateCollectionId() %>" />
+<%
+Map<String, Object> pageTemplateEditorContext = new HashMap<>();
 
-	<aui:model-context bean="<%= layoutPageTemplateEntry %>" model="<%= LayoutPageTemplateEntry.class %>" />
+pageTemplateEditorContext.put("fragmentCollections", layoutPageTemplateDisplayContext.getFragmentCollections());
+pageTemplateEditorContext.put("pageTemplateId", layoutPageTemplateDisplayContext.getLayoutPageTemplateEntryId());
+pageTemplateEditorContext.put("portletNamespace", renderResponse.getNamespace());
+pageTemplateEditorContext.put("spritemap", themeDisplay.getPathThemeImages() + "/lexicon/icons.svg");
+pageTemplateEditorContext.put("updatePageTemplateURL", String.valueOf(editLayoutPageTemplateFragmentsURL));
+%>
 
-	<aui:input autoFocus="<%= true %>" name="name" placeholder="name" />
-
-	<aui:button-row>
-		<aui:button cssClass="btn-lg" type="submit" />
-
-		<aui:button cssClass="btn-lg" href="<%= redirect %>" type="cancel" />
-	</aui:button-row>
-</aui:form>
+<soy:template-renderer
+	context="<%= pageTemplateEditorContext %>"
+	module="layout-admin-web/js/PageTemplateEditor"
+	templateNamespace="PageTemplateEditor.render"
+/>
