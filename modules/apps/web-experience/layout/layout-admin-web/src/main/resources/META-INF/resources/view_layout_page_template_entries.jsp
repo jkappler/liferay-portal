@@ -127,11 +127,51 @@ renderResponse.setTitle(layoutPageTemplateDisplayContext.getLayoutPageTemplateCo
 	</portlet:renderURL>
 
 	<liferay-frontend:add-menu>
-		<liferay-frontend:add-menu-item title='<%= LanguageUtil.get(request, "add-page-template") %>' url="<%= addLayoutPageTemplateEntryURL.toString() %>" />
+		<liferay-frontend:add-menu-item id="addPageTemplateEntryMenuItem" title='<%= LanguageUtil.get(request, "add-page-template") %>' url="<%= addLayoutPageTemplateEntryURL.toString() %>" />
 	</liferay-frontend:add-menu>
 </c:if>
 
-<aui:script sandbox="<%= true %>">
+<portlet:actionURL name="/layout/add_layout_page_template_entry" var="addLayoutPageTemplateEntryURL">
+	<portlet:param name="mvcPath" value="/edit_layout_page_template_entry.jsp" />
+</portlet:actionURL>
+
+<aui:script require="layout-admin-web/js/PageTemplateNameEditor">
+	var pageTemplateNameEditor;
+
+	function handleAddPageTemplateEntryMenuItemClick (event) {
+		event.preventDefault();
+
+		pageTemplateNameEditor = new layoutAdminWebJsPageTemplateNameEditor.default(
+			{
+				actionURL: '<%= addLayoutPageTemplateEntryURL.toString() %>',
+				editorTitle: '<liferay-ui:message key="add-page-template" />',
+				events: {
+					hide: function() {
+						pageTemplateNameEditor.dispose();
+
+						pageTemplateNameEditor = null;
+					}
+				},
+				namespace: '<portlet:namespace />',
+				spritemap: '<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg'
+			}
+		);
+	}
+
+	function handleDestroyPortlet () {
+		addPageTemplateEntryMenuItem.removeEventListener('click', handleAddPageTemplateEntryMenuItemClick);
+
+		if (pageTemplateNameEditor) {
+			pageTemplateNameEditor.dispose();
+		}
+
+		Liferay.detach('destroyPortlet', handleDestroyPortlet);
+	}
+
+	var addPageTemplateEntryMenuItem = document.getElementById('<portlet:namespace />addPageTemplateEntryMenuItem');
+
+	addPageTemplateEntryMenuItem.addEventListener('click', handleAddPageTemplateEntryMenuItemClick);
+
 	$('#<portlet:namespace />deleteSelectedLayoutPageTemplateEntries').on(
 		'click',
 		function() {
@@ -140,4 +180,6 @@ renderResponse.setTitle(layoutPageTemplateDisplayContext.getLayoutPageTemplateCo
 			}
 		}
 	);
+
+	Liferay.on('destroyPortlet', handleDestroyPortlet);
 </aui:script>
