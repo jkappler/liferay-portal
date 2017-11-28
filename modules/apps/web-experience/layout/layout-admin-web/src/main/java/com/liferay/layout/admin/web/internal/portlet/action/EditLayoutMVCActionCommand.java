@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.service.LayoutService;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.servlet.MultiSessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -205,8 +204,6 @@ public class EditLayoutMVCActionCommand extends BaseMVCActionCommand {
 		if (Validator.isNull(redirect)) {
 			redirect = _portal.getLayoutFullURL(layout, themeDisplay);
 		}
-
-		MultiSessionMessages.add(actionRequest, "layoutUpdated", layout);
 
 		actionRequest.setAttribute(WebKeys.REDIRECT, redirect);
 	}
