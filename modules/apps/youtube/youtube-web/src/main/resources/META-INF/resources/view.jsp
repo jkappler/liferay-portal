@@ -17,19 +17,28 @@
 <%@ include file="/init.jsp" %>
 
 <c:choose>
-	<c:when test="<%= Validator.isNotNull(youTubeDisplayContext.getURL()) %>">
-		<c:choose>
-			<c:when test="<%= youTubeDisplayContext.isShowThumbnail() %>">
-				<aui:a href="<%= youTubeDisplayContext.getWatchURL() %>" rel="external" title='<%= HtmlUtil.escapeAttribute(LanguageUtil.get(request, "watch-this-video-at-youtube")) %>'>
-					<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="youtube-video" />" height="<%= youTubeDisplayContext.getHeight() %>" src="<%= youTubeDisplayContext.getImageURL() %>" width="<%= youTubeDisplayContext.getWidth() %>" />
-				</aui:a>
-			</c:when>
-			<c:otherwise>
-				<iframe allowfullscreen frameborder="0" height="<%= youTubeDisplayContext.getHeight() %>" src="<%= youTubeDisplayContext.getEmbedURL() %>" width="<%= youTubeDisplayContext.getWidth() %>" wmode="Opaque" /></iframe>
-			</c:otherwise>
-		</c:choose>
+	<c:when test="<%= Validator.isNotNull(displayContext.getURL()) %>">
+		<iframe allowfullscreen frameborder="0" src="<%= displayContext.getEmbedURL() %>" width="100%" wmode="Opaque" onload="resizeIFrame()"/></iframe>
 	</c:when>
 	<c:otherwise>
 		<liferay-util:include page="/html/portal/portlet_not_setup.jsp" />
 	</c:otherwise>
 </c:choose>
+
+<aui:script>
+	var portlet = document.getElementById('portlet_<%= VideoEmbedderPortletKeys.VideoEmbedder %>');
+	var container = portlet.querySelector('.portlet-body');
+	var frame = container.querySelector('iframe');
+
+	function resizeIFrame() {
+		frame.width = frame.height = 0;
+
+		var width = container.offsetWidth;
+		frame.width = width;
+		var aspectRatioHeight = <%= displayContext.getHeight() %>;
+		var aspectRatioWidth = <%= displayContext.getWidth() %>;
+		frame.height = width * (aspectRatioHeight / aspectRatioWidth);
+	}
+
+	window.addEventListener('resize', resizeIFrame);
+</aui:script>

@@ -12,14 +12,23 @@
  * details.
  */
 
-package com.liferay.youtube.web.internal.constants;
+package com.liferay.youtube.web.internal.display.context;
 
 /**
- * @author Peter Fellwock
+ * @author arthurchan35
  */
-public class YouTubePortletKeys {
+public interface VideoEmbedderDisplayContext {
 
-	public static final String YOUTUBE =
-		"com_liferay_youtube_web_portlet_YouTubePortlet";
+	public String getEmbedURL();
+
+	public String getHeight();
+
+	public String getPresetRatio();
+
+	public String getURL();
+
+	public String getWidth();
+
+	public boolean isCustomRatio();
 
 }

@@ -15,12 +15,10 @@
 package com.liferay.youtube.web.internal.display.context;
 
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-
-import java.util.Objects;
+import com.liferay.youtube.web.configuration.VideoEmbedderConfiguration;
 
 import javax.portlet.PortletPreferences;
 
@@ -28,26 +26,27 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Eudaldo Alonso
+ * @author arthurchan35
  */
-public class YouTubeDisplayContext {
+public class YouTubeDisplayContext extends BaseVideoEmbedderDisplayContext {
 
 	public YouTubeDisplayContext(
-		HttpServletRequest request, PortletPreferences portletPreferences) {
+		HttpServletRequest request, PortletPreferences portletPreferences,
+		VideoEmbedderConfiguration configuration) {
 
-		_request = request;
-		_portletPreferences = portletPreferences;
+		super(request, portletPreferences, configuration);
 	}
 
+	@Override
 	public String getEmbedURL() {
 		StringBundler sb = new StringBundler(12);
 
-		sb.append(HttpUtil.getProtocol(_request));
-		sb.append("://www.youtube.com/embed/");
-		sb.append(getId());
+		sb.append(super.getEmbedURL());
+
 		sb.append("?wmode=transparent");
 
 		if (isAutoPlay()) {
-			sb.append("&amp;autoplay=1");
+			sb.append("&amp;auto_play=1");
 		}
 
 		if (isClosedCaptioning()) {
@@ -78,101 +77,14 @@ public class YouTubeDisplayContext {
 		return sb.toString();
 	}
 
-	public String getHeight() {
-		if (_height != null) {
-			return _height;
-		}
-
-		if (isCustomSize()) {
-			_height = _portletPreferences.getValue("height", "360");
-		}
-		else {
-			String presetSize = getPresetSize();
-
-			String[] dimensions = presetSize.split("x");
-
-			_height = dimensions[1];
-		}
-
-		return _height;
-	}
-
-	public String getId() {
-		if (_id != null) {
-			return _id;
-		}
-
-		String url = getURL();
-
-		_id = url.replaceAll("^.*?v=([a-zA-Z0-9_-]+).*$", "$1");
-
-		return _id;
-	}
-
-	public String getImageURL() {
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(HttpUtil.getProtocol(_request));
-		sb.append("://img.youtube.com/vi/");
-		sb.append(getId());
-		sb.append("/0.jpg");
-
-		return sb.toString();
-	}
-
-	public String getPresetSize() {
-		if (_presetSize != null) {
-			return _presetSize;
-		}
-
-		_presetSize = _portletPreferences.getValue("presetSize", "480x360");
-
-		return _presetSize;
-	}
-
 	public String getStartTime() {
 		if (_startTime != null) {
 			return _startTime;
 		}
 
-		_startTime = _portletPreferences.getValue(
-			"startTime", StringPool.BLANK);
+		_startTime = portletPreferences.getValue("startTime", StringPool.BLANK);
 
 		return _startTime;
-	}
-
-	public String getURL() {
-		if (_url != null) {
-			return _url;
-		}
-
-		_url = _portletPreferences.getValue("url", StringPool.BLANK);
-
-		return _url;
-	}
-
-	public String getWatchURL() {
-		return HttpUtil.getProtocol(_request) + "://www.youtube.com/watch?v=" +
-			getId();
-	}
-
-	public String getWidth() {
-		if (_width != null) {
-			return _width;
-		}
-
-		if (isCustomSize()) {
-			_width = _portletPreferences.getValue("width", "480");
-		}
-		else {
-			String presetSize = getPresetSize();
-
-			String[] dimensions = presetSize.split("x");
-
-			_width = dimensions[0];
-		}
-
-		return _width;
 	}
 
 	public boolean isAnnotations() {
@@ -181,7 +93,7 @@ public class YouTubeDisplayContext {
 		}
 
 		_annotations = GetterUtil.getBoolean(
-			_portletPreferences.getValue("annotations", "true"));
+			portletPreferences.getValue("annotations", "true"));
 
 		return _annotations;
 	}
@@ -192,7 +104,7 @@ public class YouTubeDisplayContext {
 		}
 
 		_autoPlay = GetterUtil.getBoolean(
-			_portletPreferences.getValue("autoplay", "false"));
+			portletPreferences.getValue("autoplay", "false"));
 
 		return _autoPlay;
 	}
@@ -203,19 +115,9 @@ public class YouTubeDisplayContext {
 		}
 
 		_closedCaptioning = GetterUtil.getBoolean(
-			_portletPreferences.getValue("closedCaptioning", "false"));
+			portletPreferences.getValue("closedCaptioning", "false"));
 
 		return _closedCaptioning;
-	}
-
-	public boolean isCustomSize() {
-		String presetSize = getPresetSize();
-
-		if (Objects.equals(presetSize, "custom")) {
-			return true;
-		}
-
-		return false;
 	}
 
 	public boolean isEnableKeyboardControls() {
@@ -224,7 +126,7 @@ public class YouTubeDisplayContext {
 		}
 
 		_enableKeyboardControls = GetterUtil.getBoolean(
-			_portletPreferences.getValue("enableKeyboardControls", "true"));
+			portletPreferences.getValue("enableKeyboardControls", "true"));
 
 		return _enableKeyboardControls;
 	}
@@ -235,35 +137,16 @@ public class YouTubeDisplayContext {
 		}
 
 		_loop = GetterUtil.getBoolean(
-			_portletPreferences.getValue("loop", "false"));
+			portletPreferences.getValue("loop", "false"));
 
 		return _loop;
-	}
-
-	public boolean isShowThumbnail() {
-		if (_showThumbnail != null) {
-			return _showThumbnail;
-		}
-
-		_showThumbnail = GetterUtil.getBoolean(
-			_portletPreferences.getValue("showThumbnail", "false"));
-
-		return _showThumbnail;
 	}
 
 	private Boolean _annotations;
 	private Boolean _autoPlay;
 	private Boolean _closedCaptioning;
 	private Boolean _enableKeyboardControls;
-	private String _height;
-	private String _id;
 	private Boolean _loop;
-	private final PortletPreferences _portletPreferences;
-	private String _presetSize;
-	private final HttpServletRequest _request;
-	private Boolean _showThumbnail;
 	private String _startTime;
-	private String _url;
-	private String _width;
 
 }
