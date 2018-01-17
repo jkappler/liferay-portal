@@ -11,7 +11,10 @@
 	{@param? _dirty: bool}
 	{@param? _handleFragmentCollectionEntryClick: any}
 	{@param? _handleFragmentRemoveButtonClick: any}
+	{@param? _handleSidebarTabClick: any}
 	{@param? _lastSaveDate: string}
+	{@param? _sidebarTabs: list<[id:string, name:string, visible:bool]>}
+	{@param? _sidebarSelectedTab: string}
 	{@param? fragments: list<?>}
 	{@param? id: string}
 
@@ -33,7 +36,7 @@
 		</div>
 
 		<div class="container-fluid-1280">
-			<div class="row mr-0">
+			<div class="row">
 				<div class="col-lg-9 col-md-8 fragment-panel-target">
 					{if $fragments and (length($fragments) > 0)}
 						{foreach $fragment in $fragments}
@@ -54,22 +57,47 @@
 					{/if}
 				</div>
 
-				<div class="col-lg-3 col-md-4 sidebar sidebar-light sidebar-light-bg fragment-panel-sidebar">
-					<div class="px-0 sidebar-header">
-						<div class="sidebar-section">
-							<h4 class="sidebar-title">{msg desc=""}fragments{/msg}</h4>
+				<div class="col-lg-3 col-md-4 fragment-panel-sidebar sidebar sidebar-light">
+					<nav class="bg-light tbar tbar-light">
+						<div class="container-fluid">
+							<ul class="tbar-nav">
+								<li class="fragment-panel-sidebar__title tbar-item tbar-item-expand">
+									{msg desc=""}page-template{/msg}
+								</li>
+							</ul>
 						</div>
-					</div>
+					</nav>
 
-					<div class="px-0 sidebar-body">
-						{foreach $fragmentCollection in $fragmentCollections}
-							{call LayoutPageTemplateFragmentCollection.render}
-								{param fragmentCollection: $fragmentCollection /}
-								{param events: ['collectionEntryClick': $_handleFragmentCollectionEntryClick] /}
-								{param portletNamespace: $portletNamespace /}
-								{param spritemap: $spritemap /}
-							{/call}
-						{/foreach}
+					{if $_sidebarTabs}
+						<nav class="navbar navbar-expand-md navbar-underline">
+							<div class="container-fluid">
+								<ul class="navbar-nav">
+									{foreach $sidebarTab in $_sidebarTabs}
+										{if $sidebarTab.visible}
+											{call .sidebarTab}
+												{param active: $sidebarTab.id == $_sidebarSelectedTab /}
+												{param id: $sidebarTab.id /}
+												{param handleTabClick: $_handleSidebarTabClick /}
+												{param name: $sidebarTab.name /}
+											{/call}
+										{/if}
+									{/foreach}
+								</ul>
+							</div>
+						</nav>
+					{/if}
+
+					<div class="bg-light sidebar-body">
+						{if $_sidebarSelectedTab == 'fragments'}
+							{foreach $fragmentCollection in $fragmentCollections}
+								{call LayoutPageTemplateFragmentCollection.render}
+									{param fragmentCollection: $fragmentCollection /}
+									{param events: ['collectionEntryClick': $_handleFragmentCollectionEntryClick] /}
+									{param portletNamespace: $portletNamespace /}
+									{param spritemap: $spritemap /}
+								{/call}
+							{/foreach}
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -88,4 +116,34 @@
 			{msg desc=""}this-layout-page-template-is-empty{/msg}
 		</div>
 	</div>
+{/template}
+
+/**
+ * Sidebar tab
+ */
+{template .sidebarTab}
+	{@param id: string}
+	{@param handleTabClick: any}
+	{@param active: bool}
+	{@param name: string}
+
+	<li class="nav-item">
+		{let $navLinkClasses kind="text"}
+			nav-link
+			{if $active}
+				{sp}active
+			{/if}
+		{/let}
+
+		<a
+			class="{$navLinkClasses}"
+			data-onclick="{$handleTabClick}"
+			data-tab-name="{$id}"
+			href="javascript:;"
+		>
+			<span class="text-truncate">
+				{$name}
+			</span>
+		</a>
+	</li>
 {/template}
