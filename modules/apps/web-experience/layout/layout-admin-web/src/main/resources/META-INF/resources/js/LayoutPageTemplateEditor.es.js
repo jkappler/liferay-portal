@@ -6,6 +6,7 @@ import Soy from 'metal-soy';
 import './contextual_sidebar/ContextualSidebar.es';
 import './LayoutPageTemplateFragment.es';
 import './LayoutPageTemplateFragmentCollection.es';
+import './LayoutPageTemplateSidebarMapping.es';
 import templates from './LayoutPageTemplateEditor.soy';
 
 /**
@@ -18,6 +19,27 @@ class LayoutPageTemplateEditor extends Component {
 	created() {
 		this._updatePageTemplate = this._updatePageTemplate.bind(this);
 		this._updatePageTemplate = debounce(this._updatePageTemplate, 1000);
+	}
+
+	/**
+	 * @inheritDoc
+	 * @param {Object} changes
+	 */
+	willReceiveState(changes) {
+		if (
+			changes.sidebarMappingAssetFieldListURL ||
+			changes.sidebarMappingAssetTypes
+		) {
+			const mappingTab = this._sidebarTabs.find(
+				(tab) => tab.id === 'mapping'
+			);
+
+			if (mappingTab) {
+				mappingTab.visible =
+					!!changes.sidebarMappingAssetFieldListURL &&
+					!!changes.sidebarMappingAssetTypes.newVal;
+			}
+		}
 	}
 
 	/**
@@ -133,6 +155,11 @@ const SIDEBAR_TABS = [
 		id: 'fragments',
 		name: Liferay.Language.get('fragments'),
 		visible: true
+	},
+	{
+		id: 'mapping',
+		name: Liferay.Language.get('mapping'),
+		visible: true
 	}
 ];
 
@@ -214,6 +241,36 @@ LayoutPageTemplateEditor.STATE = {
 	 * @type {!string}
 	 */
 	portletNamespace: Config.string().required(),
+
+	/**
+	 * URL used for fetching a list of AssetField from server
+	 * @default null
+	 * @instance
+	 * @memberOf LayoutPageTemplateEditor
+	 * @review
+	 * @type {string}
+	 */
+	sidebarMappingAssetFieldListURL: Config
+		.string()
+		.value(null),
+
+	/**
+	 * List of asset types
+	 * @default null
+	 * @instance
+	 * @memberOf LayoutPageTemplateEditor
+	 * @review
+	 * @type {!Array<{
+	 *   id: string,
+	 *   label: string
+	 * }>}
+	 */
+	sidebarMappingAssetTypes: Config
+		.arrayOf(Config.shapeOf({
+			id: Config.string(),
+			label: Config.string()
+		}))
+		.value(null),
 
 	/**
 	 * Path of the available icons.

@@ -20,6 +20,11 @@
 	{@param? _sidebarSelectedTab: string}
 	{@param? fragments: list<?>}
 	{@param? id: string}
+	{@param? sidebarMappingAssetFieldListURL: string}
+	{@param? sidebarMappingAssetTypes: list<[
+		id: string,
+		label: string
+	]>}
 
 	<div id="{$id}">
 		<div class="management-bar management-bar-light navbar navbar-expand-md">
@@ -81,17 +86,23 @@
 									{param spritemap: $spritemap /}
 								{/call}
 							{/foreach}
+						{elseif $_sidebarSelectedTab == 'mapping' and $sidebarMappingAssetTypes and $sidebarMappingAssetFieldListURL}
+							{call LayoutPageTemplateSidebarMapping.render}
+								{param mappingAssetFieldListURL: $sidebarMappingAssetFieldListURL /}
+								{param mappingAssetTypes: $sidebarMappingAssetTypes /}
+								{param namespace: $portletNamespace /}
+							{/call}
 						{/if}
 					{/param}
 
-					{param classes: 'bg-light' /}
+					{param classes: 'fragment-panel-sidebar' /}
 
 					{param events: [
 						'hide': $_handleHideContextualSidebar
 					]/}
 
 					{param header kind="html"}
-						<nav class="bg-light tbar tbar-light">
+						<nav class="tbar tbar-light">
 							<div class="container-fluid">
 								<ul class="tbar-nav">
 									<li class="fragment-panel-sidebar__title tbar-item tbar-item-expand">
@@ -102,7 +113,7 @@
 						</nav>
 
 						{if $_sidebarTabs}
-							<nav class="navbar navbar-expand-md navbar-underline">
+							<nav class="navbar navbar-expand-md navbar-transparent navbar-underline navigation-bar">
 								<div class="container-fluid">
 									<ul class="navbar-nav">
 										{foreach $sidebarTab in $_sidebarTabs}
@@ -120,6 +131,8 @@
 							</nav>
 						{/if}
 					{/param}
+
+					{param headerClasses: 'fragment-panel-sidebar__header' /}
 
 					{param visible: $_contextualSidebarVisible ?: true /}
 				{/call}
