@@ -1,0 +1,70 @@
+{namespace LayoutPageTemplateSidebarMapping}
+
+/**
+ * LayoutPageTemplateSidebarMapping
+ */
+{template .render}
+	{@param mappingAssetTypes: list<[
+		id: string,
+		label: string
+	]>}
+	{@param? _error: string}
+	{@param? _handleChangeAssetTypeSelect: any}
+	{@param? _loading: bool}
+	{@param? _mappingAssets: list<[
+		fieldName: string,
+		label: string
+	]>}
+
+	<div>
+		<select class="form-control" data-onchange="{$_handleChangeAssetTypeSelect}">
+			{foreach $mappingAssetType in $mappingAssetTypes}
+				<option value="{$mappingAssetType.id}">
+					{$mappingAssetType.label}
+				</option>
+			{/foreach}
+		</select>
+
+		{if $_loading}
+			{call .loadingIcon /}
+		{elseif $_error}
+			{call .errorMessage}
+				{param error: $_error /}
+			{/call}
+		{elseif $_mappingAssets}
+			{call .mappingAssetList}
+				{param mappingAssets: $_mappingAssets /}
+			{/call}
+		{/if}
+	</div>
+{/template}
+
+/**
+ * Error message
+ */
+{template .errorMessage}
+	{@param error: string}
+
+	<div>{$error}</div>
+{/template}
+
+/**
+ * Loading icon
+ */
+{template .loadingIcon}
+	<div class="loading-animation loading-animation-md">
+	</div>
+{/template}
+
+/**
+ * Mapping asset list
+ */
+{template .mappingAssetList}
+	{@param mappingAssets: list<?>}
+
+	{foreach $mappingAsset in $mappingAssets}
+		<li>{$mappingAsset.label}</li>
+	{ifempty}
+		{msg desc=""}there-are-no-mapping-assets-for-this-type{/msg}
+	{/foreach}
+{/template}
