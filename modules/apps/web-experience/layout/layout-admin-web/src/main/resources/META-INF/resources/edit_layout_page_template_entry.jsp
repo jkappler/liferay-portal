@@ -41,6 +41,8 @@ layoutPageTemplateEditorContext.put("fragmentCollections", layoutPageTemplateDis
 layoutPageTemplateEditorContext.put("fragmentEntryURL", fragmentEntryURL);
 layoutPageTemplateEditorContext.put("layoutPageTemplateEntryId", layoutPageTemplateDisplayContext.getLayoutPageTemplateEntryId());
 layoutPageTemplateEditorContext.put("portletNamespace", renderResponse.getNamespace());
+layoutPageTemplateEditorContext.put("sidebarMappingAssetFieldListURL", "cool url");
+layoutPageTemplateEditorContext.put("sidebarMappingAssetTypes", layoutPageTemplateDisplayContext.getFragmentCollectionsJSONArray());
 layoutPageTemplateEditorContext.put("spritemap", themeDisplay.getPathThemeImages() + "/lexicon/icons.svg");
 layoutPageTemplateEditorContext.put("updatePageTemplateURL", String.valueOf(editLayoutPageTemplateFragmentsURL));
 %>

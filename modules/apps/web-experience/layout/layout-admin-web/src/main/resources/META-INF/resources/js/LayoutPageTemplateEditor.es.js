@@ -6,6 +6,7 @@ import Soy from 'metal-soy';
 import './contextual_sidebar/ContextualSidebar.es';
 import './LayoutPageTemplateFragment.es';
 import './LayoutPageTemplateFragmentCollection.es';
+import './LayoutPageTemplateSidebarMapping.es';
 import templates from './LayoutPageTemplateEditor.soy';
 
 /**
@@ -18,6 +19,27 @@ class LayoutPageTemplateEditor extends Component {
 	created() {
 		this._updatePageTemplate = this._updatePageTemplate.bind(this);
 		this._updatePageTemplate = debounce(this._updatePageTemplate, 1000);
+	}
+
+	/**
+	 * @inheritDoc
+	 * @param {Object} changes
+	 */
+	willReceiveState(changes) {
+		if (
+			changes.sidebarMappingAssetFieldListURL ||
+			changes.sidebarMappingAssetTypes
+		) {
+			const mappingTab = this._sidebarTabs.find(
+				(tab) => tab.id === 'mapping'
+			);
+
+			if (mappingTab) {
+				mappingTab.visible =
+					!!changes.sidebarMappingAssetFieldListURL &&
+					!!changes.sidebarMappingAssetTypes.newVal;
+			}
+		}
 	}
 
 	/**
@@ -75,6 +97,15 @@ class LayoutPageTemplateEditor extends Component {
 	}
 
 	/**
+	 * Updates _sidebarSelectedTab according to the clicked element
+	 * @param {Event} event
+	 * @private
+	 */
+	_handleSidebarTabClick(event) {
+		this._sidebarSelectedTab = event.delegateTarget.dataset.tabName;
+	}
+
+	/**
 	 * Callback executed when the sidebar visible state should be toggled
 	 * @private
 	 */
@@ -114,6 +145,23 @@ class LayoutPageTemplateEditor extends Component {
 		});
 	}
 }
+
+/**
+ * Tabs that can appear inside the sidebar
+ * @see LayoutPageTemplateEditor._sidebarTabs
+ */
+const SIDEBAR_TABS = [
+	{
+		id: 'fragments',
+		name: Liferay.Language.get('fragments'),
+		visible: true
+	},
+	{
+		id: 'mapping',
+		name: Liferay.Language.get('mapping'),
+		visible: true
+	}
+];
 
 /**
  * State definition.
@@ -195,6 +243,36 @@ LayoutPageTemplateEditor.STATE = {
 	portletNamespace: Config.string().required(),
 
 	/**
+	 * URL used for fetching a list of AssetField from server
+	 * @default null
+	 * @instance
+	 * @memberOf LayoutPageTemplateEditor
+	 * @review
+	 * @type {string}
+	 */
+	sidebarMappingAssetFieldListURL: Config
+		.string()
+		.value(null),
+
+	/**
+	 * List of asset types
+	 * @default null
+	 * @instance
+	 * @memberOf LayoutPageTemplateEditor
+	 * @review
+	 * @type {!Array<{
+	 *   id: string,
+	 *   label: string
+	 * }>}
+	 */
+	sidebarMappingAssetTypes: Config
+		.arrayOf(Config.shapeOf({
+			id: Config.string(),
+			label: Config.string()
+		}))
+		.value(null),
+
+	/**
 	 * Path of the available icons.
 	 * @default undefined
 	 * @instance
@@ -245,6 +323,39 @@ LayoutPageTemplateEditor.STATE = {
 	_lastSaveDate: Config.string()
 		.internal()
 		.value(''),
+
+	/**
+	 * Tabs being shown in sidebar
+	 * @default SIDEBAR_TABS
+	 * @instance
+	 * @memberOf LayoutPageTemplateEditor
+	 * @private
+	 * @type {Array<{
+	 * 	 id:string,
+	 * 	 name:string,
+	 * 	 visible:boolean
+	 * }>}
+	 */
+	_sidebarTabs: Config
+		.arrayOf(Config.shapeOf({
+			id: Config.string(),
+			name: Config.string(),
+			visible: Config.bool()
+		}))
+		.internal()
+		.value(SIDEBAR_TABS),
+
+	/**
+	 * Tab selected inside sidebar
+	 * @default SIDEBAR_TABS[0].id
+	 * @instance
+	 * @memberOf LayoutPageTemplateEditor
+	 * @private
+	 * @type {string}
+	 */
+	_sidebarSelectedTab: Config.oneOf(SIDEBAR_TABS.map(tab => tab.id))
+		.internal()
+		.value(SIDEBAR_TABS[0].id)
 };
 
 Soy.register(LayoutPageTemplateEditor, templates);
