@@ -178,6 +178,10 @@ public interface AssetEntryAssetCategoryRelLocalService extends BaseLocalService
 		long assetEntryAssetCategoryRelId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public AssetEntryAssetCategoryRel fetchAssetEntryAssetCategoryRel(
+		long assetCategoryId, long assetEntryId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	/**
