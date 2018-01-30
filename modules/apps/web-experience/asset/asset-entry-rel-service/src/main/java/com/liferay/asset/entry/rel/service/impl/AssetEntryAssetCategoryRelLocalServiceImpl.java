@@ -53,6 +53,14 @@ public class AssetEntryAssetCategoryRelLocalServiceImpl
 	}
 
 	@Override
+	public AssetEntryAssetCategoryRel fetchAssetEntryAssetCategoryRel(
+		long assetCategoryId, long assetEntryId) {
+
+		return assetEntryAssetCategoryRelPersistence.fetchByA_A(
+			assetCategoryId, assetEntryId);
+	}
+
+	@Override
 	public List<AssetEntryAssetCategoryRel>
 		getAssetEntryAssetCategoryRelsByAssetCategoryId(long assetCategoryId) {
 
