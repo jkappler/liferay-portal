@@ -14,6 +14,7 @@
 
 package com.liferay.asset.internal.service;
 
+import com.liferay.asset.entry.rel.model.AssetEntryAssetCategoryRel;
 import com.liferay.asset.entry.rel.service.AssetEntryAssetCategoryRelLocalService;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
@@ -66,9 +67,16 @@ public class AssetEntryAssetCategoryRelAssetEntryLocalServiceWrapper
 				className, classPK, categoryIds);
 
 			for (long categoryId : categoryIds) {
-				_assetEntryAssetCategoryRelLocalService.
-					addAssetEntryAssetCategoryRel(
-						entry.getEntryId(), categoryId);
+				AssetEntryAssetCategoryRel assetEntryAssetCategoryRel =
+					_assetEntryAssetCategoryRelLocalService.
+						fetchAssetEntryAssetCategoryRel(
+							entry.getEntryId(), categoryId);
+
+				if(assetEntryAssetCategoryRel != null) {
+					_assetEntryAssetCategoryRelLocalService.
+						addAssetEntryAssetCategoryRel(
+							entry.getEntryId(), categoryId);
+				}
 			}
 		}
 
