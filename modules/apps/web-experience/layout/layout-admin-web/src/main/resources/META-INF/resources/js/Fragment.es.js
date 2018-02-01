@@ -53,6 +53,7 @@ class Fragment extends Component {
 	 * Allow inline edition using AlloyEditor
 	 * @param {HTMLElement} content
 	 * @private
+	 * @review
 	 */
 	_enableEditableFields(content) {
 		const editors = [];
@@ -137,9 +138,11 @@ class Fragment extends Component {
 	}
 
 	/**
-	 *
-	 * @param event
+	 * Handle AlloyEditor changes and propagate them with an
+	 * "editableChanged" event.
+	 * @param {Object} event
 	 * @private
+	 * @review
 	 */
 	_handleEditorChange(event) {
 		this.emit('editableChanged', {
@@ -256,8 +259,9 @@ Fragment.STATE = {
 	 * List of AlloyEditor instances used for inline edition
 	 * @default []
 	 * @instance
-	 * @memberOf LayoutPageTemplateFragment
+	 * @memberOf Fragment
 	 * @private
+	 * @review
 	 * @type {Array<AlloyEditor>}
 	 */
 	_editors: Config.arrayOf(Config.object())
