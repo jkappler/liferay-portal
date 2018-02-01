@@ -20,6 +20,18 @@ class Fragment extends Component {
 	}
 
 	/**
+	 * @inheritDoc
+	 * @review
+	 */
+	detached() {
+		for (let editor of this._editors) {
+			editor.destroy();
+		}
+
+		this._editors = [];
+	}
+
+	/**
 	 * After each render, script tags need to be reapended to the DOM
 	 * in order to trigger an execution (content changes do not trigger it).
 	 * @inheritDoc
