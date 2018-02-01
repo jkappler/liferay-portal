@@ -79,7 +79,10 @@ class LayoutPageTemplateFragment extends Component {
 			wrapper.innerHTML = editableElement.innerHTML;
 			editableElement.parentNode.replaceChild(wrapper, editableElement);
 
-			const editor = AlloyEditor.editable(wrapper, {});
+			const editor = AlloyEditor.editable(wrapper, {
+				enterMode: CKEDITOR.ENTER_BR
+			});
+
 			editor.get('nativeEditor').on('change', this._handleEditorChange);
 			editors.push(editor);
 		}
