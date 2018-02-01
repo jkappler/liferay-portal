@@ -6,10 +6,12 @@ import templates from './LayoutPageTemplateFragment.soy';
 
 /**
  * LayoutPageTemplateFragment
+ * @review
  */
 class LayoutPageTemplateFragment extends Component {
 	/**
 	 * @inheritDoc
+	 * @review
 	 */
 	created() {
 		this._handleEditorChange = this._handleEditorChange.bind(this);
@@ -34,6 +36,7 @@ class LayoutPageTemplateFragment extends Component {
 	/**
 	 * @inheritDoc
 	 * @param {object} changes
+	 * @review
 	 */
 	willUpdate(changes) {
 		if (changes.fragmentEntryId || changes.index) {
@@ -53,6 +56,7 @@ class LayoutPageTemplateFragment extends Component {
 	 * Allow inline edition using AlloyEditor
 	 * @param {HTMLElement} content
 	 * @private
+	 * @review
 	 */
 	_enableEditableFields(content) {
 		const editors = [];
@@ -111,6 +115,7 @@ class LayoutPageTemplateFragment extends Component {
 	 * @param {!string} fragmentEntryId
 	 * @param {!string} fragmentEntryInstanceId
 	 * @private
+	 * @review
 	 */
 	_fetchFragmentContent(fragmentEntryId, fragmentEntryInstanceId) {
 		const formData = new FormData();
@@ -139,9 +144,11 @@ class LayoutPageTemplateFragment extends Component {
 	}
 
 	/**
-	 *
-	 * @param event
+	 * Handle AlloyEditor changes and propagate them with an
+	 * "editableChanged" event.
+	 * @param {Object} event
 	 * @private
+	 * @review
 	 */
 	_handleEditorChange(event) {
 		this.emit('editableChanged', {
@@ -154,6 +161,7 @@ class LayoutPageTemplateFragment extends Component {
 	 * Callback executed when the fragment remove button is clicked.
 	 * It emits a 'fragmentRemoveButtonClick' event with the fragment index.
 	 * @private
+	 * @review
 	 */
 	_handleFragmentRemoveButtonClick() {
 		this.emit('fragmentRemoveButtonClick', {
@@ -165,6 +173,7 @@ class LayoutPageTemplateFragment extends Component {
 /**
  * State definition.
  * @type {!Object}
+ * @review
  * @static
  */
 LayoutPageTemplateFragment.STATE = {
@@ -173,6 +182,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateEditor
+	 * @review
 	 * @type {!string}
 	 */
 	fragmentEntryId: Config.string().required(),
@@ -182,6 +192,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
+	 * @review
 	 * @type {!number}
 	 */
 	index: Config.number().required(),
@@ -191,6 +202,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
+	 * @review
 	 * @type {!string}
 	 */
 	name: Config.string().required(),
@@ -200,6 +212,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateEditor
+	 * @review
 	 * @type {!string}
 	 */
 	portletNamespace: Config.string().required(),
@@ -209,6 +222,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateEditor
+	 * @review
 	 * @type {!string}
 	 */
 	renderFragmentEntryURL: Config.string().required(),
@@ -218,6 +232,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
+	 * @review
 	 * @type {!string}
 	 */
 	spritemap: Config.string().required(),
@@ -228,6 +243,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
 	 * @private
+	 * @review
 	 * @type {function}
 	 */
 	_content: Config.func()
@@ -240,6 +256,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
 	 * @private
+	 * @review
 	 * @type {Array<AlloyEditor>}
 	 */
 	_editors: Config.arrayOf(Config.object())
@@ -252,6 +269,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
 	 * @private
+	 * @review
 	 * @type {boolean}
 	 */
 	_loading: Config.bool().value(false),
