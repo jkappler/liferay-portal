@@ -169,7 +169,8 @@ class LayoutPageTemplateFragment extends Component {
 	 */
 	_handleEditorChange(event) {
 		this.emit('editableChanged', {
-			id: event.editor.element.$.dataset.lfrEditableId,
+			editableId: event.editor.element.$.dataset.lfrEditableId,
+			fragmentIndex: this.index,
 			value: event.editor.getData()
 		});
 	}
