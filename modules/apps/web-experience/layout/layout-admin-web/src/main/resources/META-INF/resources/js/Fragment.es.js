@@ -77,7 +77,9 @@ class Fragment extends Component {
 			editableElement.parentNode.replaceChild(wrapper, editableElement);
 
 			const editor = AlloyEditor.editable(wrapper, {
-				enterMode: CKEDITOR.ENTER_BR
+				enterMode: CKEDITOR.ENTER_BR,
+				extraPlugins: 'ae_autolink,ae_dragresize,ae_addimages,ae_imagealignment,ae_placeholder,ae_selectionregion,ae_tableresize,ae_tabletools,ae_uicore,itemselector,media,adaptivemedia',
+				removePlugins: 'contextmenu,elementspath,image,link,liststyle,magicline,resize,tabletools,toolbar,ae_embed'
 			});
 
 			editor.get('nativeEditor').on('change', this._handleEditorChange);
