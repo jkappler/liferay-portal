@@ -14,6 +14,8 @@ class Fragment extends Component {
 	 * @review
 	 */
 	created() {
+		this._handleEditorChange = this._handleEditorChange.bind(this);
+
 		this._fetchFragmentContent(this.fragmentEntryId, this.index);
 	}
 
@@ -26,6 +28,8 @@ class Fragment extends Component {
 	rendered() {
 		if (this.refs.content) {
 			this._executeFragmentScripts(this.refs.content);
+
+			this._enableEditableFields(this.refs.content);
 		}
 	}
 
@@ -43,6 +47,44 @@ class Fragment extends Component {
 
 			this._fetchFragmentContent(fragmentEntryId, position);
 		}
+	}
+
+	/**
+	 * Allow inline edition using AlloyEditor
+	 * @param {HTMLElement} content
+	 * @private
+	 */
+	_enableEditableFields(content) {
+		const editors = [];
+
+		for (let editableElement of content.querySelectorAll('lfr-editable')) {
+			const wrapper = document.createElement('div');
+			wrapper.dataset.lfrEditableId = editableElement.id;
+			wrapper.innerHTML = editableElement.innerHTML;
+			editableElement.parentNode.replaceChild(wrapper, editableElement);
+
+			const editor = AlloyEditor.editable(wrapper, {});
+			editor.get('nativeEditor').on('change', this._handleEditorChange);
+			editors.push(editor);
+		}
+
+		for (let editor of this._editors) {
+			const newEditor = editors.find(newEditor =>
+				newEditor.get('nativeEditor').element.$.dataset
+					.lfrEditableId ===
+				editor.get('nativeEditor').element.$.dataset.lfrEditableId
+			);
+
+			if (newEditor) {
+				newEditor.get('nativeEditor').setData(
+					editor.get('nativeEditor').getData()
+				);
+			}
+
+			editor.destroy();
+		}
+
+		this._editors = editors;
 	}
 
 	/**
@@ -92,6 +134,18 @@ class Fragment extends Component {
 				this._content = Soy.toIncDom(response.content);
 				this._loading = false;
 			});
+	}
+
+	/**
+	 *
+	 * @param event
+	 * @private
+	 */
+	_handleEditorChange(event) {
+		this.emit('editableChanged', {
+			id: event.editor.element.$.dataset.lfrEditableId,
+			value: event.editor.getData()
+		});
 	}
 
 	/**
@@ -197,6 +251,18 @@ Fragment.STATE = {
 	_content: Config.func()
 		.internal()
 		.value(Soy.toIncDom('')),
+
+	/**
+	 * List of AlloyEditor instances used for inline edition
+	 * @default []
+	 * @instance
+	 * @memberOf LayoutPageTemplateFragment
+	 * @private
+	 * @type {Array<AlloyEditor>}
+	 */
+	_editors: Config.arrayOf(Config.object())
+		.internal()
+		.value([]),
 
 	/**
 	 * Flag indicating that fragment information is being loaded
