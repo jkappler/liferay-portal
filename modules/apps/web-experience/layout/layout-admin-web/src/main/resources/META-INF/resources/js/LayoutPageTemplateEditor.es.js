@@ -163,16 +163,19 @@ class LayoutPageTemplateEditor extends Component {
 			this.layoutPageTemplateEntryId
 		);
 
+		var editableList = {};
+
 		this._editables.forEach(editable => {
-			body.append(
-				`${this.portletNamespace}editable`,
-				JSON.stringify({
-					editableId: editable.editableId,
-					fragmentIndex: editable.fragmentIndex,
-					value: editable.value
-				})
-			);
+			editableList[editable.fragmentIndex] =
+				editableList[editable.fragmentIndex] || {};
+			editableList[editable.fragmentIndex][editable.editableId] =
+				editable.value;
 		});
+
+		body.append(
+			`${this.portletNamespace}editable`,
+			JSON.stringify(editableList)
+		);
 
 		this.fragments.forEach(fragment => {
 			body.append(
