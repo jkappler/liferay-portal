@@ -35,10 +35,9 @@ create table FragmentEntryInstanceLink (
 	groupId LONG,
 	fragmentEntryId LONG,
 	layoutPageTemplateEntryId LONG,
-	editableValues VARCHAR(75) null,
+	editableValues STRING null,
 	position INTEGER
 );
-
 create table LayoutFragment (
 	layoutFragmentId LONG not null primary key,
 	groupId LONG,
