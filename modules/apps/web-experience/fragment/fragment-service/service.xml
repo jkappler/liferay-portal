@@ -155,6 +155,11 @@
 			<finder-column name="groupId" />
 			<finder-column name="layoutPageTemplateEntryId" />
 		</finder>
+		<finder name="F_L_P" return-type="FragmentEntryInstanceLink" unique="true">
+			<finder-column name="fragmentEntryId" />
+			<finder-column name="layoutPageTemplateEntryId" />
+			<finder-column name="position" />
+		</finder>
 
 		<!-- References -->
 
