@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -127,6 +128,8 @@ public class FragmentEntryInstanceLinkPersistenceTest {
 
 		newFragmentEntryInstanceLink.setLayoutPageTemplateEntryId(RandomTestUtil.nextLong());
 
+		newFragmentEntryInstanceLink.setEditableValues(RandomTestUtil.randomString());
+
 		newFragmentEntryInstanceLink.setPosition(RandomTestUtil.nextInt());
 
 		_fragmentEntryInstanceLinks.add(_persistence.update(
@@ -142,6 +145,8 @@ public class FragmentEntryInstanceLinkPersistenceTest {
 			newFragmentEntryInstanceLink.getFragmentEntryId());
 		Assert.assertEquals(existingFragmentEntryInstanceLink.getLayoutPageTemplateEntryId(),
 			newFragmentEntryInstanceLink.getLayoutPageTemplateEntryId());
+		Assert.assertEquals(existingFragmentEntryInstanceLink.getEditableValues(),
+			newFragmentEntryInstanceLink.getEditableValues());
 		Assert.assertEquals(existingFragmentEntryInstanceLink.getPosition(),
 			newFragmentEntryInstanceLink.getPosition());
 	}
@@ -167,6 +172,14 @@ public class FragmentEntryInstanceLinkPersistenceTest {
 			RandomTestUtil.nextLong());
 
 		_persistence.countByG_L(0L, 0L);
+	}
+
+	@Test
+	public void testCountByF_L_P() throws Exception {
+		_persistence.countByF_L_P(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
+
+		_persistence.countByF_L_P(0L, 0L, 0);
 	}
 
 	@Test
@@ -196,7 +209,7 @@ public class FragmentEntryInstanceLinkPersistenceTest {
 		return OrderByComparatorFactoryUtil.create("FragmentEntryInstanceLink",
 			"fragmentEntryInstanceLinkId", true, "groupId", true,
 			"fragmentEntryId", true, "layoutPageTemplateEntryId", true,
-			"position", true);
+			"editableValues", true, "position", true);
 	}
 
 	@Test
@@ -404,6 +417,29 @@ public class FragmentEntryInstanceLinkPersistenceTest {
 		Assert.assertEquals(0, result.size());
 	}
 
+	@Test
+	public void testResetOriginalValues() throws Exception {
+		FragmentEntryInstanceLink newFragmentEntryInstanceLink = addFragmentEntryInstanceLink();
+
+		_persistence.clearCache();
+
+		FragmentEntryInstanceLink existingFragmentEntryInstanceLink = _persistence.findByPrimaryKey(newFragmentEntryInstanceLink.getPrimaryKey());
+
+		Assert.assertEquals(Long.valueOf(
+				existingFragmentEntryInstanceLink.getFragmentEntryId()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntryInstanceLink,
+				"getOriginalFragmentEntryId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(
+				existingFragmentEntryInstanceLink.getLayoutPageTemplateEntryId()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntryInstanceLink,
+				"getOriginalLayoutPageTemplateEntryId", new Class<?>[0]));
+		Assert.assertEquals(Integer.valueOf(
+				existingFragmentEntryInstanceLink.getPosition()),
+			ReflectionTestUtil.<Integer>invoke(
+				existingFragmentEntryInstanceLink, "getOriginalPosition",
+				new Class<?>[0]));
+	}
+
 	protected FragmentEntryInstanceLink addFragmentEntryInstanceLink()
 		throws Exception {
 		long pk = RandomTestUtil.nextLong();
@@ -415,6 +451,8 @@ public class FragmentEntryInstanceLinkPersistenceTest {
 		fragmentEntryInstanceLink.setFragmentEntryId(RandomTestUtil.nextLong());
 
 		fragmentEntryInstanceLink.setLayoutPageTemplateEntryId(RandomTestUtil.nextLong());
+
+		fragmentEntryInstanceLink.setEditableValues(RandomTestUtil.randomString());
 
 		fragmentEntryInstanceLink.setPosition(RandomTestUtil.nextInt());
 
