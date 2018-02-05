@@ -6,36 +6,49 @@ import templates from './LayoutPageTemplateFragment.soy';
 
 /**
  * LayoutPageTemplateFragment
+ * @review
  */
 class LayoutPageTemplateFragment extends Component {
 	/**
 	 * @inheritDoc
+	 * @review
 	 */
 	created() {
+		this._handleEditorChange = this._handleEditorChange.bind(this);
+
 		this._fetchFragmentContent(this.fragmentEntryId, this.index);
+	}
+
+	/**
+	 * @inheritDoc
+	 * @review
+	 */
+	detached() {
+		for (let editor of this._editors) {
+			editor.destroy();
+		}
+
+		this._editors = [];
 	}
 
 	/**
 	 * After each render, script tags need to be reapended to the DOM
 	 * in order to trigger an execution (content changes do not trigger it).
 	 * @inheritDoc
+	 * @review
 	 */
 	rendered() {
 		if (this.refs.content) {
-			this.refs.content.querySelectorAll('script').forEach(script => {
-				const parentNode = script.parentNode;
-				const newScript = document.createElement('script');
+			this._executeFragmentScripts(this.refs.content);
 
-				newScript.innerHTML = script.innerHTML;
-				parentNode.removeChild(script);
-				parentNode.appendChild(newScript);
-			});
+			this._enableEditableFields(this.refs.content);
 		}
 	}
 
 	/**
 	 * @inheritDoc
 	 * @param {object} changes
+	 * @review
 	 */
 	willUpdate(changes) {
 		if (changes.fragmentEntryId || changes.index) {
@@ -52,11 +65,74 @@ class LayoutPageTemplateFragment extends Component {
 	}
 
 	/**
+	 * Allow inline edition using AlloyEditor
+	 * @param {HTMLElement} content
+	 * @private
+	 * @review
+	 */
+	_enableEditableFields(content) {
+		const editors = [];
+
+		for (let editableElement of content.querySelectorAll('lfr-editable')) {
+			const wrapper = document.createElement('div');
+			wrapper.dataset.lfrEditableId = editableElement.id;
+			wrapper.innerHTML = editableElement.innerHTML;
+			editableElement.parentNode.replaceChild(wrapper, editableElement);
+
+			const editor = AlloyEditor.editable(wrapper, {
+				enterMode: CKEDITOR.ENTER_BR,
+				extraPlugins: 'ae_autolink,ae_dragresize,ae_addimages,ae_imagealignment,ae_placeholder,ae_selectionregion,ae_tableresize,ae_tabletools,ae_uicore,itemselector,media,adaptivemedia',
+				removePlugins: 'contextmenu,elementspath,image,link,liststyle,magicline,resize,tabletools,toolbar,ae_embed'
+			});
+
+			editor.get('nativeEditor').on('change', this._handleEditorChange);
+			editors.push(editor);
+		}
+
+		for (let editor of this._editors) {
+			const newEditor = editors.find(newEditor =>
+				newEditor.get('nativeEditor').element.$.dataset
+					.lfrEditableId ===
+				editor.get('nativeEditor').element.$.dataset.lfrEditableId
+			);
+
+			if (newEditor) {
+				newEditor.get('nativeEditor').setData(
+					editor.get('nativeEditor').getData()
+				);
+			}
+
+			editor.destroy();
+		}
+
+		this._editors = editors;
+	}
+
+	/**
+	 * After each render, script tags need to be reapended to the DOM
+	 * in order to trigger an execution (content changes do not trigger it).
+	 * @param {HTMLElement} content
+	 * @private
+	 * @review
+	 */
+	_executeFragmentScripts(content) {
+		content.querySelectorAll('script').forEach(script => {
+			const parentNode = script.parentNode;
+			const newScript = document.createElement('script');
+
+			newScript.innerHTML = script.innerHTML;
+			parentNode.removeChild(script);
+			parentNode.appendChild(newScript);
+		});
+	}
+
+	/**
 	 * Fetches a fragment entry from the given ID, and stores the HTML,
 	 * CSS and JS result into component properties.
 	 * @param {!string} fragmentEntryId
 	 * @param {!string} fragmentEntryInstanceId
 	 * @private
+	 * @review
 	 */
 	_fetchFragmentContent(fragmentEntryId, fragmentEntryInstanceId) {
 		const formData = new FormData();
@@ -85,9 +161,25 @@ class LayoutPageTemplateFragment extends Component {
 	}
 
 	/**
+	 * Handle AlloyEditor changes and propagate them with an
+	 * "editableChanged" event.
+	 * @param {Object} event
+	 * @private
+	 * @review
+	 */
+	_handleEditorChange(event) {
+		this.emit('editableChanged', {
+			editableId: event.editor.element.$.dataset.lfrEditableId,
+			fragmentIndex: this.index,
+			value: event.editor.getData()
+		});
+	}
+
+	/**
 	 * Callback executed when the fragment remove button is clicked.
 	 * It emits a 'fragmentRemoveButtonClick' event with the fragment index.
 	 * @private
+	 * @review
 	 */
 	_handleFragmentRemoveButtonClick() {
 		this.emit('fragmentRemoveButtonClick', {
@@ -99,6 +191,7 @@ class LayoutPageTemplateFragment extends Component {
 /**
  * State definition.
  * @type {!Object}
+ * @review
  * @static
  */
 LayoutPageTemplateFragment.STATE = {
@@ -107,6 +200,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateEditor
+	 * @review
 	 * @type {!string}
 	 */
 	fragmentEntryId: Config.string().required(),
@@ -116,6 +210,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
+	 * @review
 	 * @type {!number}
 	 */
 	index: Config.number().required(),
@@ -125,6 +220,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
+	 * @review
 	 * @type {!string}
 	 */
 	name: Config.string().required(),
@@ -134,6 +230,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateEditor
+	 * @review
 	 * @type {!string}
 	 */
 	portletNamespace: Config.string().required(),
@@ -143,6 +240,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateEditor
+	 * @review
 	 * @type {!string}
 	 */
 	renderFragmentEntryURL: Config.string().required(),
@@ -152,6 +250,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @default undefined
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
+	 * @review
 	 * @type {!string}
 	 */
 	spritemap: Config.string().required(),
@@ -162,6 +261,7 @@ LayoutPageTemplateFragment.STATE = {
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
 	 * @private
+	 * @review
 	 * @type {function}
 	 */
 	_content: Config.func()
@@ -169,11 +269,25 @@ LayoutPageTemplateFragment.STATE = {
 		.value(Soy.toIncDom('')),
 
 	/**
+	 * List of AlloyEditor instances used for inline edition
+	 * @default []
+	 * @instance
+	 * @memberOf LayoutPageTemplateFragment
+	 * @private
+	 * @review
+	 * @type {Array<AlloyEditor>}
+	 */
+	_editors: Config.arrayOf(Config.object())
+		.internal()
+		.value([]),
+
+	/**
 	 * Flag indicating that fragment information is being loaded
 	 * @default false
 	 * @instance
 	 * @memberOf LayoutPageTemplateFragment
 	 * @private
+	 * @review
 	 * @type {boolean}
 	 */
 	_loading: Config.bool().value(false),
