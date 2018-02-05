@@ -186,7 +186,7 @@ class LayoutPageTemplateEditor extends Component {
 			this.layoutPageTemplateEntryId
 		);
 
-		var editableList = {};
+		const editableList = {};
 
 		this._editables.forEach(editable => {
 			editableList[editable.fragmentIndex] =
