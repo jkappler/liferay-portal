@@ -72,8 +72,14 @@ class Fragment extends Component {
 
 		for (let editableElement of content.querySelectorAll('lfr-editable')) {
 			const wrapper = document.createElement('div');
-			wrapper.dataset.lfrEditableId = editableElement.id;
-			wrapper.innerHTML = editableElement.innerHTML;
+			const editableId = editableElement.id;
+			const editableContent =
+				typeof this.editableValues[editableId] === 'undefined'
+					? editableElement.innerHTML
+					: this.editableValues[editableId];
+
+			wrapper.dataset.lfrEditableId = editableId;
+			wrapper.innerHTML = editableContent;
 			editableElement.parentNode.replaceChild(wrapper, editableElement);
 
 			const editor = AlloyEditor.editable(wrapper, {
@@ -189,6 +195,17 @@ class Fragment extends Component {
  * @type {!Object}
  */
 Fragment.STATE = {
+	/**
+	 * Editable values that should be used instead of the default ones
+	 * inside editable fields.
+	 * @default undefined
+	 * @instance
+	 * @memberOf LayoutPageTemplateFragment
+	 * @review
+	 * @type {!Object}
+	 */
+	editableValues: Config.object().required(),
+
 	/**
 	 * Fragment entry ID
 	 * @default undefined
