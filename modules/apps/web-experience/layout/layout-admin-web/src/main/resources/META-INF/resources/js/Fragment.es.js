@@ -198,13 +198,13 @@ Fragment.STATE = {
 	/**
 	 * Editable values that should be used instead of the default ones
 	 * inside editable fields.
-	 * @default undefined
+	 * @default {}
 	 * @instance
-	 * @memberOf LayoutPageTemplateFragment
+	 * @memberOf Fragment
 	 * @review
 	 * @type {!Object}
 	 */
-	editableValues: Config.object().required(),
+	editableValues: Config.object().value({}),
 
 	/**
 	 * Fragment entry ID
