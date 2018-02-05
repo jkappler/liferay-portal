@@ -52,27 +52,25 @@ class LayoutPageTemplateEditor extends Component {
 	 * @review
 	 */
 	_handleEditableChanged(data) {
-		const index = this._editables.findIndex(editable =>
-			editable.editableId === data.editableId &&
-			editable.fragmentIndex === data.fragmentIndex
+		const index = this._editables.findIndex(
+			editable =>
+				editable.editableId === data.editableId &&
+				editable.fragmentIndex === data.fragmentIndex
 		);
 
 		const editable = {
 			editableId: data.editableId,
 			fragmentIndex: data.fragmentIndex,
-			value: data.value
+			value: data.value,
 		};
 
 		if (index === -1) {
-			this._editables = [
-				...this._editables,
-				editable
-			];
+			this._editables = [...this._editables, editable];
 		} else {
 			this._editables = [
 				...this._editables.slice(0, index),
 				...this._editables.slice(index + 1),
-				editable
+				editable,
 			];
 		}
 	}
@@ -109,10 +107,11 @@ class LayoutPageTemplateEditor extends Component {
 			.filter(editable => editable.fragmentIndex !== index)
 			.map(editable => ({
 				editableId: editable.editableId,
-				fragmentIndex: editable.fragmentIndex > index
-					? editable.fragmentIndex - 1
-					: editable.fragmentIndex,
-				value: editable.value
+				fragmentIndex:
+					editable.fragmentIndex > index
+						? editable.fragmentIndex - 1
+						: editable.fragmentIndex,
+				value: editable.value,
 			}));
 
 		this.fragments = [
@@ -162,7 +161,7 @@ class LayoutPageTemplateEditor extends Component {
 				editables.push({
 					editableId: key,
 					fragmentIndex: index,
-					value: fragment.editableValues[key]
+					value: fragment.editableValues[key],
 				});
 			}
 		});
@@ -191,6 +190,7 @@ class LayoutPageTemplateEditor extends Component {
 		this._editables.forEach(editable => {
 			editableList[editable.fragmentIndex] =
 				editableList[editable.fragmentIndex] || {};
+
 			editableList[editable.fragmentIndex][editable.editableId] =
 				editable.value;
 		});
@@ -396,7 +396,7 @@ LayoutPageTemplateEditor.STATE = {
 		.arrayOf(Config.shapeOf({
 			editableId: Config.string(),
 			fragmentIndex: Config.number(),
-			value: Config.string()
+			value: Config.string(),
 		}))
 		.internal()
 		.value([]),

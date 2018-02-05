@@ -84,8 +84,32 @@ class Fragment extends Component {
 
 			const editor = AlloyEditor.editable(wrapper, {
 				enterMode: CKEDITOR.ENTER_BR,
-				extraPlugins: 'ae_autolink,ae_dragresize,ae_addimages,ae_imagealignment,ae_placeholder,ae_selectionregion,ae_tableresize,ae_tabletools,ae_uicore,itemselector,media,adaptivemedia',
-				removePlugins: 'contextmenu,elementspath,image,link,liststyle,magicline,resize,tabletools,toolbar,ae_embed'
+				extraPlugins: [
+					'ae_autolink',
+					'ae_dragresize',
+					'ae_addimages',
+					'ae_imagealignment',
+					'ae_placeholder',
+					'ae_selectionregion',
+					'ae_tableresize',
+					'ae_tabletools',
+					'ae_uicore',
+					'itemselector',
+					'media',
+					'adaptivemedia',
+				].join(','),
+				removePlugins: [
+					'contextmenu',
+					'elementspath',
+					'image',
+					'link',
+					'liststyle',
+					'magicline',
+					'resize',
+					'tabletools',
+					'toolbar',
+					'ae_embed',
+				].join(','),
 			});
 
 			editor.get('nativeEditor').on('change', this._handleEditorChange);
@@ -93,16 +117,17 @@ class Fragment extends Component {
 		}
 
 		for (let editor of this._editors) {
-			const newEditor = editors.find(newEditor =>
-				newEditor.get('nativeEditor').element.$.dataset
-					.lfrEditableId ===
-				editor.get('nativeEditor').element.$.dataset.lfrEditableId
+			const newEditor = editors.find(
+				newEditor =>
+					newEditor.get('nativeEditor').element.$.dataset
+						.lfrEditableId ===
+					editor.get('nativeEditor').element.$.dataset.lfrEditableId
 			);
 
 			if (newEditor) {
-				newEditor.get('nativeEditor').setData(
-					editor.get('nativeEditor').getData()
-				);
+				newEditor
+					.get('nativeEditor')
+					.setData(editor.get('nativeEditor').getData());
 			}
 
 			editor.destroy();
@@ -171,7 +196,7 @@ class Fragment extends Component {
 		this.emit('editableChanged', {
 			editableId: event.editor.element.$.dataset.lfrEditableId,
 			fragmentIndex: this.index,
-			value: event.editor.getData()
+			value: event.editor.getData(),
 		});
 	}
 
