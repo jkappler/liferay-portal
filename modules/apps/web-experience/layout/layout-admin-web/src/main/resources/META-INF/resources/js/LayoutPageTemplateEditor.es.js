@@ -19,25 +19,10 @@ class LayoutPageTemplateEditor extends Component {
 	 * @review
 	 */
 	created() {
-		debugger;
-
 		this._updatePageTemplate = this._updatePageTemplate.bind(this);
 		this._updatePageTemplate = debounce(this._updatePageTemplate, 1000);
 
-		this.fragments.forEach((fragment, index) => {
-			for (var key in fragment.editableValues) {
-				const editable = {
-					editableId: key,
-					fragmentIndex: index,
-					value: fragment.editableValues[key]
-				};
-
-				this._editables = [
-					...this._editables,
-					editable
-				];
-			}
-		});
+		this._initializeEditables();
 	}
 
 	/**
@@ -162,6 +147,27 @@ class LayoutPageTemplateEditor extends Component {
 	 */
 	_handleToggleContextualSidebarButtonClick() {
 		this._contextualSidebarVisible = !this._contextualSidebarVisible;
+	}
+
+	/**
+	 * Initialize _editables property with the existing values received inside
+	 * fragments.
+	 * @private
+	 */
+	_initializeEditables() {
+		const editables = [];
+
+		this.fragments.forEach((fragment, index) => {
+			for (let key of Object.keys(fragment.editableValues)) {
+				editables.push({
+					editableId: key,
+					fragmentIndex: index,
+					value: fragment.editableValues[key]
+				});
+			}
+		});
+
+		this._editables = editables;
 	}
 
 	/**
