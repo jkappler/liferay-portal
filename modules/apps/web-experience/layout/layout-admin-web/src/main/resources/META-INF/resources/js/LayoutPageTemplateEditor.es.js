@@ -178,9 +178,9 @@ class LayoutPageTemplateEditor extends Component {
 	_updatePageTemplate() {
 		this._dirty = false;
 
-		const body = new FormData();
+		const formData = new FormData();
 
-		body.append(
+		formData.append(
 			`${this.portletNamespace}layoutPageTemplateEntryId`,
 			this.layoutPageTemplateEntryId
 		);
@@ -195,20 +195,20 @@ class LayoutPageTemplateEditor extends Component {
 				editable.value;
 		});
 
-		body.append(
+		formData.append(
 			`${this.portletNamespace}editable`,
 			JSON.stringify(editableList)
 		);
 
 		this.fragments.forEach(fragment => {
-			body.append(
+			formData.append(
 				`${this.portletNamespace}fragmentIds`,
 				fragment.fragmentEntryId
 			);
 		});
 
 		fetch(this.updatePageTemplateURL, {
-			body,
+			body: formData,
 			credentials: 'include',
 			method: 'POST',
 		}).then(() => {
