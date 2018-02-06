@@ -1706,6 +1706,269 @@ public class FragmentEntryInstanceLinkPersistenceImpl
 
 	private static final String _FINDER_COLUMN_G_L_GROUPID_2 = "fragmentEntryInstanceLink.groupId = ? AND ";
 	private static final String _FINDER_COLUMN_G_L_LAYOUTPAGETEMPLATEENTRYID_2 = "fragmentEntryInstanceLink.layoutPageTemplateEntryId = ?";
+	public static final FinderPath FINDER_PATH_FETCH_BY_F_L_P = new FinderPath(FragmentEntryInstanceLinkModelImpl.ENTITY_CACHE_ENABLED,
+			FragmentEntryInstanceLinkModelImpl.FINDER_CACHE_ENABLED,
+			FragmentEntryInstanceLinkImpl.class, FINDER_CLASS_NAME_ENTITY,
+			"fetchByF_L_P",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName()
+			},
+			FragmentEntryInstanceLinkModelImpl.FRAGMENTENTRYID_COLUMN_BITMASK |
+			FragmentEntryInstanceLinkModelImpl.LAYOUTPAGETEMPLATEENTRYID_COLUMN_BITMASK |
+			FragmentEntryInstanceLinkModelImpl.POSITION_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_F_L_P = new FinderPath(FragmentEntryInstanceLinkModelImpl.ENTITY_CACHE_ENABLED,
+			FragmentEntryInstanceLinkModelImpl.FINDER_CACHE_ENABLED,
+			Long.class, FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByF_L_P",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName()
+			});
+
+	/**
+	 * Returns the fragment entry instance link where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63; or throws a {@link NoSuchEntryInstanceLinkException} if it could not be found.
+	 *
+	 * @param fragmentEntryId the fragment entry ID
+	 * @param layoutPageTemplateEntryId the layout page template entry ID
+	 * @param position the position
+	 * @return the matching fragment entry instance link
+	 * @throws NoSuchEntryInstanceLinkException if a matching fragment entry instance link could not be found
+	 */
+	@Override
+	public FragmentEntryInstanceLink findByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position)
+		throws NoSuchEntryInstanceLinkException {
+		FragmentEntryInstanceLink fragmentEntryInstanceLink = fetchByF_L_P(fragmentEntryId,
+				layoutPageTemplateEntryId, position);
+
+		if (fragmentEntryInstanceLink == null) {
+			StringBundler msg = new StringBundler(8);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("fragmentEntryId=");
+			msg.append(fragmentEntryId);
+
+			msg.append(", layoutPageTemplateEntryId=");
+			msg.append(layoutPageTemplateEntryId);
+
+			msg.append(", position=");
+			msg.append(position);
+
+			msg.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchEntryInstanceLinkException(msg.toString());
+		}
+
+		return fragmentEntryInstanceLink;
+	}
+
+	/**
+	 * Returns the fragment entry instance link where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param fragmentEntryId the fragment entry ID
+	 * @param layoutPageTemplateEntryId the layout page template entry ID
+	 * @param position the position
+	 * @return the matching fragment entry instance link, or <code>null</code> if a matching fragment entry instance link could not be found
+	 */
+	@Override
+	public FragmentEntryInstanceLink fetchByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position) {
+		return fetchByF_L_P(fragmentEntryId, layoutPageTemplateEntryId,
+			position, true);
+	}
+
+	/**
+	 * Returns the fragment entry instance link where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param fragmentEntryId the fragment entry ID
+	 * @param layoutPageTemplateEntryId the layout page template entry ID
+	 * @param position the position
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching fragment entry instance link, or <code>null</code> if a matching fragment entry instance link could not be found
+	 */
+	@Override
+	public FragmentEntryInstanceLink fetchByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position, boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] {
+				fragmentEntryId, layoutPageTemplateEntryId, position
+			};
+
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(FINDER_PATH_FETCH_BY_F_L_P,
+					finderArgs, this);
+		}
+
+		if (result instanceof FragmentEntryInstanceLink) {
+			FragmentEntryInstanceLink fragmentEntryInstanceLink = (FragmentEntryInstanceLink)result;
+
+			if ((fragmentEntryId != fragmentEntryInstanceLink.getFragmentEntryId()) ||
+					(layoutPageTemplateEntryId != fragmentEntryInstanceLink.getLayoutPageTemplateEntryId()) ||
+					(position != fragmentEntryInstanceLink.getPosition())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(5);
+
+			query.append(_SQL_SELECT_FRAGMENTENTRYINSTANCELINK_WHERE);
+
+			query.append(_FINDER_COLUMN_F_L_P_FRAGMENTENTRYID_2);
+
+			query.append(_FINDER_COLUMN_F_L_P_LAYOUTPAGETEMPLATEENTRYID_2);
+
+			query.append(_FINDER_COLUMN_F_L_P_POSITION_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(fragmentEntryId);
+
+				qPos.add(layoutPageTemplateEntryId);
+
+				qPos.add(position);
+
+				List<FragmentEntryInstanceLink> list = q.list();
+
+				if (list.isEmpty()) {
+					finderCache.putResult(FINDER_PATH_FETCH_BY_F_L_P,
+						finderArgs, list);
+				}
+				else {
+					FragmentEntryInstanceLink fragmentEntryInstanceLink = list.get(0);
+
+					result = fragmentEntryInstanceLink;
+
+					cacheResult(fragmentEntryInstanceLink);
+
+					if ((fragmentEntryInstanceLink.getFragmentEntryId() != fragmentEntryId) ||
+							(fragmentEntryInstanceLink.getLayoutPageTemplateEntryId() != layoutPageTemplateEntryId) ||
+							(fragmentEntryInstanceLink.getPosition() != position)) {
+						finderCache.putResult(FINDER_PATH_FETCH_BY_F_L_P,
+							finderArgs, fragmentEntryInstanceLink);
+					}
+				}
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_FETCH_BY_F_L_P, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (FragmentEntryInstanceLink)result;
+		}
+	}
+
+	/**
+	 * Removes the fragment entry instance link where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63; from the database.
+	 *
+	 * @param fragmentEntryId the fragment entry ID
+	 * @param layoutPageTemplateEntryId the layout page template entry ID
+	 * @param position the position
+	 * @return the fragment entry instance link that was removed
+	 */
+	@Override
+	public FragmentEntryInstanceLink removeByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position)
+		throws NoSuchEntryInstanceLinkException {
+		FragmentEntryInstanceLink fragmentEntryInstanceLink = findByF_L_P(fragmentEntryId,
+				layoutPageTemplateEntryId, position);
+
+		return remove(fragmentEntryInstanceLink);
+	}
+
+	/**
+	 * Returns the number of fragment entry instance links where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63;.
+	 *
+	 * @param fragmentEntryId the fragment entry ID
+	 * @param layoutPageTemplateEntryId the layout page template entry ID
+	 * @param position the position
+	 * @return the number of matching fragment entry instance links
+	 */
+	@Override
+	public int countByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_F_L_P;
+
+		Object[] finderArgs = new Object[] {
+				fragmentEntryId, layoutPageTemplateEntryId, position
+			};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_FRAGMENTENTRYINSTANCELINK_WHERE);
+
+			query.append(_FINDER_COLUMN_F_L_P_FRAGMENTENTRYID_2);
+
+			query.append(_FINDER_COLUMN_F_L_P_LAYOUTPAGETEMPLATEENTRYID_2);
+
+			query.append(_FINDER_COLUMN_F_L_P_POSITION_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(fragmentEntryId);
+
+				qPos.add(layoutPageTemplateEntryId);
+
+				qPos.add(position);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_F_L_P_FRAGMENTENTRYID_2 = "fragmentEntryInstanceLink.fragmentEntryId = ? AND ";
+	private static final String _FINDER_COLUMN_F_L_P_LAYOUTPAGETEMPLATEENTRYID_2 =
+		"fragmentEntryInstanceLink.layoutPageTemplateEntryId = ? AND ";
+	private static final String _FINDER_COLUMN_F_L_P_POSITION_2 = "fragmentEntryInstanceLink.position = ?";
 
 	public FragmentEntryInstanceLinkPersistenceImpl() {
 		setModelClass(FragmentEntryInstanceLink.class);
@@ -1721,6 +1984,13 @@ public class FragmentEntryInstanceLinkPersistenceImpl
 		entityCache.putResult(FragmentEntryInstanceLinkModelImpl.ENTITY_CACHE_ENABLED,
 			FragmentEntryInstanceLinkImpl.class,
 			fragmentEntryInstanceLink.getPrimaryKey(), fragmentEntryInstanceLink);
+
+		finderCache.putResult(FINDER_PATH_FETCH_BY_F_L_P,
+			new Object[] {
+				fragmentEntryInstanceLink.getFragmentEntryId(),
+				fragmentEntryInstanceLink.getLayoutPageTemplateEntryId(),
+				fragmentEntryInstanceLink.getPosition()
+			}, fragmentEntryInstanceLink);
 
 		fragmentEntryInstanceLink.resetOriginalValues();
 	}
@@ -1777,6 +2047,9 @@ public class FragmentEntryInstanceLinkPersistenceImpl
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		clearUniqueFindersCache((FragmentEntryInstanceLinkModelImpl)fragmentEntryInstanceLink,
+			true);
 	}
 
 	@Override
@@ -1789,6 +2062,50 @@ public class FragmentEntryInstanceLinkPersistenceImpl
 			entityCache.removeResult(FragmentEntryInstanceLinkModelImpl.ENTITY_CACHE_ENABLED,
 				FragmentEntryInstanceLinkImpl.class,
 				fragmentEntryInstanceLink.getPrimaryKey());
+
+			clearUniqueFindersCache((FragmentEntryInstanceLinkModelImpl)fragmentEntryInstanceLink,
+				true);
+		}
+	}
+
+	protected void cacheUniqueFindersCache(
+		FragmentEntryInstanceLinkModelImpl fragmentEntryInstanceLinkModelImpl) {
+		Object[] args = new Object[] {
+				fragmentEntryInstanceLinkModelImpl.getFragmentEntryId(),
+				fragmentEntryInstanceLinkModelImpl.getLayoutPageTemplateEntryId(),
+				fragmentEntryInstanceLinkModelImpl.getPosition()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_F_L_P, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_F_L_P, args,
+			fragmentEntryInstanceLinkModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(
+		FragmentEntryInstanceLinkModelImpl fragmentEntryInstanceLinkModelImpl,
+		boolean clearCurrent) {
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					fragmentEntryInstanceLinkModelImpl.getFragmentEntryId(),
+					fragmentEntryInstanceLinkModelImpl.getLayoutPageTemplateEntryId(),
+					fragmentEntryInstanceLinkModelImpl.getPosition()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_F_L_P, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_F_L_P, args);
+		}
+
+		if ((fragmentEntryInstanceLinkModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_F_L_P.getColumnBitmask()) != 0) {
+			Object[] args = new Object[] {
+					fragmentEntryInstanceLinkModelImpl.getOriginalFragmentEntryId(),
+					fragmentEntryInstanceLinkModelImpl.getOriginalLayoutPageTemplateEntryId(),
+					fragmentEntryInstanceLinkModelImpl.getOriginalPosition()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_F_L_P, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_F_L_P, args);
 		}
 	}
 
@@ -2030,6 +2347,9 @@ public class FragmentEntryInstanceLinkPersistenceImpl
 			fragmentEntryInstanceLink.getPrimaryKey(),
 			fragmentEntryInstanceLink, false);
 
+		clearUniqueFindersCache(fragmentEntryInstanceLinkModelImpl, false);
+		cacheUniqueFindersCache(fragmentEntryInstanceLinkModelImpl);
+
 		fragmentEntryInstanceLink.resetOriginalValues();
 
 		return fragmentEntryInstanceLink;
@@ -2050,6 +2370,7 @@ public class FragmentEntryInstanceLinkPersistenceImpl
 		fragmentEntryInstanceLinkImpl.setGroupId(fragmentEntryInstanceLink.getGroupId());
 		fragmentEntryInstanceLinkImpl.setFragmentEntryId(fragmentEntryInstanceLink.getFragmentEntryId());
 		fragmentEntryInstanceLinkImpl.setLayoutPageTemplateEntryId(fragmentEntryInstanceLink.getLayoutPageTemplateEntryId());
+		fragmentEntryInstanceLinkImpl.setEditableValues(fragmentEntryInstanceLink.getEditableValues());
 		fragmentEntryInstanceLinkImpl.setPosition(fragmentEntryInstanceLink.getPosition());
 
 		return fragmentEntryInstanceLinkImpl;

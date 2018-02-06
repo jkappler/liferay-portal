@@ -471,6 +471,65 @@ public interface FragmentEntryInstanceLinkPersistence extends BasePersistence<Fr
 	public int countByG_L(long groupId, long layoutPageTemplateEntryId);
 
 	/**
+	* Returns the fragment entry instance link where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63; or throws a {@link NoSuchEntryInstanceLinkException} if it could not be found.
+	*
+	* @param fragmentEntryId the fragment entry ID
+	* @param layoutPageTemplateEntryId the layout page template entry ID
+	* @param position the position
+	* @return the matching fragment entry instance link
+	* @throws NoSuchEntryInstanceLinkException if a matching fragment entry instance link could not be found
+	*/
+	public FragmentEntryInstanceLink findByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position)
+		throws NoSuchEntryInstanceLinkException;
+
+	/**
+	* Returns the fragment entry instance link where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param fragmentEntryId the fragment entry ID
+	* @param layoutPageTemplateEntryId the layout page template entry ID
+	* @param position the position
+	* @return the matching fragment entry instance link, or <code>null</code> if a matching fragment entry instance link could not be found
+	*/
+	public FragmentEntryInstanceLink fetchByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position);
+
+	/**
+	* Returns the fragment entry instance link where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param fragmentEntryId the fragment entry ID
+	* @param layoutPageTemplateEntryId the layout page template entry ID
+	* @param position the position
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching fragment entry instance link, or <code>null</code> if a matching fragment entry instance link could not be found
+	*/
+	public FragmentEntryInstanceLink fetchByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position, boolean retrieveFromCache);
+
+	/**
+	* Removes the fragment entry instance link where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63; from the database.
+	*
+	* @param fragmentEntryId the fragment entry ID
+	* @param layoutPageTemplateEntryId the layout page template entry ID
+	* @param position the position
+	* @return the fragment entry instance link that was removed
+	*/
+	public FragmentEntryInstanceLink removeByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position)
+		throws NoSuchEntryInstanceLinkException;
+
+	/**
+	* Returns the number of fragment entry instance links where fragmentEntryId = &#63; and layoutPageTemplateEntryId = &#63; and position = &#63;.
+	*
+	* @param fragmentEntryId the fragment entry ID
+	* @param layoutPageTemplateEntryId the layout page template entry ID
+	* @param position the position
+	* @return the number of matching fragment entry instance links
+	*/
+	public int countByF_L_P(long fragmentEntryId,
+		long layoutPageTemplateEntryId, int position);
+
+	/**
 	* Caches the fragment entry instance link in the entity cache if it is enabled.
 	*
 	* @param fragmentEntryInstanceLink the fragment entry instance link
