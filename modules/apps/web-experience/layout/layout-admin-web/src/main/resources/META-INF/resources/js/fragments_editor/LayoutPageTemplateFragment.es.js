@@ -50,6 +50,10 @@ class LayoutPageTemplateFragment extends Component {
 	 * @review
 	 */
 	_enableEditableFields(content) {
+		if (!window.AlloyEditor) {
+			return
+		}
+
 		this._editors = [].slice
 			.call(content.querySelectorAll('lfr-editable'))
 			.map(editableElement => {
