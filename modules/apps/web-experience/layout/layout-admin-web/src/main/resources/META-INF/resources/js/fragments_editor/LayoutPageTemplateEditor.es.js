@@ -20,9 +20,14 @@ class LayoutPageTemplateEditor extends Component {
 	 */
 	created() {
 		this._updatePageTemplate = this._updatePageTemplate.bind(this);
-		this._updatePageTemplate = debounce(this._updatePageTemplate, 1000);
+		this._updatePageTemplate = debounce(this._updatePageTemplate, 100);
 
 		this._initializeEditables();
+
+		this._dirty = true;
+		this._fetchFragmentsContent().then(() => {
+			this._dirty = false;
+		});
 	}
 
 	/**
@@ -34,11 +39,61 @@ class LayoutPageTemplateEditor extends Component {
 	 */
 	shouldUpdate(changes) {
 		if (changes.fragments || changes._editables) {
-			this._dirty = true;
 			this._updatePageTemplate();
 		}
 
 		return true;
+	}
+
+	/**
+	 * Fetches a fragment entry from the given ID and position,
+	 * returns a promise that resolves into it's content
+	 * @param {!string} fragmentEntryId
+	 * @param {!number} position
+	 * @return {Promise<string>}
+	 * @review
+	 */
+	_fetchFragmentContent(fragmentEntryId, position) {
+		const formData = new FormData();
+
+		formData.append(
+			`${this.portletNamespace}fragmentEntryId`,
+			fragmentEntryId
+		);
+		formData.append(`${this.portletNamespace}position`, position);
+
+		return fetch(this.renderFragmentEntryURL, {
+			body: formData,
+			credentials: 'include',
+			method: 'POST',
+		})
+			.then(response => response.json())
+			.then(response => response.content);
+	}
+
+	/**
+	 * Fetchs all missing fragments contents.
+	 * It returns a promise that is resolved when every fragment
+	 * has been fetched.
+	 * @return {Promise<>}
+	 * @review
+	 * @private
+	 */
+	_fetchFragmentsContent() {
+		const promises = [];
+
+		this.fragments.forEach((fragment, index) => {
+			if (fragment.fragmentEntryId && !fragment.content) {
+				promises.push(this
+					._fetchFragmentContent(fragment.fragmentEntryId, index)
+					.then((content) => {
+						this.fragments[index].content = content;
+					})
+				)
+			}
+		});
+
+		return Promise.all(promises);
 	}
 
 	/**
@@ -86,9 +141,11 @@ class LayoutPageTemplateEditor extends Component {
 		this.fragments = [
 			...this.fragments,
 			{
+				config: {},
+				content: '',
+				editableValues: {},
 				fragmentEntryId: event.fragmentEntryId,
 				name: event.fragmentName,
-				config: {},
 			},
 		];
 	}
@@ -176,45 +233,50 @@ class LayoutPageTemplateEditor extends Component {
 	 * @review
 	 */
 	_updatePageTemplate() {
-		this._dirty = false;
+		if (!this._dirty) {
+			this._dirty = true;
 
-		const formData = new FormData();
+			const formData = new FormData();
 
-		formData.append(
-			`${this.portletNamespace}layoutPageTemplateEntryId`,
-			this.layoutPageTemplateEntryId
-		);
-
-		const editableList = {};
-
-		this._editables.forEach(editable => {
-			editableList[editable.fragmentIndex] =
-				editableList[editable.fragmentIndex] || {};
-
-			editableList[editable.fragmentIndex][editable.editableId] =
-				editable.value;
-		});
-
-		formData.append(
-			`${this.portletNamespace}editable`,
-			JSON.stringify(editableList)
-		);
-
-		this.fragments.forEach(fragment => {
 			formData.append(
-				`${this.portletNamespace}fragmentIds`,
-				fragment.fragmentEntryId
+				`${this.portletNamespace}layoutPageTemplateEntryId`,
+				this.layoutPageTemplateEntryId
 			);
-		});
 
-		fetch(this.updatePageTemplateURL, {
-			body: formData,
-			credentials: 'include',
-			method: 'POST',
-		}).then(() => {
-			this._lastSaveDate = new Date().toLocaleTimeString();
-			this._dirty = false;
-		});
+			const editableList = {};
+
+			this._editables.forEach(editable => {
+				editableList[editable.fragmentIndex] =
+					editableList[editable.fragmentIndex] || {};
+
+				editableList[editable.fragmentIndex][editable.editableId] =
+					editable.value;
+			});
+
+			formData.append(
+				`${this.portletNamespace}editable`,
+				JSON.stringify(editableList)
+			);
+
+			this.fragments.forEach(fragment => {
+				formData.append(
+					`${this.portletNamespace}fragmentIds`,
+					fragment.fragmentEntryId
+				);
+			});
+
+			fetch(this.updatePageTemplateURL, {
+				body: formData,
+				credentials: 'include',
+				method: 'POST',
+			}).then(() => {
+				this._lastSaveDate = new Date().toLocaleTimeString();
+
+				this._fetchFragmentsContent().then(() => {
+					this._dirty = false;
+				});
+			});
+		}
 	}
 }
 
@@ -286,10 +348,11 @@ LayoutPageTemplateEditor.STATE = {
 	 */
 	fragments: Config.arrayOf(
 		Config.shapeOf({
+			config: Config.object().value({}),
+			content: Config.string().value(''),
+			editableValues: Config.object().value({}),
 			fragmentEntryId: Config.string().required(),
 			name: Config.string().required(),
-			editableValues: Config.object().value({}),
-			config: Config.object().value({}),
 		})
 	).value([]),
 
