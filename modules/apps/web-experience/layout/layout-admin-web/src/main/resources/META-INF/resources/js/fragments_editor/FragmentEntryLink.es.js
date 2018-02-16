@@ -48,6 +48,13 @@ class FragmentEntryLink extends Component {
 			this._destroyEditors();
 			this._enableEditableFields(this.refs.content);
 			this._executeFragmentScripts(this.refs.content);
+
+			AUI().use('aui-parse-content', A => {
+				const content = A.one(this.refs.content);
+
+				content.plug(A.Plugin.ParseContent);
+				content.setContent(this.content);
+			});
 		}
 	}
 
