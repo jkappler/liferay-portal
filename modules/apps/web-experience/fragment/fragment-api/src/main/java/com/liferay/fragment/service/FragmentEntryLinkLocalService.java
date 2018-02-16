@@ -73,6 +73,12 @@ public interface FragmentEntryLinkLocalService extends BaseLocalService,
 		FragmentEntryLink fragmentEntryLink);
 
 	public FragmentEntryLink addFragmentEntryLink(long groupId,
+		long originalFragmentEntryLinkId, long fragmentEntryId,
+		long classNameId, long classPK, java.lang.String css,
+		java.lang.String html, java.lang.String js,
+		java.lang.String editableValues, int position);
+
+	public FragmentEntryLink addFragmentEntryLink(long groupId,
 		long fragmentEntryId, long classNameId, long classPK,
 		java.lang.String css, java.lang.String html, java.lang.String js,
 		java.lang.String editableValues, int position);
@@ -177,6 +183,11 @@ public interface FragmentEntryLinkLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public FragmentEntryLink fetchFragmentEntryLink(long fragmentEntryLinkId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public FragmentEntryLink fetchFragmentEntryLink(long groupId,
+		long classNameId, long classPK, long fragmentEntryId, int position)
+		throws java.lang.Exception;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
