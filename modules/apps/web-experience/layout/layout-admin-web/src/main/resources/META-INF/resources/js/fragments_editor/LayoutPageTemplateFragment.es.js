@@ -49,6 +49,17 @@ class LayoutPageTemplateFragment extends Component {
 	rendered() {
 		if (this.refs.content) {
 			this._enableEditableFields(this.refs.content);
+
+			AUI().use(
+				'aui-parse-content',
+				A => {
+					const content = A.one(this.refs.content);
+
+					content.plug(A.Plugin.ParseContent);
+
+					content.setContent(this._content);
+				}
+			);
 		}
 	}
 
@@ -259,7 +270,6 @@ LayoutPageTemplateFragment.STATE = {
 	 */
 	_content: Config.string()
 		.internal()
-		.setter(_content => Soy.toIncDom(_content))
 		.value(''),
 
 	/**
