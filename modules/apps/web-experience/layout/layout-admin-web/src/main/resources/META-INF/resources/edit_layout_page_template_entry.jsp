@@ -68,7 +68,9 @@ renderResponse.setTitle(layoutPageTemplateDisplayContext.getLayoutPageTemplateEn
 	<portlet:param name="mvcPath" value="/edit_layout_page_template_entry.jsp" />
 </portlet:actionURL>
 
-<portlet:actionURL name="/layout/render_fragment_entry" var="renderFragmentEntryURL" />
+<liferay-portlet:actionURL name="/layout/render_fragment_entry" plid="<%= layoutPageTemplateDisplayContext.getDefaultPlid() %>" var="renderFragmentEntryURL">
+	<portlet:param name="layoutPageTemplateEntryId" value="<%= String.valueOf(layoutPageTemplateDisplayContext.getLayoutPageTemplateEntryId()) %>" />
+</liferay-portlet:actionURL>
 
 <%
 Map<String, Object> layoutPageTemplateEditorContext = new HashMap<>();

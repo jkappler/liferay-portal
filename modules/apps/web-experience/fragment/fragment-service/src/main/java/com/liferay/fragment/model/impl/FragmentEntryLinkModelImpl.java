@@ -64,6 +64,7 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 	public static final Object[][] TABLE_COLUMNS = {
 			{ "fragmentEntryLinkId", Types.BIGINT },
 			{ "groupId", Types.BIGINT },
+			{ "originalFragmentEntryLinkId", Types.BIGINT },
 			{ "fragmentEntryId", Types.BIGINT },
 			{ "classNameId", Types.BIGINT },
 			{ "classPK", Types.BIGINT },
@@ -78,6 +79,7 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 	static {
 		TABLE_COLUMNS_MAP.put("fragmentEntryLinkId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("originalFragmentEntryLinkId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("fragmentEntryId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("classNameId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("classPK", Types.BIGINT);
@@ -88,7 +90,7 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 		TABLE_COLUMNS_MAP.put("position", Types.INTEGER);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table FragmentEntryLink (fragmentEntryLinkId LONG not null primary key,groupId LONG,fragmentEntryId LONG,classNameId LONG,classPK LONG,css STRING null,html STRING null,js STRING null,editableValues STRING null,position INTEGER)";
+	public static final String TABLE_SQL_CREATE = "create table FragmentEntryLink (fragmentEntryLinkId LONG not null primary key,groupId LONG,originalFragmentEntryLinkId LONG,fragmentEntryId LONG,classNameId LONG,classPK LONG,css STRING null,html STRING null,js STRING null,editableValues STRING null,position INTEGER)";
 	public static final String TABLE_SQL_DROP = "drop table FragmentEntryLink";
 	public static final String ORDER_BY_JPQL = " ORDER BY fragmentEntryLink.fragmentEntryLinkId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY FragmentEntryLink.fragmentEntryLinkId ASC";
@@ -108,7 +110,8 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 	public static final long CLASSPK_COLUMN_BITMASK = 2L;
 	public static final long FRAGMENTENTRYID_COLUMN_BITMASK = 4L;
 	public static final long GROUPID_COLUMN_BITMASK = 8L;
-	public static final long FRAGMENTENTRYLINKID_COLUMN_BITMASK = 16L;
+	public static final long POSITION_COLUMN_BITMASK = 16L;
+	public static final long FRAGMENTENTRYLINKID_COLUMN_BITMASK = 32L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.fragment.service.util.ServiceProps.get(
 				"lock.expiration.time.com.liferay.fragment.model.FragmentEntryLink"));
 
@@ -151,6 +154,8 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 
 		attributes.put("fragmentEntryLinkId", getFragmentEntryLinkId());
 		attributes.put("groupId", getGroupId());
+		attributes.put("originalFragmentEntryLinkId",
+			getOriginalFragmentEntryLinkId());
 		attributes.put("fragmentEntryId", getFragmentEntryId());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
@@ -178,6 +183,13 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 
 		if (groupId != null) {
 			setGroupId(groupId);
+		}
+
+		Long originalFragmentEntryLinkId = (Long)attributes.get(
+				"originalFragmentEntryLinkId");
+
+		if (originalFragmentEntryLinkId != null) {
+			setOriginalFragmentEntryLinkId(originalFragmentEntryLinkId);
 		}
 
 		Long fragmentEntryId = (Long)attributes.get("fragmentEntryId");
@@ -259,6 +271,16 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 
 	public long getOriginalGroupId() {
 		return _originalGroupId;
+	}
+
+	@Override
+	public long getOriginalFragmentEntryLinkId() {
+		return _originalFragmentEntryLinkId;
+	}
+
+	@Override
+	public void setOriginalFragmentEntryLinkId(long originalFragmentEntryLinkId) {
+		_originalFragmentEntryLinkId = originalFragmentEntryLinkId;
 	}
 
 	@Override
@@ -414,7 +436,19 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 
 	@Override
 	public void setPosition(int position) {
+		_columnBitmask |= POSITION_COLUMN_BITMASK;
+
+		if (!_setOriginalPosition) {
+			_setOriginalPosition = true;
+
+			_originalPosition = _position;
+		}
+
 		_position = position;
+	}
+
+	public int getOriginalPosition() {
+		return _originalPosition;
 	}
 
 	public long getColumnBitmask() {
@@ -450,6 +484,7 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 
 		fragmentEntryLinkImpl.setFragmentEntryLinkId(getFragmentEntryLinkId());
 		fragmentEntryLinkImpl.setGroupId(getGroupId());
+		fragmentEntryLinkImpl.setOriginalFragmentEntryLinkId(getOriginalFragmentEntryLinkId());
 		fragmentEntryLinkImpl.setFragmentEntryId(getFragmentEntryId());
 		fragmentEntryLinkImpl.setClassNameId(getClassNameId());
 		fragmentEntryLinkImpl.setClassPK(getClassPK());
@@ -536,6 +571,10 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 
 		fragmentEntryLinkModelImpl._setOriginalClassPK = false;
 
+		fragmentEntryLinkModelImpl._originalPosition = fragmentEntryLinkModelImpl._position;
+
+		fragmentEntryLinkModelImpl._setOriginalPosition = false;
+
 		fragmentEntryLinkModelImpl._columnBitmask = 0;
 	}
 
@@ -546,6 +585,8 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 		fragmentEntryLinkCacheModel.fragmentEntryLinkId = getFragmentEntryLinkId();
 
 		fragmentEntryLinkCacheModel.groupId = getGroupId();
+
+		fragmentEntryLinkCacheModel.originalFragmentEntryLinkId = getOriginalFragmentEntryLinkId();
 
 		fragmentEntryLinkCacheModel.fragmentEntryId = getFragmentEntryId();
 
@@ -592,12 +633,14 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{fragmentEntryLinkId=");
 		sb.append(getFragmentEntryLinkId());
 		sb.append(", groupId=");
 		sb.append(getGroupId());
+		sb.append(", originalFragmentEntryLinkId=");
+		sb.append(getOriginalFragmentEntryLinkId());
 		sb.append(", fragmentEntryId=");
 		sb.append(getFragmentEntryId());
 		sb.append(", classNameId=");
@@ -621,7 +664,7 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(34);
+		StringBundler sb = new StringBundler(37);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.fragment.model.FragmentEntryLink");
@@ -634,6 +677,10 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 		sb.append(
 			"<column><column-name>groupId</column-name><column-value><![CDATA[");
 		sb.append(getGroupId());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>originalFragmentEntryLinkId</column-name><column-value><![CDATA[");
+		sb.append(getOriginalFragmentEntryLinkId());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>fragmentEntryId</column-name><column-value><![CDATA[");
@@ -681,6 +728,7 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 	private long _groupId;
 	private long _originalGroupId;
 	private boolean _setOriginalGroupId;
+	private long _originalFragmentEntryLinkId;
 	private long _fragmentEntryId;
 	private long _originalFragmentEntryId;
 	private boolean _setOriginalFragmentEntryId;
@@ -695,6 +743,8 @@ public class FragmentEntryLinkModelImpl extends BaseModelImpl<FragmentEntryLink>
 	private String _js;
 	private String _editableValues;
 	private int _position;
+	private int _originalPosition;
+	private boolean _setOriginalPosition;
 	private long _columnBitmask;
 	private FragmentEntryLink _escapedModel;
 }
