@@ -63,8 +63,17 @@ public class FragmentsEditorContext {
 
 		Map<String, Object> editorContext = new HashMap<>();
 
+		editorContext.put(
+			"addFragmentEntryLinkURL",
+			_getFragmentEntryActionURL("/layout/add_fragment_entry_link"));
 		editorContext.put("classNameId", _classNameId);
 		editorContext.put("classPK", _classPK);
+		editorContext.put(
+			"deleteFragmentEntryLinkURL",
+			_getFragmentEntryActionURL("/layout/delete_fragment_entry_link"));
+		editorContext.put(
+			"editFragmentEntryLinkURL",
+			_getFragmentEntryActionURL("/layout/edit_fragment_entry_link"));
 		editorContext.put(
 			"fragmentCollections", _getFragmentCollectionsJSONArray());
 		editorContext.put(
