@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,11 +24,14 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Raymond Augé
  */
+@ProviderType
 public interface LayoutTypeController extends Serializable {
 
 	public String[] getConfigurationActionDelete();
 
 	public String[] getConfigurationActionUpdate();
+
+	public String getEditURL(HttpServletRequest request, Layout layout);
 
 	public String getType();
 

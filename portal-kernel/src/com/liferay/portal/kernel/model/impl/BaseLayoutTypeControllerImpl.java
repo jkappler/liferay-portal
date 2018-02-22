@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.model.impl;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
@@ -35,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Eudaldo Alonso
  */
+@ProviderType
 public abstract class BaseLayoutTypeControllerImpl
 	implements LayoutTypeController {
 
@@ -46,6 +49,11 @@ public abstract class BaseLayoutTypeControllerImpl
 	@Override
 	public String[] getConfigurationActionUpdate() {
 		return StringPool.EMPTY_ARRAY;
+	}
+
+	@Override
+	public String getEditURL(HttpServletRequest request, Layout layout) {
+		return null;
 	}
 
 	@Override
