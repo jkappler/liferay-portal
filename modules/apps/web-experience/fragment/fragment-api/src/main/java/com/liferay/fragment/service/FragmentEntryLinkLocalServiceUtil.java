@@ -273,6 +273,14 @@ public class FragmentEntryLinkLocalServiceUtil {
 		return getService().updateFragmentEntryLink(fragmentEntryLink);
 	}
 
+	public static com.liferay.fragment.model.FragmentEntryLink updateFragmentEntryLinkEditableValues(
+		long fragmentEntryLinkId, java.lang.String editableValues)
+		throws com.liferay.portal.kernel.json.JSONException {
+		return getService()
+				   .updateFragmentEntryLinkEditableValues(fragmentEntryLinkId,
+			editableValues);
+	}
+
 	public static void updateFragmentEntryLinks(long groupId, long classNameId,
 		long classPK, long[] fragmentEntryIds, java.lang.String editableValues)
 		throws com.liferay.portal.kernel.json.JSONException {

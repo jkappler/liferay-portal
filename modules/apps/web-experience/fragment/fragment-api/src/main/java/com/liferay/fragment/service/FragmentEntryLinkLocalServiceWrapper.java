@@ -291,6 +291,14 @@ public class FragmentEntryLinkLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.fragment.model.FragmentEntryLink updateFragmentEntryLinkEditableValues(
+		long fragmentEntryLinkId, java.lang.String editableValues)
+		throws com.liferay.portal.kernel.json.JSONException {
+		return _fragmentEntryLinkLocalService.updateFragmentEntryLinkEditableValues(fragmentEntryLinkId,
+			editableValues);
+	}
+
+	@Override
 	public void updateFragmentEntryLinks(long groupId, long classNameId,
 		long classPK, long[] fragmentEntryIds, java.lang.String editableValues)
 		throws com.liferay.portal.kernel.json.JSONException {
