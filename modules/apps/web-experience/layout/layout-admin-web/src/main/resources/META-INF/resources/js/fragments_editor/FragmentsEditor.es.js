@@ -311,15 +311,43 @@ class FragmentsEditor extends Component {
 	 */
 
 	_swapFragmentEntryLinks(positionA, positionB) {
-		const fragmentEntryLinks = [].concat(this.fragmentEntryLinks);
-		const temporaryFragmentEntryLink = fragmentEntryLinks[positionA];
+		if (!this._dirty) {
+			this._dirty = true;
 
-		fragmentEntryLinks[positionA] = fragmentEntryLinks[positionB];
-		fragmentEntryLinks[positionB] = temporaryFragmentEntryLink;
+			const fragmentEntryLinks = [].concat(this.fragmentEntryLinks);
+			const temporaryFragmentEntryLink = fragmentEntryLinks[positionA];
 
-		this.fragmentEntryLinks = fragmentEntryLinks;
+			fragmentEntryLinks[positionA] = fragmentEntryLinks[positionB];
+			fragmentEntryLinks[positionB] = temporaryFragmentEntryLink;
 
-		this._updatePageTemplate();
+			this.fragmentEntryLinks = fragmentEntryLinks;
+
+			const formData = new FormData();
+
+			formData.append(
+				`${this.portletNamespace}fragmentEntryLink1`,
+				this.fragmentEntryLinks[positionA]
+			);
+
+			formData.append(
+				`${this.portletNamespace}fragmentEntryLink2`,
+				this.fragmentEntryLinks[positionB]
+			);
+
+			fetch(
+				this.swapFragmentEntryLinksURL,
+				{
+					body: formData,
+					credentials: 'include',
+					method: 'POST'
+				}
+			)
+				.then(
+					() => {
+						this._dirty = false;
+					}
+				);
+		}
 	}
 
 	/**
@@ -523,6 +551,17 @@ FragmentsEditor.STATE = {
 	 */
 
 	renderFragmentEntryURL: Config.string().required(),
+
+	/**
+	 * URL for swapping to fragmentEntryLinks.
+	 * @default undefined
+	 * @instance
+	 * @memberOf FragmentsEditor
+	 * @review
+	 * @type {!string}
+	 */
+
+	swapFragmentEntryLinksURL: Config.string().required(),
 
 	/**
 	 * Path of the available icons.
