@@ -87,8 +87,23 @@ public class SiteNavigationMenuItemLocalServiceImpl
 			long siteNavigationMenuItemId)
 		throws PortalException {
 
-		return siteNavigationMenuItemPersistence.remove(
-			siteNavigationMenuItemId);
+		SiteNavigationMenuItem siteNavigationMenuItem =
+			siteNavigationMenuItemPersistence.remove(siteNavigationMenuItemId);
+
+		List<SiteNavigationMenuItem> siteNavigationMenuItems =
+			getChildSiteNavigationMenuItems(siteNavigationMenuItemId);
+
+		for (SiteNavigationMenuItem childSiteNavigationMenuItem :
+				siteNavigationMenuItems) {
+
+			childSiteNavigationMenuItem.setParentSiteNavigationMenuItemId(
+				siteNavigationMenuItem.getParentSiteNavigationMenuItemId());
+
+			siteNavigationMenuItemPersistence.update(
+				childSiteNavigationMenuItem);
+		}
+
+		return siteNavigationMenuItem;
 	}
 
 	@Override
