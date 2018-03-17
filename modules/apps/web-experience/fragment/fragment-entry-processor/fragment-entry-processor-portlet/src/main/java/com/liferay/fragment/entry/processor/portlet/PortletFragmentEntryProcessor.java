@@ -136,6 +136,8 @@ public class PortletFragmentEntryProcessor implements FragmentEntryProcessor {
 
 			Element portletElement = new Element("div");
 
+			portletElement.attr("class", "portlet");
+
 			ServiceContext serviceContext =
 				ServiceContextThreadLocal.getServiceContext();
 
