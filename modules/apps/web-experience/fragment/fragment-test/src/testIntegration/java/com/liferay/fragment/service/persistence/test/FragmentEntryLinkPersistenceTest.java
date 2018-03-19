@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -123,6 +124,8 @@ public class FragmentEntryLinkPersistenceTest {
 
 		newFragmentEntryLink.setGroupId(RandomTestUtil.nextLong());
 
+		newFragmentEntryLink.setOriginalFragmentEntryLinkId(RandomTestUtil.nextLong());
+
 		newFragmentEntryLink.setFragmentEntryId(RandomTestUtil.nextLong());
 
 		newFragmentEntryLink.setClassNameId(RandomTestUtil.nextLong());
@@ -147,6 +150,8 @@ public class FragmentEntryLinkPersistenceTest {
 			newFragmentEntryLink.getFragmentEntryLinkId());
 		Assert.assertEquals(existingFragmentEntryLink.getGroupId(),
 			newFragmentEntryLink.getGroupId());
+		Assert.assertEquals(existingFragmentEntryLink.getOriginalFragmentEntryLinkId(),
+			newFragmentEntryLink.getOriginalFragmentEntryLinkId());
 		Assert.assertEquals(existingFragmentEntryLink.getFragmentEntryId(),
 			newFragmentEntryLink.getFragmentEntryId());
 		Assert.assertEquals(existingFragmentEntryLink.getClassNameId(),
@@ -189,6 +194,15 @@ public class FragmentEntryLinkPersistenceTest {
 	}
 
 	@Test
+	public void testCountByG_F_C_C_P() throws Exception {
+		_persistence.countByG_F_C_C_P(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
+
+		_persistence.countByG_F_C_C_P(0L, 0L, 0L, 0L, 0);
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		FragmentEntryLink newFragmentEntryLink = addFragmentEntryLink();
 
@@ -212,9 +226,10 @@ public class FragmentEntryLinkPersistenceTest {
 
 	protected OrderByComparator<FragmentEntryLink> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("FragmentEntryLink",
-			"fragmentEntryLinkId", true, "groupId", true, "fragmentEntryId",
-			true, "classNameId", true, "classPK", true, "css", true, "html",
-			true, "js", true, "editableValues", true, "position", true);
+			"fragmentEntryLinkId", true, "groupId", true,
+			"originalFragmentEntryLinkId", true, "fragmentEntryId", true,
+			"classNameId", true, "classPK", true, "css", true, "html", true,
+			"js", true, "editableValues", true, "position", true);
 	}
 
 	@Test
@@ -411,6 +426,34 @@ public class FragmentEntryLinkPersistenceTest {
 		Assert.assertEquals(0, result.size());
 	}
 
+	@Test
+	public void testResetOriginalValues() throws Exception {
+		FragmentEntryLink newFragmentEntryLink = addFragmentEntryLink();
+
+		_persistence.clearCache();
+
+		FragmentEntryLink existingFragmentEntryLink = _persistence.findByPrimaryKey(newFragmentEntryLink.getPrimaryKey());
+
+		Assert.assertEquals(Long.valueOf(existingFragmentEntryLink.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntryLink,
+				"getOriginalGroupId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(
+				existingFragmentEntryLink.getFragmentEntryId()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntryLink,
+				"getOriginalFragmentEntryId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(
+				existingFragmentEntryLink.getClassNameId()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntryLink,
+				"getOriginalClassNameId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(existingFragmentEntryLink.getClassPK()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntryLink,
+				"getOriginalClassPK", new Class<?>[0]));
+		Assert.assertEquals(Integer.valueOf(
+				existingFragmentEntryLink.getPosition()),
+			ReflectionTestUtil.<Integer>invoke(existingFragmentEntryLink,
+				"getOriginalPosition", new Class<?>[0]));
+	}
+
 	protected FragmentEntryLink addFragmentEntryLink()
 		throws Exception {
 		long pk = RandomTestUtil.nextLong();
@@ -418,6 +461,8 @@ public class FragmentEntryLinkPersistenceTest {
 		FragmentEntryLink fragmentEntryLink = _persistence.create(pk);
 
 		fragmentEntryLink.setGroupId(RandomTestUtil.nextLong());
+
+		fragmentEntryLink.setOriginalFragmentEntryLinkId(RandomTestUtil.nextLong());
 
 		fragmentEntryLink.setFragmentEntryId(RandomTestUtil.nextLong());
 
