@@ -46,9 +46,11 @@
 				COUNT(DISTINCT JournalArticle.articleId) AS COUNT_VALUE
 			FROM
 				JournalArticle
+			INNER JOIN
+				JournalArticle statusJournalArticle ON
+					[$STATUS_JOIN$]
 			LEFT JOIN
 				JournalArticle tempJournalArticle ON
-					[$STATUS_JOIN$] AND
 					(JournalArticle.groupId = tempJournalArticle.groupId) AND
 					(JournalArticle.articleId = tempJournalArticle.articleId) AND
 					(JournalArticle.version < tempJournalArticle.version)
@@ -233,12 +235,14 @@
 	<sql id="com.liferay.journal.service.persistence.JournalArticleFinder.findByG_U_F_C">
 		<![CDATA[
 			SELECT
-				JournalArticle.*
+				DISTINCT JournalArticle.*
 			FROM
 				JournalArticle
+			INNER JOIN
+				JournalArticle statusJournalArticle ON
+					[$STATUS_JOIN$]
 			LEFT JOIN
 				JournalArticle tempJournalArticle ON
-					[$STATUS_JOIN$] AND
 					(JournalArticle.groupId = tempJournalArticle.groupId) AND
 					(JournalArticle.articleId = tempJournalArticle.articleId) AND
 					(JournalArticle.version < tempJournalArticle.version)
