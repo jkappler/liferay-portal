@@ -1592,7 +1592,10 @@ public class JournalArticleFinderImpl
 
 		if (queryDefinition.getStatus() == WorkflowConstants.STATUS_ANY) {
 			return StringUtil.replace(
-				sql, "[$STATUS_JOIN$] AND", StringPool.BLANK);
+				sql,
+				"INNER JOIN JournalArticle statusJournalArticle ON " +
+					"[$STATUS_JOIN$]",
+				StringPool.BLANK);
 		}
 
 		if (queryDefinition.isExcludeStatus()) {
@@ -1600,7 +1603,7 @@ public class JournalArticleFinderImpl
 
 			sb.append("(JournalArticle.status != ");
 			sb.append(queryDefinition.getStatus());
-			sb.append(") AND (tempJournalArticle.status != ");
+			sb.append(") AND (statusJournalArticle.status != ");
 			sb.append(queryDefinition.getStatus());
 			sb.append(")");
 
@@ -1611,7 +1614,7 @@ public class JournalArticleFinderImpl
 
 			sb.append("(JournalArticle.status = ");
 			sb.append(queryDefinition.getStatus());
-			sb.append(") AND (tempJournalArticle.status = ");
+			sb.append(") AND (statusJournalArticle.status = ");
 			sb.append(queryDefinition.getStatus());
 			sb.append(")");
 
