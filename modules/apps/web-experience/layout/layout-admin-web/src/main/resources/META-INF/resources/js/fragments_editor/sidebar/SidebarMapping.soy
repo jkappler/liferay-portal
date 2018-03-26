@@ -1,0 +1,48 @@
+{namespace com.liferay.layout.admin.web.SidebarMapping}
+
+/**
+ * SidebarMapping
+ */
+{template .render}
+	{@param spritemap: string}
+	{@param? _handleSelectAssetTypeButtonClick: any}
+	{@param? selectedMappingTypeLabel: [
+		type: string,
+		subtype: string
+	]}
+
+	<div class="sidebar-mapping">
+		<dt class="sidebar-dt">
+			{msg desc=""}asset-type{/msg}
+		</dt>
+
+		{if $selectedMappingTypeLabel and $selectedMappingTypeLabel.type}
+			<div class="panel panel-secondary">
+				<div class="panel-body">
+					{$selectedMappingTypeLabel.type}
+
+					{if $selectedMappingTypeLabel.subtype}
+						<span class="inline-item inline-item-after inline-item-before">
+							<svg class="lexicon-icon">
+								<use xlink:href="{$spritemap}#angle-right"></use>
+							</svg>
+						</span>
+						{$selectedMappingTypeLabel.subtype}
+					{/if}
+				</div>
+			</div>
+		{/if}
+
+		<button
+			class="btn btn-secondary"
+			data-onclick="{$_handleSelectAssetTypeButtonClick}"
+			type="button"
+		>
+			{if $selectedMappingTypeLabel and $selectedMappingTypeLabel.type}
+				{msg desc=""}change-asset-type{/msg}
+			{else}
+				{msg desc=""}select{/msg}
+			{/if}
+		</button>
+	</div>
+{/template}
