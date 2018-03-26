@@ -113,12 +113,37 @@ class SelectMappingTypeDialog extends Component {
 	_handleSubmitButtonClick() {
 		this._savingChanges = true;
 
-		setTimeout(
+		const formData = new FormData();
+
+		formData.append(
+			`${this.portletNamespace}classPK`,
+			this.classPK
+		);
+
+		formData.append(
+			`${this.portletNamespace}classNameId`,
+			this._selectedMappingTypeId
+		);
+
+		formData.append(
+			`${this.portletNamespace}classTypeId`,
+			this._selectedMappingSubtypeId
+		);
+
+		return fetch(
+			this.updateLayoutPageTemplateEntryAssetTypeURL,
+			{
+				body: formData,
+				credentials: 'include',
+				method: 'POST'
+			}
+		).then(
+			response => response.json()
+		).then(
 			() => {
 				this._emitSelectedMappingLabels();
 				this.visible = false;
-			},
-			1000
+			}
 		);
 	}
 
