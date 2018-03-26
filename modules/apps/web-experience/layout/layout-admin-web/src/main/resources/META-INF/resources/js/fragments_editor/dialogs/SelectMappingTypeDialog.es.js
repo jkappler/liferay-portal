@@ -20,6 +20,41 @@ class SelectMappingTypeDialog extends Component {
 		if (this.visible && !this._mappingTypes) {
 			this._loadMappingTypes();
 		}
+		else if (!this.visible) {
+			this._mappingSubtypes = [];
+			this._mappingTypes = [];
+			this._savingChanges = false;
+			this._selectedMappingTypeId = '';
+			this._selectedMappingSubtypeId = '';
+		}
+	}
+
+	/**
+	 * Emits a mappingTypeSelected event with the corresponding labels
+	 * @review
+	 */
+
+	_emitSelectedMappingLabels() {
+		const label = {
+			subtype: '',
+			type: ''
+		};
+		const subtype = this._mappingSubtypes.find(
+			subtype => subtype.id === this._selectedMappingSubtypeId
+		);
+		const type = this._mappingTypes.find(
+			type => type.id === this._selectedMappingTypeId
+		);
+
+		if (subtype) {
+			label.subtype = subtype.label;
+		}
+
+		if (type) {
+			label.type = type.label;
+		}
+
+		this.emit('mappingTypeSelected', {label});
 	}
 
 	/**
@@ -82,11 +117,7 @@ class SelectMappingTypeDialog extends Component {
 
 		setTimeout(
 			() => {
-				this._mappingSubtypes = [];
-				this._mappingTypes = [];
-				this._savingChanges = false;
-				this._selectedMappingTypeId = '';
-				this._selectedMappingSubtypeId = '';
+				this._emitSelectedMappingLabels();
 				this.visible = false;
 			},
 			1000
