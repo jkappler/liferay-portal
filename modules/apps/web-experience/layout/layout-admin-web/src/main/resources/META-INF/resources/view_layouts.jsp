@@ -22,7 +22,7 @@
 <liferay-ui:error exception="<%= GroupInheritContentException.class %>" message="this-page-cannot-be-deleted-and-cannot-have-child-pages-because-it-is-associated-to-a-site-template" />
 
 <clay:navigation-bar
-	inverted="<%= true %>"
+	inverted="<%= false %>"
 	items="<%= layoutsAdminDisplayContext.getNavigationItems() %>"
 />
 
