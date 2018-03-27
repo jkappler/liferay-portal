@@ -16,9 +16,9 @@
 			{msg desc=""}asset-type{/msg}
 		</dt>
 
-		{if $selectedMappingTypeLabel and $selectedMappingTypeLabel.type}
-			<div class="panel panel-secondary">
-				<div class="panel-body">
+		<div class="panel panel-secondary">
+			<div class="panel-body">
+				{if $selectedMappingTypeLabel and $selectedMappingTypeLabel.type}
 					{$selectedMappingTypeLabel.type}
 
 					{if $selectedMappingTypeLabel.subtype}
@@ -29,9 +29,11 @@
 						</span>
 						{$selectedMappingTypeLabel.subtype}
 					{/if}
-				</div>
+				{else}
+					{msg desc=""}no-asset-type-selected{/msg}
+				{/if}
 			</div>
-		{/if}
+		</div>
 
 		{if not $selectedMappingTypeLabel or not $selectedMappingTypeLabel.type}
 			<button
