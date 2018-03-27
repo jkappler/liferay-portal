@@ -87,6 +87,7 @@ public class FragmentEntryLocalServiceImpl
 		FragmentEntry fragmentEntry = fragmentEntryPersistence.create(
 			fragmentEntryId);
 
+		fragmentEntry.setUuid(serviceContext.getUuid());
 		fragmentEntry.setGroupId(groupId);
 		fragmentEntry.setCompanyId(user.getCompanyId());
 		fragmentEntry.setUserId(user.getUserId());
@@ -155,6 +156,7 @@ public class FragmentEntryLocalServiceImpl
 		FragmentEntry fragmentEntry = fragmentEntryPersistence.create(
 			fragmentEntryId);
 
+		fragmentEntry.setUuid(serviceContext.getUuid());
 		fragmentEntry.setGroupId(groupId);
 		fragmentEntry.setCompanyId(user.getCompanyId());
 		fragmentEntry.setUserId(user.getUserId());
@@ -186,6 +188,16 @@ public class FragmentEntryLocalServiceImpl
 		resourceLocalService.addModelResources(fragmentEntry, serviceContext);
 
 		return fragmentEntry;
+	}
+
+	@Override
+	public void deleteFragmentEntries(long groupId) throws PortalException {
+		List<FragmentEntry> fragmentEntries =
+			fragmentEntryPersistence.findByGroupId(groupId);
+
+		for (FragmentEntry fragmentEntry : fragmentEntries) {
+			deleteFragmentEntry(fragmentEntry);
+		}
 	}
 
 	@Override

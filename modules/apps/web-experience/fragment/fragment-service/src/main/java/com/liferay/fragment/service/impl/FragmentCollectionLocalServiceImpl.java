@@ -76,6 +76,7 @@ public class FragmentCollectionLocalServiceImpl
 		FragmentCollection fragmentCollection =
 			fragmentCollectionPersistence.create(fragmentCollectionId);
 
+		fragmentCollection.setUuid(serviceContext.getUuid());
 		fragmentCollection.setGroupId(groupId);
 		fragmentCollection.setCompanyId(user.getCompanyId());
 		fragmentCollection.setUserId(user.getUserId());
@@ -137,6 +138,17 @@ public class FragmentCollectionLocalServiceImpl
 			fragmentCollectionId);
 
 		return deleteFragmentCollection(fragmentCollection);
+	}
+
+	@Override
+	public void deleteFragmentCollections(long groupId) throws PortalException {
+		List<FragmentCollection> fragmentCollections =
+			fragmentCollectionPersistence.findByGroupId(groupId);
+
+		for (FragmentCollection fragmentCollection : fragmentCollections) {
+			fragmentCollectionLocalService.deleteFragmentCollection(
+				fragmentCollection);
+		}
 	}
 
 	@Override
