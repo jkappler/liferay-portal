@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -53,13 +54,17 @@ public class FragmentsEditorContext {
 
 	public FragmentsEditorContext(
 		HttpServletRequest request, RenderResponse renderResponse,
-		String className, long classPK) {
+		String className, long classPK, boolean showMapping) {
 
 		_request = request;
 		_renderResponse = renderResponse;
 		_classPK = classPK;
+		_showMapping = showMapping;
 
 		_classNameId = PortalUtil.getClassNameId(className);
+
+		_themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
 	}
 
 	public SoyContext getEditorContext() throws PortalException {
@@ -96,16 +101,28 @@ public class FragmentsEditorContext {
 			"fragmentCollections", _getSoyContextFragmentCollections());
 		soyContext.put(
 			"fragmentEntryLinks", _getSoyContextFragmentEntryLinks());
+		soyContext.put(
+			"getAssetDisplayContributorsURL",
+			_getFragmentEntryActionURL(
+				"/layout/get_asset_display_contributors"));
+		soyContext.put(
+			"getAssetClassTypesURL",
+			_getFragmentEntryActionURL("/layout/get_asset_class_types"));
 		soyContext.put("portletNamespace", _renderResponse.getNamespace());
 		soyContext.put(
 			"renderFragmentEntryURL",
 			_getFragmentEntryActionURL("/layout/render_fragment_entry"));
+		soyContext.put("sidebarTabs", _getSidebarTabs());
 		soyContext.put(
 			"spritemap",
 			themeDisplay.getPathThemeImages() + "/lexicon/icons.svg");
 		soyContext.put(
 			"updateFragmentEntryLinksURL",
 			_getFragmentEntryActionURL("/layout/update_fragment_entry_links"));
+		soyContext.put(
+			"updateLayoutPageTemplateEntryAssetTypeURL",
+			_getFragmentEntryActionURL(
+				"/layout/update_layout_page_template_entry_asset_type"));
 
 		return soyContext;
 	}
@@ -140,6 +157,29 @@ public class FragmentsEditorContext {
 		actionURL.setParameter(ActionRequest.ACTION_NAME, action);
 
 		return actionURL.toString();
+	}
+
+	private SoyContext _getSidebarTab(String label) {
+		SoyContext soyContext = new SoyContext();
+
+		soyContext.put("id", label);
+		soyContext.put(
+			"label", LanguageUtil.get(_themeDisplay.getLocale(), label));
+
+		return soyContext;
+	}
+
+	private List<SoyContext> _getSidebarTabs() {
+		List<SoyContext> soyContexts = new ArrayList<>();
+
+		soyContexts.add(_getSidebarTab("fragments"));
+		soyContexts.add(_getSidebarTab("added"));
+
+		if (_showMapping) {
+			soyContexts.add(_getSidebarTab("mapping"));
+		}
+
+		return soyContexts;
 	}
 
 	private List<SoyContext> _getSoyContextFragmentCollections() {
@@ -224,5 +264,7 @@ public class FragmentsEditorContext {
 	private final long _classPK;
 	private final RenderResponse _renderResponse;
 	private final HttpServletRequest _request;
+	private final boolean _showMapping;
+	private final ThemeDisplay _themeDisplay;
 
 }
