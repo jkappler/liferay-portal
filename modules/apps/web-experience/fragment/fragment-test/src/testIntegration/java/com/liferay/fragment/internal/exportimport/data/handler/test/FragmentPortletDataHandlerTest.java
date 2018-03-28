@@ -15,13 +15,16 @@
 package com.liferay.fragment.internal.exportimport.data.handler.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.bookmarks.constants.BookmarksPortletKeys;
-import com.liferay.bookmarks.model.BookmarksFolder;
-import com.liferay.bookmarks.service.BookmarksFolderLocalServiceUtil;
-import com.liferay.bookmarks.service.BookmarksFolderServiceUtil;
-import com.liferay.bookmarks.util.test.BookmarksTestUtil;
 import com.liferay.exportimport.kernel.lar.DataLevel;
+import com.liferay.fragment.constants.FragmentPortletKeys;
+import com.liferay.fragment.model.FragmentCollection;
+import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.service.FragmentCollectionLocalServiceUtil;
+import com.liferay.fragment.util.FragmentTestUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -29,6 +32,7 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.lar.test.BasePortletDataHandlerTestCase;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -43,10 +47,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * @author Zsolt Berentey
+ * @author Pavel Savinov
  */
 @RunWith(Arquillian.class)
-public class BookmarksPortletDataHandlerTest
+public class FragmentPortletDataHandlerTest
 	extends BasePortletDataHandlerTestCase {
 
 	@ClassRule
@@ -63,40 +67,45 @@ public class BookmarksPortletDataHandlerTest
 	}
 
 	@Test
-	public void testDeleteAllFolders() throws Exception {
+	public void testDeleteGroupFragmentCollections() throws Exception {
 		Group group = GroupTestUtil.addGroup();
 
-		BookmarksFolder parentFolder = BookmarksTestUtil.addFolder(
-			group.getGroupId(), "parent");
-
-		BookmarksFolder childFolder = BookmarksTestUtil.addFolder(
-			group.getGroupId(), parentFolder.getFolderId(), "child");
-
-		BookmarksFolderServiceUtil.moveFolderToTrash(
-			childFolder.getPrimaryKey());
-
-		BookmarksFolderServiceUtil.moveFolderToTrash(
-			parentFolder.getPrimaryKey());
-
-		BookmarksFolderServiceUtil.deleteFolder(parentFolder.getFolderId());
+		FragmentTestUtil.addFragmentCollection(
+			group.getGroupId(), RandomTestUtil.randomString(64));
 
 		GroupLocalServiceUtil.deleteGroup(group);
 
-		List<BookmarksFolder> folders =
-			BookmarksFolderLocalServiceUtil.getFolders(group.getGroupId());
+		List<FragmentCollection> fragmentCollections =
+			FragmentCollectionLocalServiceUtil.getFragmentCollections(
+				group.getGroupId(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-		Assert.assertEquals(folders.toString(), 0, folders.size());
+		Assert.assertEquals(
+			fragmentCollections.toString(), 0, fragmentCollections.size());
 	}
 
 	@Override
 	protected void addStagedModels() throws Exception {
-		BookmarksFolder folder = BookmarksTestUtil.addFolder(
-			stagingGroup.getGroupId(), RandomTestUtil.randomString());
+		Group group = GroupTestUtil.addGroup();
+
+		FragmentCollection fragmentCollection =
+			FragmentTestUtil.addFragmentCollection(
+				stagingGroup.getGroupId(), RandomTestUtil.randomString(64));
 
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(stagingGroup.getGroupId());
 
-		BookmarksTestUtil.addEntry(folder.getFolderId(), true, serviceContext);
+		FragmentEntry fragmentEntry = FragmentTestUtil.addFragmentEntry(
+			fragmentCollection.getFragmentCollectionId());
+
+		FragmentEntryLink originalFragmentEntryLink =
+			FragmentTestUtil.addFragmentEntryLink(
+				fragmentEntry, 0, PortalUtil.getClassNameId(Layout.class),
+				group.getDefaultPublicPlid());
+
+		FragmentTestUtil.addFragmentEntryLink(
+			fragmentEntry, originalFragmentEntryLink.getFragmentEntryLinkId(),
+			PortalUtil.getClassNameId(Layout.class),
+			group.getDefaultPublicPlid());
 	}
 
 	@Override
@@ -105,13 +114,8 @@ public class BookmarksPortletDataHandlerTest
 	}
 
 	@Override
-	protected String[] getDataPortletPreferences() {
-		return new String[] {"rootFolderId"};
-	}
-
-	@Override
 	protected String getPortletId() {
-		return BookmarksPortletKeys.BOOKMARKS;
+		return FragmentPortletKeys.FRAGMENT;
 	}
 
 	@Override
