@@ -14,11 +14,14 @@
 
 package com.liferay.portal.template.soy.internal;
 
+import com.liferay.portal.kernel.json.JSONObject;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -256,6 +259,22 @@ class SoyTemplateRecord extends SoyAbstractValue implements SoyRecord {
 			);
 
 			return soyMD;
+		}
+		else if (object instanceof JSONObject) {
+			SoyMapData soyMD = new SoyMapData();
+
+			JSONObject jsonObject = (JSONObject)object;
+
+			Iterator<String> keys = jsonObject.keys();
+
+			while (keys.hasNext()) {
+				String key = keys.next();
+
+				soyMD.put(key, jsonObject.get(key));
+			}
+
+			return soyMD;
+
 		}
 		else if (object instanceof Double) {
 			return FloatData.forValue((Double) object);
