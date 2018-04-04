@@ -25,8 +25,10 @@ import com.liferay.html.preview.service.HtmlPreviewEntryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -87,6 +89,7 @@ public class FragmentEntryLocalServiceImpl
 		FragmentEntry fragmentEntry = fragmentEntryPersistence.create(
 			fragmentEntryId);
 
+		fragmentEntry.setUuid(serviceContext.getUuid());
 		fragmentEntry.setGroupId(groupId);
 		fragmentEntry.setCompanyId(user.getCompanyId());
 		fragmentEntry.setUserId(user.getUserId());
@@ -100,7 +103,7 @@ public class FragmentEntryLocalServiceImpl
 		fragmentEntry.setStatus(status);
 		fragmentEntry.setStatusByUserId(userId);
 		fragmentEntry.setStatusByUserName(user.getFullName());
-		fragmentEntry.setStatusDate(new Date());
+		fragmentEntry.setStatusDate(serviceContext.getModifiedDate(null));
 
 		fragmentEntryPersistence.update(fragmentEntry);
 
@@ -155,6 +158,7 @@ public class FragmentEntryLocalServiceImpl
 		FragmentEntry fragmentEntry = fragmentEntryPersistence.create(
 			fragmentEntryId);
 
+		fragmentEntry.setUuid(serviceContext.getUuid());
 		fragmentEntry.setGroupId(groupId);
 		fragmentEntry.setCompanyId(user.getCompanyId());
 		fragmentEntry.setUserId(user.getUserId());
@@ -171,7 +175,7 @@ public class FragmentEntryLocalServiceImpl
 		fragmentEntry.setStatus(status);
 		fragmentEntry.setStatusByUserId(userId);
 		fragmentEntry.setStatusByUserName(user.getFullName());
-		fragmentEntry.setStatusDate(new Date());
+		fragmentEntry.setStatusDate(serviceContext.getModifiedDate(null));
 
 		HtmlPreviewEntry htmlPreviewEntry = _updateHtmlPreviewEntry(
 			fragmentEntry, serviceContext);
@@ -189,6 +193,17 @@ public class FragmentEntryLocalServiceImpl
 	}
 
 	@Override
+	public void deleteFragmentEntries(long groupId) throws PortalException {
+		List<FragmentEntry> fragmentEntries =
+			fragmentEntryPersistence.findByGroupId(groupId);
+
+		for (FragmentEntry fragmentEntry : fragmentEntries) {
+			deleteFragmentEntry(fragmentEntry);
+		}
+	}
+
+	@Override
+	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
 	public FragmentEntry deleteFragmentEntry(FragmentEntry fragmentEntry)
 		throws PortalException {
 
@@ -226,7 +241,7 @@ public class FragmentEntryLocalServiceImpl
 
 		FragmentEntry fragmentEntry = getFragmentEntry(fragmentEntryId);
 
-		return deleteFragmentEntry(fragmentEntry);
+		return fragmentEntryLocalService.deleteFragmentEntry(fragmentEntry);
 	}
 
 	@Override
@@ -320,7 +335,6 @@ public class FragmentEntryLocalServiceImpl
 
 		User user = userLocalService.getUser(userId);
 
-		fragmentEntry.setModifiedDate(new Date());
 		fragmentEntry.setName(name);
 		fragmentEntry.setCss(css);
 		fragmentEntry.setHtml(html);
@@ -357,6 +371,36 @@ public class FragmentEntryLocalServiceImpl
 		fragmentEntry.setName(name);
 
 		return fragmentEntryPersistence.update(fragmentEntry);
+	}
+
+	@Override
+	public FragmentEntry updateFragmentEntry(
+			long fragmentEntryId, String name, String css, String html,
+			String js, ServiceContext serviceContext)
+		throws PortalException {
+
+		FragmentEntry fragmentEntry = fragmentEntryPersistence.findByPrimaryKey(
+			fragmentEntryId);
+
+		validate(name);
+		validateContent(html);
+
+		html = _parseHTMLContent(html);
+
+		fragmentEntry.setName(name);
+		fragmentEntry.setCss(css);
+		fragmentEntry.setHtml(html);
+		fragmentEntry.setJs(js);
+
+		HtmlPreviewEntry htmlPreviewEntry = _updateHtmlPreviewEntry(
+			fragmentEntry, serviceContext);
+
+		fragmentEntry.setHtmlPreviewEntryId(
+			htmlPreviewEntry.getHtmlPreviewEntryId());
+
+		fragmentEntryPersistence.update(fragmentEntry);
+
+		return fragmentEntry;
 	}
 
 	protected void validate(String name) throws PortalException {
