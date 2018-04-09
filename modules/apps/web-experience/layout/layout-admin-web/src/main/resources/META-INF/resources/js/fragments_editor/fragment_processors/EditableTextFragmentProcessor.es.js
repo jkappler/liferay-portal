@@ -61,7 +61,9 @@ class EditableTextFragmentProcessor {
 
 		wrapper.dataset.lfrEditableId = editableId;
 		wrapper.innerHTML = editableContent;
-		editableField.parentNode.replaceChild(wrapper, editableField);
+
+		editableField.innerHTML = '';
+		editableField.appendChild(wrapper);
 
 		const editor = AlloyEditor.editable(
 			wrapper,
