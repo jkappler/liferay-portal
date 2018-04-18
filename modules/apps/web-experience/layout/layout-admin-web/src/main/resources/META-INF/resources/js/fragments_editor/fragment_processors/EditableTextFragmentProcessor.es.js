@@ -42,7 +42,10 @@ class EditableTextFragmentProcessor {
 
 	process() {
 		this._destroyEditors();
-		this._createEditors();
+
+		if (!this.fragmentEntryLink.showMapping) {
+			this._createEditors();
+		}
 	}
 
 	/**
