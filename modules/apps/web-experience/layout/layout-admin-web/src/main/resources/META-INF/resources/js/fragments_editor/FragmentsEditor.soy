@@ -49,9 +49,15 @@
 	{@param? getAssetClassTypesURL: any}
 	{@param? getAssetDisplayContributorsURL: any}
 	{@param? id: string}
-	{@param? selectedMappingTypeLabel: [
-		type: string,
-		subtype: string
+	{@param? selectedMappingTypes: [
+		subtype: [
+			id: string,
+			label: string
+		],
+		type: [
+			id: string,
+			label: string
+		]
 	]}
 	{@param? updateLayoutPageTemplateEntryAssetTypeURL: any}
 
@@ -80,8 +86,8 @@
 								] /}
 								{param fragmentEntryLinkId: $fragmentEntryLink.fragmentEntryLinkId /}
 								{param imageSelectorURL: $imageSelectorURL /}
-								{param selectedMappingTypeLabel: $selectedMappingTypeLabel /}
-								{param showMapping: $selectedMappingTypeLabel and $selectedMappingTypeLabel.type and $_sidebarSelectedTab == 'mapping' /}
+								{param selectedMappingTypes: $selectedMappingTypes /}
+								{param showMapping: $selectedMappingTypes and $selectedMappingTypes.type and $_sidebarSelectedTab == 'mapping' /}
 								{param name: $fragmentEntryLink.name /}
 								{param portletNamespace: $portletNamespace /}
 								{param spritemap: $spritemap /}
@@ -153,7 +159,7 @@
 					{elseif $_sidebarSelectedTab == 'mapping'}
 						{call com.liferay.layout.admin.web.SidebarMapping.render}
 							{param events: ['selectAssetTypeButtonClick': $_handleSelectAssetTypeButtonClick] /}
-							{param selectedMappingTypeLabel: $selectedMappingTypeLabel /}
+							{param selectedMappingTypes: $selectedMappingTypes /}
 							{param spritemap: $spritemap /}
 						{/call}
 					{/if}
