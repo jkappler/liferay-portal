@@ -712,6 +712,17 @@ FragmentsEditor.STATE = {
 	).value([]),
 
 	/**
+	 * URL for getting the list of mapping fields
+	 * @default undefined
+	 * @instance
+	 * @memberOf FragmentsEditor
+	 * @review
+	 * @type {!string}
+	 */
+
+	mappingFieldsURL: Config.string().required(),
+
+	/**
 	 * Portlet namespace needed for prefixing form inputs
 	 * @default undefined
 	 * @instance
