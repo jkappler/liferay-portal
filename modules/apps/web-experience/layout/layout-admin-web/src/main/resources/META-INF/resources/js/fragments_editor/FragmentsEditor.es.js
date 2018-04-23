@@ -164,15 +164,11 @@ class FragmentsEditor extends Component {
 	 */
 
 	_handleEditableChanged(data) {
-		const fragmentEntryLink = this.fragmentEntryLinks.find(
-			fragmentEntryLink => fragmentEntryLink.fragmentEntryLinkId === data.fragmentEntryLinkId
+		this._setFragmentEntryLinkEditableValue(
+			data.fragmentEntryLinkId,
+			data.editableId,
+			{defaultValue: data.value}
 		);
-
-		if (fragmentEntryLink) {
-			fragmentEntryLink.editableValues[data.editableId] = data.value;
-		}
-
-		this._updateFragmentEntryLink(fragmentEntryLink);
 	}
 
 	/**
@@ -235,7 +231,6 @@ class FragmentsEditor extends Component {
 							editableValues: {},
 							fragmentEntryId: event.fragmentEntryId,
 							fragmentEntryLinkId: response.fragmentEntryLinkId,
-							mappedValues: {},
 							name: event.fragmentName,
 							position
 						}
@@ -400,15 +395,11 @@ class FragmentsEditor extends Component {
 	 */
 
 	_handleMappeableFieldSelected(event) {
-		const fragmentEntryLink = this.fragmentEntryLinks.find(
-			fragmentEntryLink => fragmentEntryLink.fragmentEntryLinkId === event.fragmentEntryLinkId
+		this._setFragmentEntryLinkEditableValue(
+			event.fragmentEntryLinkId,
+			event.editableId,
+			{mappedField: event.key}
 		);
-
-		if (fragmentEntryLink) {
-			fragmentEntryLink.mappedValues[event.editableId] = event.key;
-		}
-
-		this._updateFragmentEntryLink(fragmentEntryLink);
 	}
 
 	/**
@@ -500,6 +491,61 @@ class FragmentsEditor extends Component {
 	}
 
 	/**
+	 * Updates the given fragmentEntryLinkId editable value without mutating
+	 * the fragmentEntryLinks property but creating a new array and
+	 * synchronizing changes with server.
+	 *
+	 * @param {!string} fragmentEntryLinkId
+	 * @param {!string} editableValueId
+	 * @param {!object} editableValueContent
+	 * @private
+	 */
+
+	_setFragmentEntryLinkEditableValue(
+		fragmentEntryLinkId,
+		editableValueId,
+		editableValueContent
+	) {
+		const index = this.fragmentEntryLinks.findIndex(
+			fragmentEntryLink => fragmentEntryLinkId ===
+				fragmentEntryLink.fragmentEntryLinkId
+		);
+
+		if (index !== -1) {
+			const fragmentEntryLink = this.fragmentEntryLinks[index];
+
+			const editableValues = fragmentEntryLink.editableValues || {};
+
+			const editableValue = editableValues[editableValueId] || {};
+
+			const newEditableValue = Object.assign(
+				{},
+				editableValue,
+				editableValueContent
+			);
+
+			const newEditableValues = Object.assign(
+				{},
+				editableValues,
+				{[editableValueId]: newEditableValue}
+			);
+
+			const newFragmentEntryLink = Object.assign(
+				{},
+				fragmentEntryLink,
+				{editableValues: newEditableValues}
+			);
+
+			const newFragmentEntryLinks = [...this.fragmentEntryLinks];
+			newFragmentEntryLinks[index] = newFragmentEntryLink;
+
+			this.fragmentEntryLinks = newFragmentEntryLinks;
+
+			this._updateFragmentEntryLink(newFragmentEntryLink);
+		}
+	}
+
+	/**
 	 * Sends the change of a single fragment entry link to the server and, if
 	 * success, sets the _dirty property to false.
 	 * @private
@@ -520,11 +566,6 @@ class FragmentsEditor extends Component {
 			formData.append(
 				`${this.portletNamespace}editableValues`,
 				JSON.stringify(fragmentEntryLink.editableValues)
-			);
-
-			formData.append(
-				`${this.portletNamespace}mappedValues`,
-				JSON.stringify(fragmentEntryLink.mappedValues)
 			);
 
 			fetch(
@@ -714,7 +755,6 @@ FragmentsEditor.STATE = {
 	 *   editableValues: Object,
 	 *   fragmentEntryId: !string,
 	 *   fragmentEntryLinkId: !string,
-	 *   mappedValues: Object,
 	 *   name: !string,
 	 *   position: !number
 	 * }>}
@@ -728,7 +768,6 @@ FragmentsEditor.STATE = {
 				editableValues: Config.object().value({}),
 				fragmentEntryId: Config.string().required(),
 				fragmentEntryLinkId: Config.string().required(),
-				mappedValues: Config.object().value({}),
 				name: Config.string().required(),
 				position: Config.number().required()
 			}
