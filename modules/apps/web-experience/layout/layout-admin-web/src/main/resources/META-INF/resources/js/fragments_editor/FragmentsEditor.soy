@@ -15,6 +15,7 @@
 		fragmentCollectionId: string,
 		name: string
 	]>}
+	{@param mappingFieldsURL: string}
 	{@param imageSelectorURL: string}
 	{@param portletNamespace: string}
 	{@param spritemap: string}
@@ -25,12 +26,18 @@
 	{@param? _handleFragmentMove: any}
 	{@param? _handleFragmentRemove: any}
 	{@param? _handleHideContextualSidebar: any}
+	{@param? _handleMappeableFieldClicked: any}
+	{@param? _handleMappeableFieldSelected: any}
 	{@param? _handleMappingTypeSelected: any}
 	{@param? _handleToggleContextualSidebarButtonClick: any}
 	{@param? _handleSelectAssetTypeButtonClick: any}
+	{@param? _handleSelectMappingDialogVisibleChanged: any}
 	{@param? _handleSelectMappingTypeDialogVisibleChanged: any}
 	{@param? _handleSidebarTabClick: any}
 	{@param? _lastSaveDate: string}
+	{@param? _selectMappingDialogEditableId: string}
+	{@param? _selectMappingDialogFragmentEntryLinkId: string}
+	{@param? _selectMappingDialogVisible: bool}
 	{@param? _selectMappingTypeDialogVisible: bool}
 	{@param? _sidebarSelectedTab: string}
 	{@param? _sidebarTabs: list<[id:string, label:string]>}
@@ -43,9 +50,15 @@
 	{@param? getAssetClassTypesURL: any}
 	{@param? getAssetDisplayContributorsURL: any}
 	{@param? id: string}
-	{@param? selectedMappingTypeLabel: [
-		type: string,
-		subtype: string
+	{@param? selectedMappingTypes: [
+		subtype: [
+			id: string,
+			label: string
+		],
+		type: [
+			id: string,
+			label: string
+		]
 	]}
 	{@param? updateLayoutPageTemplateEntryAssetTypeURL: any}
 
@@ -68,11 +81,14 @@
 								{param editableValues: $fragmentEntryLink.editableValues /}
 								{param events: [
 									'editableChanged': $_handleEditableChanged,
+									'mappeableFieldClicked': $_handleMappeableFieldClicked,
 									'move': $_handleFragmentMove,
 									'remove': $_handleFragmentRemove
 								] /}
 								{param fragmentEntryLinkId: $fragmentEntryLink.fragmentEntryLinkId /}
 								{param imageSelectorURL: $imageSelectorURL /}
+								{param selectedMappingTypes: $selectedMappingTypes /}
+								{param showMapping: $selectedMappingTypes and $selectedMappingTypes.type and $_sidebarSelectedTab == 'mapping' /}
 								{param name: $fragmentEntryLink.name /}
 								{param portletNamespace: $portletNamespace /}
 								{param spritemap: $spritemap /}
@@ -83,6 +99,20 @@
 					{call .noFragmentsMessage /}
 				{/if}
 			</div>
+
+			{call com.liferay.layout.admin.web.SelectMappingDialog.render}
+				{param editableId: $_selectMappingDialogEditableId /}
+				{param events: [
+					'mappeableFieldSelected': $_handleMappeableFieldSelected,
+					'visibleChanged': $_handleSelectMappingDialogVisibleChanged
+				] /}
+				{param fragmentEntryLinkId: $_selectMappingDialogFragmentEntryLinkId /}
+				{param mappingFieldsURL: $mappingFieldsURL /}
+				{param namespace: $portletNamespace /}
+				{param selectedMappingTypes: $selectedMappingTypes /}
+				{param spritemap: $spritemap /}
+				{param visible: $_selectMappingDialogVisible ?: false /}
+			{/call}
 
 			{call com.liferay.layout.admin.web.SelectMappingTypeDialog.render}
 				{param classPK: $classPK /}
@@ -133,7 +163,7 @@
 					{elseif $_sidebarSelectedTab == 'mapping'}
 						{call com.liferay.layout.admin.web.SidebarMapping.render}
 							{param events: ['selectAssetTypeButtonClick': $_handleSelectAssetTypeButtonClick] /}
-							{param selectedMappingTypeLabel: $selectedMappingTypeLabel /}
+							{param selectedMappingTypes: $selectedMappingTypes /}
 							{param spritemap: $spritemap /}
 						{/call}
 					{/if}

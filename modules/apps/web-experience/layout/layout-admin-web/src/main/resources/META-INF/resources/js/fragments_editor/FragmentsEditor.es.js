@@ -3,6 +3,7 @@ import Component from 'metal-component';
 import Soy from 'metal-soy';
 import {Config} from 'metal-state';
 
+import './dialogs/SelectMappingDialog.es';
 import './dialogs/SelectMappingTypeDialog.es';
 import './sidebar/SidebarAddedFragments.es';
 import './sidebar/SidebarAvailableFragments.es';
@@ -163,15 +164,11 @@ class FragmentsEditor extends Component {
 	 */
 
 	_handleEditableChanged(data) {
-		const fragmentEntryLink = this.fragmentEntryLinks.find(
-			fragmentEntryLink => fragmentEntryLink.fragmentEntryLinkId === data.fragmentEntryLinkId
+		this._setFragmentEntryLinkEditableValue(
+			data.fragmentEntryLinkId,
+			data.editableId,
+			{defaultValue: data.value}
 		);
-
-		if (fragmentEntryLink) {
-			fragmentEntryLink.editableValues[data.editableId] = data.value;
-		}
-
-		this._updateFragmentEntryLink(fragmentEntryLink);
 	}
 
 	/**
@@ -374,14 +371,57 @@ class FragmentsEditor extends Component {
 	}
 
 	/**
-	 * Callback executed when a mapping type hsa been selected
-	 * @param {{ labels: Array<string> }} event
+	 * Callback executed when a mappeable fragment has been clicked
+	 * @param {!{ fragmentEntryLinkId: !string, editableId: !string }} event
+	 * @private
+	 * @review
+	 */
+
+	_handleMappeableFieldClicked(event) {
+		this._selectMappingDialogVisible = true;
+		this._selectMappingDialogFragmentEntryLinkId = event.fragmentEntryLinkId;
+		this._selectMappingDialogEditableId = event.editableId;
+	}
+
+	/**
+	 * Callback executed when a mappeable field has been selected for the
+	 * given editable.
+	 * @param {!{
+	 *   editableId: !string,
+	 *   fragmentEntryLinkId: !string,
+	 *   key: !string
+	 * }} event
+	 * @private
+	 */
+
+	_handleMappeableFieldSelected(event) {
+		this._setFragmentEntryLinkEditableValue(
+			event.fragmentEntryLinkId,
+			event.editableId,
+			{mappedField: event.key}
+		);
+	}
+
+	/**
+	 * Callback executed when a mapping type has selected
+	 * @param {{
+	 * 	 mappingTypes: {
+	 *     subtype: {
+	 *   	  id: !string,
+	 *   	  label: !string
+	 *     },
+	 *     type: {
+	 *   	  id: !string,
+	 *   	  label: !string
+	 *     }
+	 * 	 }
+     * }} event
 	 * @private
 	 * @review
 	 */
 
 	_handleMappingTypeSelected(event) {
-		this.selectedMappingTypeLabel = event.label;
+		this.selectedMappingTypes = event.mappingTypes;
 	}
 
 	/**
@@ -391,6 +431,17 @@ class FragmentsEditor extends Component {
 
 	_handleSelectAssetTypeButtonClick() {
 		this._selectMappingTypeDialogVisible = true;
+	}
+
+	/**
+	 * Callback executed when the SelectMappingDialog visibility changes
+	 * @param {{ newVal: boolean }} change
+	 * @private
+	 * @review
+	 */
+
+	_handleSelectMappingDialogVisibleChanged(change) {
+		this._selectMappingDialogVisible = change.newVal;
 	}
 
 	/**
@@ -437,6 +488,61 @@ class FragmentsEditor extends Component {
 		[list[indexA], list[indexB]] = [list[indexB], list[indexA]];
 
 		return list;
+	}
+
+	/**
+	 * Updates the given fragmentEntryLinkId editable value without mutating
+	 * the fragmentEntryLinks property but creating a new array and
+	 * synchronizing changes with server.
+	 *
+	 * @param {!string} fragmentEntryLinkId
+	 * @param {!string} editableValueId
+	 * @param {!object} editableValueContent
+	 * @private
+	 */
+
+	_setFragmentEntryLinkEditableValue(
+		fragmentEntryLinkId,
+		editableValueId,
+		editableValueContent
+	) {
+		const index = this.fragmentEntryLinks.findIndex(
+			fragmentEntryLink => fragmentEntryLinkId ===
+				fragmentEntryLink.fragmentEntryLinkId
+		);
+
+		if (index !== -1) {
+			const fragmentEntryLink = this.fragmentEntryLinks[index];
+
+			const editableValues = fragmentEntryLink.editableValues || {};
+
+			const editableValue = editableValues[editableValueId] || {};
+
+			const newEditableValue = Object.assign(
+				{},
+				editableValue,
+				editableValueContent
+			);
+
+			const newEditableValues = Object.assign(
+				{},
+				editableValues,
+				{[editableValueId]: newEditableValue}
+			);
+
+			const newFragmentEntryLink = Object.assign(
+				{},
+				fragmentEntryLink,
+				{editableValues: newEditableValues}
+			);
+
+			const newFragmentEntryLinks = [...this.fragmentEntryLinks];
+			newFragmentEntryLinks[index] = newFragmentEntryLink;
+
+			this.fragmentEntryLinks = newFragmentEntryLinks;
+
+			this._updateFragmentEntryLink(newFragmentEntryLink);
+		}
 	}
 
 	/**
@@ -643,7 +749,15 @@ FragmentsEditor.STATE = {
 	 * @instance
 	 * @memberOf FragmentsEditor
 	 * @review
-	 * @type {Array<string>}
+	 * @type {Array<{
+	 *   config: Object,
+	 *   content: string,
+	 *   editableValues: Object,
+	 *   fragmentEntryId: !string,
+	 *   fragmentEntryLinkId: !string,
+	 *   name: !string,
+	 *   position: !number
+	 * }>}
 	 */
 
 	fragmentEntryLinks: Config.arrayOf(
@@ -659,6 +773,17 @@ FragmentsEditor.STATE = {
 			}
 		)
 	).value([]),
+
+	/**
+	 * URL for getting the list of mapping fields
+	 * @default undefined
+	 * @instance
+	 * @memberOf FragmentsEditor
+	 * @review
+	 * @type {!string}
+	 */
+
+	mappingFieldsURL: Config.string().required(),
 
 	/**
 	 * Portlet namespace needed for prefixing form inputs
@@ -683,22 +808,38 @@ FragmentsEditor.STATE = {
 	renderFragmentEntryURL: Config.string().required(),
 
 	/**
-	 * Selected mapping type label
+	 * Selected mapping types
 	 * @default {}
 	 * @instance
 	 * @memberOf FragmentsEditor
 	 * @review
 	 * @type {{
-	 *   subtype: string,
-	 *   type: string
+	 *   subtype: {
+	 *   	id: !string,
+	 *   	label: !string
+	 *   },
+	 *   type: {
+	 *   	id: !string,
+	 *   	label: !string
+	 *   }
 	 * }}
 	 */
 
-	selectedMappingTypeLabel: Config
+	selectedMappingTypes: Config
 		.shapeOf(
 			{
-				subtype: Config.string().value(''),
-				type: Config.string().value('')
+				subtype: Config.shapeOf(
+					{
+						id: Config.string().required(),
+						label: Config.string().required()
+					}
+				),
+				type: Config.shapeOf(
+					{
+						id: Config.string().required(),
+						label: Config.string().required()
+					}
+				)
 			}
 		)
 		.value({}),
@@ -797,6 +938,51 @@ FragmentsEditor.STATE = {
 	_lastSaveDate: Config.string()
 		.internal()
 		.value(''),
+
+	/**
+	 * EditableId of the field that is being mapped
+	 * @default ''
+	 * @instance
+	 * @memberOf FragmentsEditor
+	 * @private
+	 * @review
+	 * @type {string}
+	 */
+
+	_selectMappingDialogEditableId: Config
+		.string()
+		.internal()
+		.value(''),
+
+	/**
+	 * FragmentEntryLinkId of the field that is being mapped
+	 * @default ''
+	 * @instance
+	 * @memberOf FragmentsEditor
+	 * @private
+	 * @review
+	 * @type {string}
+	 */
+
+	_selectMappingDialogFragmentEntryLinkId: Config
+		.string()
+		.internal()
+		.value(''),
+
+	/**
+	 * Flag indicating if the SelectMappingDialog should be shown
+	 * @default false
+	 * @instance
+	 * @memberOf FragmentsEditor
+	 * @private
+	 * @review
+	 * @type {boolean}
+	 */
+
+	_selectMappingDialogVisible: Config
+		.bool()
+		.internal()
+		.value(false),
 
 	/**
 	 * Flag indicating if the SelectMappingTypeDialog should be shown

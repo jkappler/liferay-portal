@@ -5,6 +5,7 @@ import Soy from 'metal-soy';
 
 import EditableTextFragmentProcessor from './fragment_processors/EditableTextFragmentProcessor.es';
 import EditableImageFragmentProcessor from './fragment_processors/EditableImageFragmentProcessor.es';
+import MappeableFragmentProcessor from './fragment_processors/MappeableFragmentProcessor.es';
 import templates from './FragmentEntryLink.soy';
 
 const ARROW_DOWN_KEYCODE = 40;
@@ -13,7 +14,8 @@ const ARROW_UP_KEYCODE = 38;
 
 const FRAGMENT_PROCESSORS = [
 	EditableTextFragmentProcessor,
-	EditableImageFragmentProcessor
+	EditableImageFragmentProcessor,
+	MappeableFragmentProcessor
 ];
 
 /**
@@ -94,7 +96,7 @@ class FragmentEntryLink extends Component {
 	 */
 
 	shouldUpdate(changes) {
-		return !!changes.content;
+		return !!changes.content || !!changes.showMapping;
 	}
 
 	/**
@@ -271,6 +273,43 @@ FragmentEntryLink.STATE = {
 	name: Config.string().value(''),
 
 	/**
+	 * Selected mapping type label
+	 * @default {}
+	 * @instance
+	 * @memberOf FragmentEntryLink
+	 * @review
+	 * @type {{
+	 *   subtype: {
+	 *   	id: !string,
+	 *   	label: !string
+	 *   },
+	 *   type: {
+	 *   	id: !string,
+	 *   	label: !string
+	 *   }
+	 * }}
+	 */
+
+	selectedMappingTypes: Config
+		.shapeOf(
+			{
+				subtype: Config.shapeOf(
+					{
+						id: Config.string().required(),
+						label: Config.string().required()
+					}
+				),
+				type: Config.shapeOf(
+					{
+						id: Config.string().required(),
+						label: Config.string().required()
+					}
+				)
+			}
+		)
+		.value({}),
+
+	/**
 	 * Shows FragmentEntryLink control toolbar
 	 * @default true
 	 * @instance
@@ -280,6 +319,17 @@ FragmentEntryLink.STATE = {
 	 */
 
 	showControlBar: Config.bool().value(true),
+
+	/**
+	 * If true, asset mapping is enabled
+	 * @default false
+	 * @instance
+	 * @memberOf FragmentEntryLink
+	 * @review
+	 * @type {bool}
+	 */
+
+	showMapping: Config.bool().value(false),
 
 	/**
 	 * Portlet namespace needed for prefixing Alloy Editor instances

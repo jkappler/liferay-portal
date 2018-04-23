@@ -42,7 +42,10 @@ class EditableTextFragmentProcessor {
 
 	process() {
 		this._destroyEditors();
-		this._createEditors();
+
+		if (!this.fragmentEntryLink.showMapping) {
+			this._createEditors();
+		}
 	}
 
 	/**
@@ -61,7 +64,9 @@ class EditableTextFragmentProcessor {
 
 		wrapper.dataset.lfrEditableId = editableId;
 		wrapper.innerHTML = editableContent;
-		editableField.parentNode.replaceChild(wrapper, editableField);
+
+		editableField.innerHTML = '';
+		editableField.appendChild(wrapper);
 
 		const editor = AlloyEditor.editable(
 			wrapper,
@@ -73,11 +78,24 @@ class EditableTextFragmentProcessor {
 
 		const nativeEditor = editor.get('nativeEditor');
 
-		nativeEditor.name = `${this.fragmentEntryLink.portletNamespace}fragmentEntryLink_`;
-		nativeEditor.on('change', this._handleEditorChange);
-		nativeEditor.on('selectionChange', this._handleEditorChange);
+		const editorChangeHandler = nativeEditor.on(
+			'change',
+			this._handleEditorChange
+		);
 
-		return editor;
+		const editorSelectionChangeHandler = nativeEditor.on(
+			'selectionChange',
+			this._handleEditorChange
+		);
+
+		return {
+			editableField,
+			editor,
+			eventHandlers: [
+				editorChangeHandler,
+				editorSelectionChangeHandler
+			]
+		};
 	}
 
 	/**
@@ -102,8 +120,15 @@ class EditableTextFragmentProcessor {
 
 	_destroyEditors() {
 		this._editors.forEach(
-			editor => {
+			({editableField, editor, eventHandlers}) => {
+				eventHandlers.forEach(
+					eventHandler => {
+						eventHandler.removeListener();
+					}
+				);
+
 				editor.destroy();
+				editableField.innerHTML = editor.get('nativeEditor').getData();
 			}
 		);
 
