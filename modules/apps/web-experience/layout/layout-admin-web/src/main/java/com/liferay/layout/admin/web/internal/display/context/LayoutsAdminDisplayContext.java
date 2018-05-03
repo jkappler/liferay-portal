@@ -670,27 +670,6 @@ public class LayoutsAdminDisplayContext {
 		return _tabs1;
 	}
 
-	public String getViewLayoutURL(Layout layout) throws PortalException {
-		if (!Objects.equals(layout.getType(), "content")) {
-			return PortalUtil.getLayoutFullURL(layout, _themeDisplay);
-		}
-
-		PortletURL editLayoutURL = _liferayPortletResponse.createRenderURL();
-
-		editLayoutURL.setParameter("mvcPath", "/edit_content_layout.jsp");
-		editLayoutURL.setParameter("backURL", _themeDisplay.getURLCurrent());
-
-		PortletDisplay portletDisplay = _themeDisplay.getPortletDisplay();
-
-		editLayoutURL.setParameter("portletResource", portletDisplay.getId());
-
-		editLayoutURL.setParameter(
-			"groupId", String.valueOf(layout.getGroupId()));
-		editLayoutURL.setParameter("selPlid", String.valueOf(layout.getPlid()));
-
-		return editLayoutURL.toString();
-	}
-
 	public boolean isMillerColumnsEnabled() {
 		if (_millerColumnsEnabled != null) {
 			return _millerColumnsEnabled;
@@ -911,7 +890,9 @@ public class LayoutsAdminDisplayContext {
 			jsonObject.put("permissionsURL", getPermissionsURL(layout));
 		}
 
-		jsonObject.put("viewLayoutURL", getViewLayoutURL(layout));
+		jsonObject.put(
+			"viewLayoutURL",
+			PortalUtil.getLayoutFullURL(layout, _themeDisplay));
 
 		return jsonObject;
 	}
