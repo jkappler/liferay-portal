@@ -74,6 +74,11 @@ public interface LayoutPageTemplateEntryLocalService extends BaseLocalService,
 
 	public LayoutPageTemplateEntry addLayoutPageTemplateEntry(long userId,
 		long groupId, long layoutPageTemplateCollectionId, String name,
+		int type, long[] fragmentEntryIds, int status, long layoutPrototypeId,
+		ServiceContext serviceContext) throws PortalException;
+
+	public LayoutPageTemplateEntry addLayoutPageTemplateEntry(long userId,
+		long groupId, long layoutPageTemplateCollectionId, String name,
 		int type, long[] fragmentEntryIds, int status,
 		ServiceContext serviceContext) throws PortalException;
 
