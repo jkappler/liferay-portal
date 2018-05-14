@@ -48,7 +48,7 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 	public LayoutPageTemplateEntry addLayoutPageTemplateEntry(
 			long userId, long groupId, long layoutPageTemplateCollectionId,
 			String name, int type, long[] fragmentEntryIds, int status,
-			ServiceContext serviceContext)
+			long layoutPrototypeId, ServiceContext serviceContext)
 		throws PortalException {
 
 		// Layout page template entry
@@ -79,6 +79,7 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 		layoutPageTemplateEntry.setStatusByUserId(userId);
 		layoutPageTemplateEntry.setStatusByUserName(user.getFullName());
 		layoutPageTemplateEntry.setStatusDate(new Date());
+		layoutPageTemplateEntry.setLayoutPrototypeId(layoutPrototypeId);
 
 		// HTML preview
 
@@ -105,6 +106,18 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 			layoutPageTemplateEntry, serviceContext);
 
 		return layoutPageTemplateEntry;
+	}
+
+	@Override
+	public LayoutPageTemplateEntry addLayoutPageTemplateEntry(
+			long userId, long groupId, long layoutPageTemplateCollectionId,
+			String name, int type, long[] fragmentEntryIds, int status,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		return addLayoutPageTemplateEntry(
+			userId, groupId, layoutPageTemplateCollectionId, name, type,
+			fragmentEntryIds, status, 0, serviceContext);
 	}
 
 	@Override
@@ -195,6 +208,14 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 
 		return layoutPageTemplateEntryPersistence.fetchByPrimaryKey(
 			layoutPageTemplateEntryId);
+	}
+
+	@Override
+	public LayoutPageTemplateEntry fetchLayoutPageTemplateEntry(
+		long groupId, long layoutPrototypeId) {
+
+		return layoutPageTemplateEntryPersistence.fetchByG_LP(
+			groupId, layoutPrototypeId);
 	}
 
 	@Override
