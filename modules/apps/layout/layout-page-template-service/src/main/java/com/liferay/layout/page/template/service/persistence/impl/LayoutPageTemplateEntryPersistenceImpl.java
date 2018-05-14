@@ -16998,6 +16998,7 @@ public class LayoutPageTemplateEntryPersistenceImpl extends BasePersistenceImpl<
 		layoutPageTemplateEntryImpl.setStatusByUserId(layoutPageTemplateEntry.getStatusByUserId());
 		layoutPageTemplateEntryImpl.setStatusByUserName(layoutPageTemplateEntry.getStatusByUserName());
 		layoutPageTemplateEntryImpl.setStatusDate(layoutPageTemplateEntry.getStatusDate());
+		layoutPageTemplateEntryImpl.setLayoutPrototypeId(layoutPageTemplateEntry.getLayoutPrototypeId());
 
 		return layoutPageTemplateEntryImpl;
 	}
