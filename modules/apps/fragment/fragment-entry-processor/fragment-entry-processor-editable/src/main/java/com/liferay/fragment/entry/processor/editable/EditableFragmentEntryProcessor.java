@@ -133,6 +133,12 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 				value = _getEditableValue(editableValueJSONObject, locale);
 			}
 
+			if (Validator.isNull(value) &&
+				Objects.equals(mode, FragmentEntryLinkConstants.EDIT)) {
+
+				continue;
+			}
+
 			editableElementParser.replace(element, value);
 		}
 
