@@ -72,7 +72,7 @@ public class UpdateFragmentEntryMVCActionCommand extends BaseMVCActionCommand {
 				actionRequest, actionResponse, jsonObject);
 		}
 		catch (PortalException pe) {
-			hideDefaultSuccessMessage(actionRequest);
+			hideDefaultErrorMessage(actionRequest);
 
 			_fragmentEntryExceptionRequestHandler.handlePortalException(
 				actionRequest, actionResponse, pe);
