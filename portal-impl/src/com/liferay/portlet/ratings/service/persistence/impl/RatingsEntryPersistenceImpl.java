@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -1967,11 +1968,46 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 			if (classPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_U_C_C_CLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(classPKs));
+				if (classPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < classPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > classPKs.length) {
+								curEnd = classPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(classPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_U_C_C_CLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_U_C_C_CLASSPK_7);
+
+					query.append(StringUtil.merge(classPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -2294,11 +2330,46 @@ public class RatingsEntryPersistenceImpl extends BasePersistenceImpl<RatingsEntr
 			if (classPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_U_C_C_CLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(classPKs));
+				if (classPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < classPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > classPKs.length) {
+								curEnd = classPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(classPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_U_C_C_CLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_U_C_C_CLASSPK_7);
+
+					query.append(StringUtil.merge(classPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}

@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -2317,11 +2318,46 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 		if (groupIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(groupIds));
+			if (groupIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < groupIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > groupIds.length) {
+							curEnd = groupIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(groupIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+
+				query.append(StringUtil.merge(groupIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 		}
@@ -2507,11 +2543,46 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 			if (groupIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(groupIds));
+				if (groupIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < groupIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > groupIds.length) {
+								curEnd = groupIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(groupIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+
+					query.append(StringUtil.merge(groupIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -2663,11 +2734,46 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 			if (groupIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(groupIds));
+				if (groupIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < groupIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > groupIds.length) {
+								curEnd = groupIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(groupIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+
+					query.append(StringUtil.merge(groupIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -2779,11 +2885,46 @@ public class AssetVocabularyPersistenceImpl extends BasePersistenceImpl<AssetVoc
 		if (groupIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(groupIds));
+			if (groupIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < groupIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > groupIds.length) {
+							curEnd = groupIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(groupIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_GROUPID_GROUPID_7);
+
+				query.append(StringUtil.merge(groupIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 		}

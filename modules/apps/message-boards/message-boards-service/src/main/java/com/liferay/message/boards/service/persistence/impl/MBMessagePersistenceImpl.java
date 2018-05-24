@@ -8253,11 +8253,46 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 			if (classNameIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_U_C_CLASSNAMEID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(classNameIds));
+				if (classNameIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < classNameIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > classNameIds.length) {
+								curEnd = classNameIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(classNameIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_U_C_CLASSNAMEID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_U_C_CLASSNAMEID_7);
+
+					query.append(StringUtil.merge(classNameIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -8424,11 +8459,46 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 			if (classNameIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_U_C_CLASSNAMEID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(classNameIds));
+				if (classNameIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < classNameIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > classNameIds.length) {
+								curEnd = classNameIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(classNameIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_U_C_CLASSNAMEID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_U_C_CLASSNAMEID_7);
+
+					query.append(StringUtil.merge(classNameIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -16422,11 +16492,46 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 			if (classNameIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_U_C_S_CLASSNAMEID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(classNameIds));
+				if (classNameIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < classNameIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > classNameIds.length) {
+								curEnd = classNameIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(classNameIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_U_C_S_CLASSNAMEID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_U_C_S_CLASSNAMEID_7);
+
+					query.append(StringUtil.merge(classNameIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -16606,11 +16711,46 @@ public class MBMessagePersistenceImpl extends BasePersistenceImpl<MBMessage>
 			if (classNameIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_U_C_S_CLASSNAMEID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(classNameIds));
+				if (classNameIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < classNameIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > classNameIds.length) {
+								curEnd = classNameIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(classNameIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_U_C_S_CLASSNAMEID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_U_C_S_CLASSNAMEID_7);
+
+					query.append(StringUtil.merge(classNameIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 

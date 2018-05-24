@@ -3426,11 +3426,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		if (categoryIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(categoryIds));
+			if (categoryIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < categoryIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > categoryIds.length) {
+							curEnd = categoryIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+
+				query.append(StringUtil.merge(categoryIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 		}
@@ -3628,11 +3663,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			if (categoryIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(categoryIds));
+				if (categoryIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < categoryIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > categoryIds.length) {
+								curEnd = categoryIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+
+					query.append(StringUtil.merge(categoryIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -3799,11 +3869,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			if (categoryIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(categoryIds));
+				if (categoryIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < categoryIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > categoryIds.length) {
+								curEnd = categoryIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+
+					query.append(StringUtil.merge(categoryIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -3927,11 +4032,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		if (categoryIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(categoryIds));
+			if (categoryIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < categoryIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > categoryIds.length) {
+							curEnd = categoryIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_C_CATEGORYID_7);
+
+				query.append(StringUtil.merge(categoryIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 		}
@@ -8889,11 +9029,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		if (categoryIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(categoryIds));
+			if (categoryIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < categoryIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > categoryIds.length) {
+							curEnd = categoryIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+
+				query.append(StringUtil.merge(categoryIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -9106,11 +9281,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			if (categoryIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(categoryIds));
+				if (categoryIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < categoryIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > categoryIds.length) {
+								curEnd = categoryIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+
+					query.append(StringUtil.merge(categoryIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -9290,11 +9500,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			if (categoryIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(categoryIds));
+				if (categoryIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < categoryIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > categoryIds.length) {
+								curEnd = categoryIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+
+					query.append(StringUtil.merge(categoryIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -9430,11 +9675,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		if (categoryIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(categoryIds));
+			if (categoryIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < categoryIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > categoryIds.length) {
+							curEnd = categoryIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_C_S_CATEGORYID_7);
+
+				query.append(StringUtil.merge(categoryIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -10391,11 +10671,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		if (categoryIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(categoryIds));
+			if (categoryIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < categoryIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > categoryIds.length) {
+							curEnd = categoryIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+
+				query.append(StringUtil.merge(categoryIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -10608,11 +10923,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			if (categoryIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(categoryIds));
+				if (categoryIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < categoryIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > categoryIds.length) {
+								curEnd = categoryIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+
+					query.append(StringUtil.merge(categoryIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -10792,11 +11142,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 			if (categoryIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(categoryIds));
+				if (categoryIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < categoryIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > categoryIds.length) {
+								curEnd = categoryIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+
+					query.append(StringUtil.merge(categoryIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -10933,11 +11318,46 @@ public class MBThreadPersistenceImpl extends BasePersistenceImpl<MBThread>
 		if (categoryIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.message.boards.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(categoryIds));
+			if (categoryIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < categoryIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > categoryIds.length) {
+							curEnd = categoryIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(categoryIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_C_NOTS_CATEGORYID_7);
+
+				query.append(StringUtil.merge(categoryIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 

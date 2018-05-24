@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.LayoutPersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -8127,11 +8128,46 @@ public class LayoutPersistenceImpl extends BasePersistenceImpl<Layout>
 		if (parentLayoutIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(parentLayoutIds));
+			if (parentLayoutIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < parentLayoutIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > parentLayoutIds.length) {
+							curEnd = parentLayoutIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(parentLayoutIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+
+				query.append(StringUtil.merge(parentLayoutIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 		}
@@ -8343,11 +8379,46 @@ public class LayoutPersistenceImpl extends BasePersistenceImpl<Layout>
 			if (parentLayoutIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentLayoutIds));
+				if (parentLayoutIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentLayoutIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentLayoutIds.length) {
+								curEnd = parentLayoutIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentLayoutIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+
+					query.append(StringUtil.merge(parentLayoutIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -8530,11 +8601,46 @@ public class LayoutPersistenceImpl extends BasePersistenceImpl<Layout>
 			if (parentLayoutIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentLayoutIds));
+				if (parentLayoutIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentLayoutIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentLayoutIds.length) {
+								curEnd = parentLayoutIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentLayoutIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+
+					query.append(StringUtil.merge(parentLayoutIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -8670,11 +8776,46 @@ public class LayoutPersistenceImpl extends BasePersistenceImpl<Layout>
 		if (parentLayoutIds.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(parentLayoutIds));
+			if (parentLayoutIds.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < parentLayoutIds.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > parentLayoutIds.length) {
+							curEnd = parentLayoutIds.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(parentLayoutIds,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_P_P_PARENTLAYOUTID_7);
+
+				query.append(StringUtil.merge(parentLayoutIds));
+
+				query.append(")");
+			}
 
 			query.append(")");
 		}

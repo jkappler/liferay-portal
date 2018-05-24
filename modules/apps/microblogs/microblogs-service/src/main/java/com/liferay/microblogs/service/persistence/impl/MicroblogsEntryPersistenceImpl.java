@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -2288,11 +2289,46 @@ public class MicroblogsEntryPersistenceImpl extends BasePersistenceImpl<Microblo
 			if (creatorClassPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_CCNI_CCPK_CREATORCLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.microblogs.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(creatorClassPKs));
+				if (creatorClassPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < creatorClassPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > creatorClassPKs.length) {
+								curEnd = creatorClassPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(creatorClassPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_CCNI_CCPK_CREATORCLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_CCNI_CCPK_CREATORCLASSPK_7);
+
+					query.append(StringUtil.merge(creatorClassPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -2460,11 +2496,46 @@ public class MicroblogsEntryPersistenceImpl extends BasePersistenceImpl<Microblo
 			if (creatorClassPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_CCNI_CCPK_CREATORCLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.microblogs.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(creatorClassPKs));
+				if (creatorClassPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < creatorClassPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > creatorClassPKs.length) {
+								curEnd = creatorClassPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(creatorClassPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_CCNI_CCPK_CREATORCLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_CCNI_CCPK_CREATORCLASSPK_7);
+
+					query.append(StringUtil.merge(creatorClassPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -4287,11 +4358,46 @@ public class MicroblogsEntryPersistenceImpl extends BasePersistenceImpl<Microblo
 			if (creatorClassPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_C_CCNI_CCPK_CREATORCLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.microblogs.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(creatorClassPKs));
+				if (creatorClassPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < creatorClassPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > creatorClassPKs.length) {
+								curEnd = creatorClassPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(creatorClassPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_C_CCNI_CCPK_CREATORCLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_C_CCNI_CCPK_CREATORCLASSPK_7);
+
+					query.append(StringUtil.merge(creatorClassPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -4475,11 +4581,46 @@ public class MicroblogsEntryPersistenceImpl extends BasePersistenceImpl<Microblo
 			if (creatorClassPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_C_CCNI_CCPK_CREATORCLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.microblogs.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(creatorClassPKs));
+				if (creatorClassPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < creatorClassPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > creatorClassPKs.length) {
+								curEnd = creatorClassPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(creatorClassPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_C_CCNI_CCPK_CREATORCLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_C_CCNI_CCPK_CREATORCLASSPK_7);
+
+					query.append(StringUtil.merge(creatorClassPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -5794,11 +5935,46 @@ public class MicroblogsEntryPersistenceImpl extends BasePersistenceImpl<Microblo
 			if (creatorClassPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_CCNI_CCPK_T_CREATORCLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.microblogs.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(creatorClassPKs));
+				if (creatorClassPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < creatorClassPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > creatorClassPKs.length) {
+								curEnd = creatorClassPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(creatorClassPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_CCNI_CCPK_T_CREATORCLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_CCNI_CCPK_T_CREATORCLASSPK_7);
+
+					query.append(StringUtil.merge(creatorClassPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -5984,11 +6160,46 @@ public class MicroblogsEntryPersistenceImpl extends BasePersistenceImpl<Microblo
 			if (creatorClassPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_CCNI_CCPK_T_CREATORCLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.microblogs.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(creatorClassPKs));
+				if (creatorClassPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < creatorClassPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > creatorClassPKs.length) {
+								curEnd = creatorClassPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(creatorClassPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_CCNI_CCPK_T_CREATORCLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_CCNI_CCPK_T_CREATORCLASSPK_7);
+
+					query.append(StringUtil.merge(creatorClassPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -6752,11 +6963,46 @@ public class MicroblogsEntryPersistenceImpl extends BasePersistenceImpl<Microblo
 			if (creatorClassPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_C_CCNI_CCPK_T_CREATORCLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.microblogs.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(creatorClassPKs));
+				if (creatorClassPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < creatorClassPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > creatorClassPKs.length) {
+								curEnd = creatorClassPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(creatorClassPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_C_CCNI_CCPK_T_CREATORCLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_C_CCNI_CCPK_T_CREATORCLASSPK_7);
+
+					query.append(StringUtil.merge(creatorClassPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -6954,11 +7200,46 @@ public class MicroblogsEntryPersistenceImpl extends BasePersistenceImpl<Microblo
 			if (creatorClassPKs.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_C_CCNI_CCPK_T_CREATORCLASSPK_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.microblogs.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(creatorClassPKs));
+				if (creatorClassPKs.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < creatorClassPKs.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > creatorClassPKs.length) {
+								curEnd = creatorClassPKs.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(creatorClassPKs,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_C_CCNI_CCPK_T_CREATORCLASSPK_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_C_CCNI_CCPK_T_CREATORCLASSPK_7);
+
+					query.append(StringUtil.merge(creatorClassPKs));
+
+					query.append(")");
+				}
 
 				query.append(")");
 

@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -965,11 +966,46 @@ public class PushNotificationsDevicePersistenceImpl extends BasePersistenceImpl<
 			if (userIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_U_P_USERID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.push.notifications.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(userIds));
+				if (userIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < userIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > userIds.length) {
+								curEnd = userIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(userIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_U_P_USERID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_U_P_USERID_7);
+
+					query.append(StringUtil.merge(userIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -1164,11 +1200,46 @@ public class PushNotificationsDevicePersistenceImpl extends BasePersistenceImpl<
 			if (userIds.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_U_P_USERID_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.push.notifications.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(userIds));
+				if (userIds.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < userIds.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > userIds.length) {
+								curEnd = userIds.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(userIds,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_U_P_USERID_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_U_P_USERID_7);
+
+					query.append(StringUtil.merge(userIds));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
