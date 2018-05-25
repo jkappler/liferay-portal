@@ -61,6 +61,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -6318,15 +6319,47 @@ public class AssetTagPersistenceImpl extends BasePersistenceImpl<AssetTag>
 
 		query.append(_SQL_SELECT_ASSETTAG_WHERE_PKS_IN);
 
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
+		int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+					"database.in.clause.max.length"));
 
-			query.append(",");
+		if (uncachedPrimaryKeys.size() > databaseInClauseMaxLength) {
+			List<Serializable> uncachedPrimaryKeysList = new ArrayList<Serializable>(uncachedPrimaryKeys);
+
+			int curStart = 0;
+			int curEnd = 0;
+
+			while (curEnd < uncachedPrimaryKeys.size()) {
+				if (curStart == 0) {
+					curEnd = curEnd + databaseInClauseMaxLength;
+				}
+				else {
+					query.append(WHERE_OR);
+					query.append("tagId");
+					query.append(WHERE_IN);
+					query.append("(");
+
+					curEnd = curEnd + databaseInClauseMaxLength;
+
+					if (curEnd > uncachedPrimaryKeys.size()) {
+						curEnd = uncachedPrimaryKeys.size();
+					}
+				}
+
+				List<Serializable> curUncachedPrimaryKeysList = uncachedPrimaryKeysList.subList(curStart,
+						curEnd);
+
+				query.append(StringUtil.merge(curUncachedPrimaryKeysList));
+
+				query.append(")");
+			}
 		}
+		else {
+			query.append(StringUtil.merge(uncachedPrimaryKeys));
 
-		query.setIndex(query.index() - 1);
+			query.setIndex(query.index() - 1);
 
-		query.append(")");
+			query.append(")");
+		}
 
 		String sql = query.toString();
 
