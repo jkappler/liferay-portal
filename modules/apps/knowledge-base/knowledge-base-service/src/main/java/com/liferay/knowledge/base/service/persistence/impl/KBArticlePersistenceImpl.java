@@ -60,6 +60,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -3742,11 +3743,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_L_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_L_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_L_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -3915,11 +3951,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_L_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_L_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_L_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -4574,11 +4645,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_M_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_M_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_M_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -4747,11 +4853,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_M_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_M_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_M_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -5408,11 +5549,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_S_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_S_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_S_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -5581,11 +5757,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_S_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_S_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_S_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -10614,11 +10825,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_P_L_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_P_L_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_P_L_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -10787,11 +11033,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_P_L_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_P_L_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_P_L_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -11451,11 +11732,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_P_M_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_P_M_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_P_M_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -11624,11 +11940,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_P_M_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_P_M_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_P_M_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -12287,11 +12638,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_P_S_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_P_S_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_P_S_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -12460,11 +12846,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_P_S_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_P_S_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_P_S_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -13689,11 +14110,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (resourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(resourcePrimKeies));
+			if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < resourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > resourcePrimKeies.length) {
+							curEnd = resourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(resourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -13907,11 +14363,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -14092,11 +14583,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -14234,11 +14760,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (resourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(resourcePrimKeies));
+			if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < resourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > resourcePrimKeies.length) {
+							curEnd = resourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_R_G_L_RESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(resourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -15221,11 +15782,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (resourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(resourcePrimKeies));
+			if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < resourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > resourcePrimKeies.length) {
+							curEnd = resourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(resourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -15439,11 +16035,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -15623,11 +16254,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -15765,11 +16431,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (resourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(resourcePrimKeies));
+			if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < resourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > resourcePrimKeies.length) {
+							curEnd = resourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_R_G_M_RESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(resourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -16752,11 +17453,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (resourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(resourcePrimKeies));
+			if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < resourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > resourcePrimKeies.length) {
+							curEnd = resourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(resourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -16970,11 +17706,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -17154,11 +17925,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (resourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(resourcePrimKeies));
+				if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < resourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > resourcePrimKeies.length) {
+								curEnd = resourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(resourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -17295,11 +18101,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (resourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(resourcePrimKeies));
+			if (resourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < resourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > resourcePrimKeies.length) {
+							curEnd = resourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(resourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_R_G_S_RESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(resourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -18292,11 +19133,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (parentResourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(parentResourcePrimKeies));
+			if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < parentResourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > parentResourcePrimKeies.length) {
+							curEnd = parentResourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(parentResourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -18511,11 +19387,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -18700,11 +19611,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -18842,11 +19788,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (parentResourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(parentResourcePrimKeies));
+			if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < parentResourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > parentResourcePrimKeies.length) {
+							curEnd = parentResourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_P_L_PARENTRESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(parentResourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -19837,11 +20818,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (parentResourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(parentResourcePrimKeies));
+			if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < parentResourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > parentResourcePrimKeies.length) {
+							curEnd = parentResourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(parentResourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -20056,11 +21072,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -20243,11 +21294,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -20385,11 +21471,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (parentResourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(parentResourcePrimKeies));
+			if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < parentResourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > parentResourcePrimKeies.length) {
+							curEnd = parentResourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_P_M_PARENTRESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(parentResourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -21380,11 +22501,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (parentResourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(parentResourcePrimKeies));
+			if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < parentResourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > parentResourcePrimKeies.length) {
+							curEnd = parentResourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(parentResourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -21599,11 +22755,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -21787,11 +22978,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (parentResourcePrimKeies.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(parentResourcePrimKeies));
+				if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < parentResourcePrimKeies.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > parentResourcePrimKeies.length) {
+								curEnd = parentResourcePrimKeies.length;
+							}
+						}
+
+						long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(parentResourcePrimKeies));
+
+					query.append(")");
+				}
 
 				query.append(")");
 
@@ -21929,11 +23155,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (parentResourcePrimKeies.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(parentResourcePrimKeies));
+			if (parentResourcePrimKeies.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < parentResourcePrimKeies.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > parentResourcePrimKeies.length) {
+							curEnd = parentResourcePrimKeies.length;
+						}
+					}
+
+					long[] copyOfRangeClassNames = Arrays.copyOfRange(parentResourcePrimKeies,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_P_S_PARENTRESOURCEPRIMKEY_7);
+
+				query.append(StringUtil.merge(parentResourcePrimKeies));
+
+				query.append(")");
+			}
 
 			query.append(")");
 
@@ -31090,11 +32351,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (statuses.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(statuses));
+			if (statuses.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < statuses.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > statuses.length) {
+							curEnd = statuses.length;
+						}
+					}
+
+					int[] copyOfRangeClassNames = Arrays.copyOfRange(statuses,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+
+				query.append(StringUtil.merge(statuses));
+
+				query.append(")");
+			}
 
 			query.append(")");
 		}
@@ -31329,11 +32625,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (statuses.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(statuses));
+				if (statuses.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < statuses.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > statuses.length) {
+								curEnd = statuses.length;
+							}
+						}
+
+						int[] copyOfRangeClassNames = Arrays.copyOfRange(statuses,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+
+					query.append(StringUtil.merge(statuses));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -31553,11 +32884,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 			if (statuses.length > 0) {
 				query.append("(");
 
-				query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+				int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+							"database.in.clause.max.length"));
 
-				query.append(StringUtil.merge(statuses));
+				if (statuses.length > databaseInClauseMaxLength) {
+					int curStart = 0;
+					int curEnd = 0;
 
-				query.append(")");
+					while (curEnd < statuses.length) {
+						if (curStart == 0) {
+							curEnd = curEnd + databaseInClauseMaxLength;
+						}
+						else {
+							query.append(WHERE_OR);
+
+							curEnd = curEnd + databaseInClauseMaxLength;
+
+							if (curEnd > statuses.length) {
+								curEnd = statuses.length;
+							}
+						}
+
+						int[] copyOfRangeClassNames = Arrays.copyOfRange(statuses,
+								curStart, curEnd);
+
+						query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+
+						query.append(StringUtil.merge(copyOfRangeClassNames));
+
+						query.append(")");
+
+						curStart = curStart + databaseInClauseMaxLength;
+					}
+				}
+				else {
+					query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+
+					query.append(StringUtil.merge(statuses));
+
+					query.append(")");
+				}
 
 				query.append(")");
 			}
@@ -31731,11 +33097,46 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 		if (statuses.length > 0) {
 			query.append("(");
 
-			query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+			int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.knowledge.base.service.util.ServiceProps.get(
+						"database.in.clause.max.length"));
 
-			query.append(StringUtil.merge(statuses));
+			if (statuses.length > databaseInClauseMaxLength) {
+				int curStart = 0;
+				int curEnd = 0;
 
-			query.append(")");
+				while (curEnd < statuses.length) {
+					if (curStart == 0) {
+						curEnd = curEnd + databaseInClauseMaxLength;
+					}
+					else {
+						query.append(WHERE_OR);
+
+						curEnd = curEnd + databaseInClauseMaxLength;
+
+						if (curEnd > statuses.length) {
+							curEnd = statuses.length;
+						}
+					}
+
+					int[] copyOfRangeClassNames = Arrays.copyOfRange(statuses,
+							curStart, curEnd);
+
+					query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+
+					query.append(StringUtil.merge(copyOfRangeClassNames));
+
+					query.append(")");
+
+					curStart = curStart + databaseInClauseMaxLength;
+				}
+			}
+			else {
+				query.append(_FINDER_COLUMN_G_KBFI_UT_ST_STATUS_7);
+
+				query.append(StringUtil.merge(statuses));
+
+				query.append(")");
+			}
 
 			query.append(")");
 		}
@@ -33172,15 +34573,47 @@ public class KBArticlePersistenceImpl extends BasePersistenceImpl<KBArticle>
 
 		query.append(_SQL_SELECT_KBARTICLE_WHERE_PKS_IN);
 
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
+		int databaseInClauseMaxLength = GetterUtil.getInteger(com.liferay.portal.util.PropsUtil.get(
+					"database.in.clause.max.length"));
 
-			query.append(",");
+		if (uncachedPrimaryKeys.size() > databaseInClauseMaxLength) {
+			List<Serializable> uncachedPrimaryKeysList = new ArrayList<Serializable>(uncachedPrimaryKeys);
+
+			int curStart = 0;
+			int curEnd = 0;
+
+			while (curEnd < uncachedPrimaryKeys.size()) {
+				if (curStart == 0) {
+					curEnd = curEnd + databaseInClauseMaxLength;
+				}
+				else {
+					query.append(WHERE_OR);
+					query.append("kbArticleId");
+					query.append(WHERE_IN);
+					query.append("(");
+
+					curEnd = curEnd + databaseInClauseMaxLength;
+
+					if (curEnd > uncachedPrimaryKeys.size()) {
+						curEnd = uncachedPrimaryKeys.size();
+					}
+				}
+
+				List<Serializable> curUncachedPrimaryKeysList = uncachedPrimaryKeysList.subList(curStart,
+						curEnd);
+
+				query.append(StringUtil.merge(curUncachedPrimaryKeysList));
+
+				query.append(")");
+			}
 		}
+		else {
+			query.append(StringUtil.merge(uncachedPrimaryKeys));
 
-		query.setIndex(query.index() - 1);
+			query.setIndex(query.index() - 1);
 
-		query.append(")");
+			query.append(")");
+		}
 
 		String sql = query.toString();
 
