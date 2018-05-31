@@ -108,6 +108,15 @@ public class LayoutPrototypeModelListener
 
 		layoutPageTemplateEntry.setName(nameMap.get(defaultLocale));
 
+		if (!layoutPrototype.isActive()) {
+			layoutPageTemplateEntry.setStatus(
+				WorkflowConstants.STATUS_INACTIVE);
+		}
+		else {
+			layoutPageTemplateEntry.setStatus(
+				WorkflowConstants.STATUS_APPROVED);
+		}
+
 		_layoutPageTemplateEntryLocalService.updateLayoutPageTemplateEntry(
 			layoutPageTemplateEntry);
 	}
