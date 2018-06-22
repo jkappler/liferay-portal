@@ -62,8 +62,11 @@ public class LayoutPageTemplateEntryStagedModelRepository
 		return _layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 			userId, layoutPageTemplateEntry.getGroupId(),
 			layoutPageTemplateEntry.getLayoutPageTemplateCollectionId(),
+			layoutPageTemplateEntry.getClassNameId(),
+			layoutPageTemplateEntry.getClassTypeId(),
 			layoutPageTemplateEntry.getName(),
 			layoutPageTemplateEntry.getType(),
+			layoutPageTemplateEntry.isDefaultTemplate(),
 			layoutPageTemplateEntry.getLayoutPrototypeId(),
 			layoutPageTemplateEntry.getPreviewFileEntryId(),
 			layoutPageTemplateEntry.getStatus(), serviceContext);
@@ -128,6 +131,14 @@ public class LayoutPageTemplateEntryStagedModelRepository
 
 		return _layoutPageTemplateEntryLocalService.
 			getExportActionableDynamicQuery(portletDataContext);
+	}
+
+	@Override
+	public LayoutPageTemplateEntry getStagedModel(long id)
+		throws PortalException {
+
+		return _layoutPageTemplateEntryLocalService.getLayoutPageTemplateEntry(
+			id);
 	}
 
 	@Override
