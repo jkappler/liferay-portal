@@ -106,7 +106,7 @@ public class LayoutPageTemplateEntryServiceTest {
 		LayoutPageTemplateCollection layoutPageTemplateCollection =
 			LayoutPageTemplateCollectionServiceUtil.
 				addLayoutPageTemplateCollection(
-					_group.getGroupId(), "Layout Page Template Collection",
+					_group.getGroupId(), "Layout Page Template Collection2",
 					null, serviceContext);
 
 		LayoutPageTemplateEntryServiceUtil.addLayoutPageTemplateEntry(
