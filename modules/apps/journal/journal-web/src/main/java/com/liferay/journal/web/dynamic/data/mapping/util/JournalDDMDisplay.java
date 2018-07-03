@@ -42,8 +42,10 @@ import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.webdav.WebDAVUtil;
 
@@ -112,6 +114,25 @@ public class JournalDDMDisplay extends BaseDDMDisplay {
 		portletURL.setParameter("ddmStructureKey", structure.getStructureKey());
 
 		return portletURL.toString();
+	}
+
+	@Override
+	public String getEditTemplateBackURL(
+			LiferayPortletRequest liferayPortletRequest,
+			LiferayPortletResponse liferayPortletResponse, long classNameId,
+			long classPK, long resourceClassNameId, String portletResource)
+		throws Exception {
+
+		String redirect = ParamUtil.getString(
+			liferayPortletRequest, "redirect");
+
+		if (Validator.isNotNull(redirect)) {
+			return redirect;
+		}
+
+		return super.getEditTemplateBackURL(
+			liferayPortletRequest, liferayPortletResponse, classNameId, classPK,
+			resourceClassNameId, portletResource);
 	}
 
 	@Override
