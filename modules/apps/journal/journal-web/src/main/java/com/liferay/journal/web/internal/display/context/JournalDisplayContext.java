@@ -67,6 +67,7 @@ import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletProvider;
@@ -462,6 +463,25 @@ public class JournalDisplayContext {
 			ddmStructure, fields);
 
 		return _ddmFormValues;
+	}
+
+	public String getDDMRedirectURL(String windowId) throws Exception {
+		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+
+		PortletURL redirectURL = PortletURLFactoryUtil.create(
+			_request, portletDisplay.getId(), PortletRequest.RENDER_PHASE);
+
+		redirectURL.setParameter(
+			"mvcPath", "/update_structure_template_redirect.jsp");
+		redirectURL.setParameter(
+			"referringPortletResource", portletDisplay.getId());
+		redirectURL.setParameter("windowId", windowId);
+		redirectURL.setWindowState(LiferayWindowState.POP_UP);
+
+		return redirectURL.toString();
 	}
 
 	public String getDDMStructureKey() {

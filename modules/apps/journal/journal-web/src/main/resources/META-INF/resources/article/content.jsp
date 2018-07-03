@@ -161,7 +161,7 @@ if (!searchRestriction) {
 <liferay-portlet:renderURL portletName="<%= PortletProviderUtil.getPortletId(DDMStructure.class.getName(), PortletProvider.Action.EDIT) %>" var="editStructureURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
 	<portlet:param name="mvcPath" value="/edit_structure.jsp" />
 	<portlet:param name="navigationStartsOn" value="<%= DDMNavigationHelper.EDIT_STRUCTURE %>" />
-	<portlet:param name="closeRedirect" value="<%= currentURL %>" />
+	<portlet:param name="redirect" value='<%= journalDisplayContext.getDDMRedirectURL("editStructure") %>' />
 	<portlet:param name="showBackURL" value="<%= Boolean.FALSE.toString() %>" />
 	<portlet:param name="refererPortletName" value="<%= JournalPortletKeys.JOURNAL %>" />
 	<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
@@ -172,7 +172,7 @@ if (!searchRestriction) {
 <liferay-portlet:renderURL portletName="<%= PortletProviderUtil.getPortletId(DDMTemplate.class.getName(), PortletProvider.Action.EDIT) %>" var="editTemplateURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
 	<portlet:param name="mvcPath" value="/edit_template.jsp" />
 	<portlet:param name="navigationStartsOn" value="<%= DDMNavigationHelper.EDIT_TEMPLATE %>" />
-	<portlet:param name="closeRedirect" value="<%= currentURL %>" />
+	<portlet:param name="redirect" value='<%= journalDisplayContext.getDDMRedirectURL("editTemplate") %>' />
 	<portlet:param name="showBackURL" value="<%= Boolean.FALSE.toString() %>" />
 	<portlet:param name="refererPortletName" value="<%= JournalPortletKeys.JOURNAL %>" />
 	<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />

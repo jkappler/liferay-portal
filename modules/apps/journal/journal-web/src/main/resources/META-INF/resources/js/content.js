@@ -127,7 +127,7 @@ AUI.add(
 
 							Liferay.Util.openWindow(
 								{
-									id: A.guid(),
+									id: instance.ns('editStructure'),
 									refreshWindow: WIN,
 									title: strings.structures,
 									uri: urls.editStructure
@@ -146,7 +146,7 @@ AUI.add(
 
 							Liferay.Util.openWindow(
 								{
-									id: A.guid(),
+									id: instance.ns('editTemplate'),
 									refreshWindow: WIN,
 									title: strings.templates,
 									uri: urls.editTemplate
