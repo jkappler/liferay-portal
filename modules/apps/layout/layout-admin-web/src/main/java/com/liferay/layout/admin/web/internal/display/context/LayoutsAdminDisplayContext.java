@@ -1129,7 +1129,11 @@ public class LayoutsAdminDisplayContext {
 			layoutColumnsJSONArray.put(layoutSetBranchesJSONArray);
 		}
 
-		layoutColumnsJSONArray.put(_getLayoutsJSONArray(0, isPrivatePages()));
+		JSONArray pagesJSONArray = _getLayoutsJSONArray(0, isPrivatePages());
+
+		if (pagesJSONArray.length() > 0) {
+			layoutColumnsJSONArray.put(pagesJSONArray);
+		}
 
 		if (getSelPlid() == LayoutConstants.DEFAULT_PLID) {
 			return layoutColumnsJSONArray;
@@ -1148,12 +1152,12 @@ public class LayoutsAdminDisplayContext {
 		for (Layout layout : layouts) {
 			layoutColumnsJSONArray.put(
 				_getLayoutsJSONArray(
-					layout.getLayoutId(), selLayout.isPrivateLayout()));
+					layout.getParentLayoutId(), selLayout.isPrivateLayout()));
 		}
 
 		layoutColumnsJSONArray.put(
 			_getLayoutsJSONArray(
-				selLayout.getLayoutId(), selLayout.isPrivateLayout()));
+				selLayout.getParentLayoutId(), selLayout.isPrivateLayout()));
 
 		return layoutColumnsJSONArray;
 	}
