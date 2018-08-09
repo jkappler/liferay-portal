@@ -43,7 +43,21 @@ class SimpleInputModal extends PortletBase {
 	 */
 
 	_defaultFormSubmit(event) {
-		this.fetch(this.formSubmitURL, event.form)
+		const formElements = event.form.elements;
+
+		const data = {
+			[this.mainFieldName]: formElements[this.mainFieldName]
+		};
+
+		if (this.idFieldName) {
+			data[this.idFieldName] = formElements[this.idFieldName];
+		}
+
+		if (this.checkboxFieldName) {
+			data[this.checkboxFieldName] = formElements[this.checkboxFieldName];
+		}
+
+		this.fetch(this.formSubmitURL, data)
 			.then(response => response.json())
 			.then(
 				responseContent => {
