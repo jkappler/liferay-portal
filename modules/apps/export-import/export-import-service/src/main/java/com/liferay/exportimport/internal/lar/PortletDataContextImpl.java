@@ -707,9 +707,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 	@Override
 	public Object fromXML(byte[] bytes) {
 		if (ArrayUtil.isEmpty(bytes)) {
+			System.out.println("Array is empty.");
 			return null;
 		}
-
+		System.out.println("Array is not empty");
 		return _xStream.fromXML(new String(bytes));
 	}
 
@@ -1473,12 +1474,18 @@ public class PortletDataContextImpl implements PortletDataContext {
 		Attribute classNameAttribute = element.attribute("attached-class-name");
 
 		if ((object != null) && (classNameAttribute != null)) {
+			System.out.println("This should pass!!!!!!!!!");
 			String className = classNameAttribute.getText();
 
 			BeanPropertiesUtil.setProperty(object, "className", className);
 			BeanPropertiesUtil.setProperty(
 				object, "classNameId", PortalUtil.getClassNameId(className));
+		} else {
+			System.out.println("Object or className Attribute in PortletDataContextImpl.java is null");
+			System.out.println("object: " + object);
+			System.out.println("classNameAttribute: " + classNameAttribute);
 		}
+		System.out.flush();
 
 		return object;
 	}
@@ -1491,8 +1498,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 	@Override
 	public String getZipEntryAsString(String path) {
 		if (!Validator.isFilePath(path, false)) {
+			System.out.println(path + " is not a file path.");
 			return null;
 		}
+		System.out.println(path + "is a valid path.");
 
 		return getZipReader().getEntryAsString(path);
 	}

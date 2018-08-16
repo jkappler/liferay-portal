@@ -69,6 +69,8 @@ public class AddSiteNavigationMenuItemMVCActionCommand
 
 		String type = ParamUtil.getString(actionRequest, "type");
 
+		System.out.println("type: " + type);
+
 		UnicodeProperties typeSettingsProperties =
 			PropertiesParamUtil.getProperties(
 				actionRequest, "TypeSettingsProperties--");
@@ -83,6 +85,8 @@ public class AddSiteNavigationMenuItemMVCActionCommand
 				_siteNavigationMenuItemService.addSiteNavigationMenuItem(
 					themeDisplay.getScopeGroupId(), siteNavigationMenuId, 0,
 					type, typeSettingsProperties.toString(), serviceContext);
+
+			System.out.println("sitenavigationMenuItem: " + siteNavigationMenuItem);
 
 			jsonObject.put(
 				"siteNavigationMenuItemId",

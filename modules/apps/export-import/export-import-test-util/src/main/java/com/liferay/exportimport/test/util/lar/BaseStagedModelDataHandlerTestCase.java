@@ -425,6 +425,9 @@ public abstract class BaseStagedModelDataHandlerTestCase {
 			return;
 		}
 
+		System.out.println("Testing Versioning 1");
+		System.out.flush();
+
 		Map<String, List<StagedModel>> dependentStagedModelsMap =
 			addDependentStagedModelsMap(stagingGroup);
 
@@ -448,6 +451,9 @@ public abstract class BaseStagedModelDataHandlerTestCase {
 		if (!isVersionableStagedModel()) {
 			return;
 		}
+
+		System.out.println("Testing Versioning 2");
+		System.out.flush();
 
 		Map<String, List<StagedModel>> dependentStagedModelsMap =
 			addDependentStagedModelsMap(stagingGroup);
@@ -480,6 +486,9 @@ public abstract class BaseStagedModelDataHandlerTestCase {
 		if (!isVersionableStagedModel()) {
 			return;
 		}
+
+		System.out.println("Testing Export Import 2x");
+		System.out.flush();
 
 		Map<String, List<StagedModel>> dependentStagedModelsMap =
 			addDependentStagedModelsMap(stagingGroup);
@@ -615,6 +624,9 @@ public abstract class BaseStagedModelDataHandlerTestCase {
 	protected void exportImportStagedModel(StagedModel stagedModel)
 		throws Exception {
 
+		System.out.println("-----Enter Export Import Staged Model-----");
+		System.out.flush();
+
 		initExport();
 
 		StagedModelDataHandlerUtil.exportStagedModel(
@@ -623,6 +635,14 @@ public abstract class BaseStagedModelDataHandlerTestCase {
 		initImport();
 
 		StagedModel exportedStagedModel = readExportedStagedModel(stagedModel);
+
+		 if (exportedStagedModel != null) {
+		 	System.out.println("ExportedStageModel: " + exportedStagedModel);
+		} else {
+			System.out.println("ExportedStageModel: NULL.");
+		}
+		System.out.println("----------------------------");
+		System.out.flush();
 
 		Assert.assertNotNull(exportedStagedModel);
 
@@ -710,6 +730,9 @@ public abstract class BaseStagedModelDataHandlerTestCase {
 				exportGroup.getCompanyId(), exportGroup.getGroupId(),
 				getParameterMap(), getStartDate(), getEndDate(), zipWriter);
 
+		System.out.println("portletDataContext: " + portletDataContext);
+		System.out.flush();
+
 		portletDataContext.setExportImportProcessId(
 			BaseStagedModelDataHandlerTestCase.class.getName());
 
@@ -793,9 +816,17 @@ public abstract class BaseStagedModelDataHandlerTestCase {
 	protected StagedModel readExportedStagedModel(StagedModel stagedModel) {
 		String stagedModelPath = ExportImportPathUtil.getModelPath(stagedModel);
 
+		System.out.println("Staged Model Path: " + stagedModelPath + "\n");
+
+		System.out.flush();
+
 		StagedModel exportedStagedModel =
 			(StagedModel)portletDataContext.getZipEntryAsObject(
 				stagedModelPath);
+
+		System.out.println("getZip Entry: " + exportedStagedModel); 
+
+		System.out.flush();
 
 		return exportedStagedModel;
 	}

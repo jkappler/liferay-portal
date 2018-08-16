@@ -167,14 +167,19 @@ public class StagedModelDataHandlerUtil {
 			PortletDataContext portletDataContext, T stagedModel)
 		throws PortletDataException {
 
+		System.out.println("Enter exportStageModel");
+
 		if (!ExportImportHelperUtil.isReferenceWithinExportScope(
 				portletDataContext, stagedModel)) {
-
+			System.out.println("Fail isReferencewithinExportScope");
+			System.out.flush();
 			return;
 		}
 
 		StagedModelDataHandler<T> stagedModelDataHandler =
 			_getStagedModelDataHandler(stagedModel);
+
+		System.out.println("stagedModelDataHandler: " + stagedModelDataHandler);
 
 		if (stagedModelDataHandler == null) {
 			return;

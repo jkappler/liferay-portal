@@ -107,9 +107,16 @@ public class ZipReaderImpl implements ZipReader {
 		try {
 			InputStream is = getEntryAsInputStream(name);
 
+			System.out.println("Input stream is = " + is);
+			System.out.flush();
+
 			if (is != null) {
 				bytes = FileUtil.getBytes(is);
+				System.out.println("Bytes is = " + bytes);
+			} else {
+				System.out.println("'is' is null");
 			}
+			System.out.flush();
 		}
 		catch (IOException ioe) {
 			_log.error(ioe, ioe);
@@ -130,34 +137,50 @@ public class ZipReaderImpl implements ZipReader {
 
 		File file = new File(_zipFile, name, DefaultArchiveDetector.NULL);
 
+		System.out.println("File = " + file);
+
 		if (file.exists() && !file.isDirectory()) {
 			try {
 				if (_log.isDebugEnabled()) {
 					_log.debug("Extracting " + name);
 				}
-
+				System.out.println("File found!");
+				System.out.flush();
 				return new FileInputStream(file);
 			}
 			catch (IOException ioe) {
 				_log.error(ioe, ioe);
 			}
 		}
-
+		System.out.println("File not found!");
+		System.out.flush();
 		return null;
 	}
 
 	@Override
 	public String getEntryAsString(String name) {
+		System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+		System.out.println("Entered ZipReaderImpl.getEntryAsString(" + name + ");");
+		System.out.flush();
 		if (Validator.isNull(name)) {
+			System.out.println("Null paramenter name");
+			System.out.flush();
 			return null;
 		}
 
 		byte[] bytes = getEntryAsByteArray(name);
 
+		System.out.println("Bytes: " + bytes);
+		System.out.flush();
+
 		if (bytes != null) {
+			System.out.println("--------Success End---------");
+			System.out.flush();
 			return new String(bytes);
 		}
 
+		System.out.println("-------------Fail End----------");
+		System.out.flush();
 		return null;
 	}
 
