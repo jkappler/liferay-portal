@@ -21,17 +21,7 @@ class FragmentEntryLinkList extends Component {
 	focusFragmentEntryLink(fragmentEntryLinkId) {
 		requestAnimationFrame(
 			() => {
-				const index = this.fragmentEntryLinks.indexOf(
-					this.fragmentEntryLinks.find(
-						fragmentEntryLink => (
-							fragmentEntryLink.fragmentEntryLinkId === fragmentEntryLinkId
-						)
-					)
-				);
-
-				const fragmentEntryLinkElement = this.refs.fragmentEntryLinks.querySelectorAll(
-					'.fragment-entry-link-wrapper'
-				)[index];
+				const fragmentEntryLinkElement = this.refs[fragmentEntryLinkId];
 
 				if (fragmentEntryLinkElement) {
 					fragmentEntryLinkElement.focus();
@@ -103,36 +93,26 @@ FragmentEntryLinkList.STATE = {
 	dropTargetClass: Config.string(),
 
 	/**
-	 * List of fragment instances being used, the order
-	 * of the elements in this array defines their position.
-	 * @default []
+	 * Nearest border of the hovered fragment entry link when dragging.
+	 * @default undefined
 	 * @instance
 	 * @memberOf FragmentEntryLinkList
 	 * @review
-	 * @type {Array<{
-	 *   config: Object,
-	 *   content: string,
-	 *   editableValues: Object,
-	 *   fragmentEntryId: !string,
-	 *   fragmentEntryLinkId: !string,
-	 *   name: !string,
-	 *   position: !number
-	 * }>}
+	 * @type {!string}
 	 */
 
-	fragmentEntryLinks: Config.arrayOf(
-		Config.shapeOf(
-			{
-				config: Config.object().value({}),
-				content: Config.any().value(''),
-				editableValues: Config.object().value({}),
-				fragmentEntryId: Config.string().required(),
-				fragmentEntryLinkId: Config.string().required(),
-				name: Config.string().required(),
-				position: Config.number().required()
-			}
-		)
-	).value([])
+	hoveredFragmentEntryLinkBorder: Config.string(),
+
+	/**
+	 * Id of the hovered fragment entry link when dragging.
+	 * @default undefined
+	 * @instance
+	 * @memberOf FragmentEntryLinkList
+	 * @review
+	 * @type {!string}
+	 */
+
+	hoveredFragmentEntryLinkId: Config.string()
 };
 
 Soy.register(FragmentEntryLinkList, templates);
