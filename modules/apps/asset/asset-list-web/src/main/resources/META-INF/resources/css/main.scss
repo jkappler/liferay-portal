@@ -1,6 +1,19 @@
 @import "mixins";
 
 .portlet-asset-list-web {
+	.preview-container {
+		padding: 30px;
+		width: 80%;
+	}
+
+	.sidebar {
+		padding: 30px;
+		position: absolute;
+		right: 0px;
+		top: 0px;
+		width: 20%;
+	}
+
 	.timeline-item {
 		&:first-child {
 			.timeline-icon {
