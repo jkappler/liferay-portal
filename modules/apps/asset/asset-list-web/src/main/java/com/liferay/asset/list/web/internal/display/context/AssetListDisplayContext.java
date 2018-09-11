@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
+import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -308,6 +309,10 @@ public class AssetListDisplayContext {
 		return _assetListEntryType;
 	}
 
+	public String getAssetPublisherInstanceId() {
+		return "assetListPreview";
+	}
+
 	public CreationMenu getCreationMenu() {
 		return new CreationMenu() {
 			{
@@ -330,6 +335,16 @@ public class AssetListDisplayContext {
 					});
 			}
 		};
+	}
+
+	public String getDisplayStyle() {
+		return ParamUtil.getString(_request, "displayStyle", "abstracts");
+	}
+
+	public long getDisplayStyleGroupId() throws Exception {
+		AssetListEntry assetListEntry = getAssetListEntry();
+
+		return assetListEntry.getGroupId();
 	}
 
 	public String getEmptyResultMessageDescription() {
@@ -452,16 +467,23 @@ public class AssetListDisplayContext {
 	}
 
 	public String getViewContentPreferences() throws Exception {
+		String portletId = PortletIdCodec.encode(
+			AssetPublisherPortletKeys.ASSET_PUBLISHER,
+			getAssetPublisherInstanceId());
+
 		PortletPreferences portletPreferences =
 			PortletPreferencesFactoryUtil.getPortletPreferences(
-				_request, AssetPublisherPortletKeys.ASSET_PUBLISHER);
+				_request, portletId);
 
 		portletPreferences.setValue(
 			"assetListEntryId", String.valueOf(getAssetListEntryId()));
+		portletPreferences.setValue("displayStyle", getDisplayStyle());
 		portletPreferences.setValue(
 			"emailAssetEntryAddedEnabled", Boolean.FALSE.toString());
 		portletPreferences.setValue("paginationType", "none");
 		portletPreferences.setValue("selectionStyle", "asset-list");
+
+		portletPreferences.store();
 
 		return PortletPreferencesFactoryUtil.toXML(portletPreferences);
 	}
