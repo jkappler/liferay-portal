@@ -2,7 +2,8 @@
 	"dependencies": {
 		"metal-component": "^2.4.5",
 		"metal-soy": "^2.4.5",
-		"metal-state": "^2.13.2"
+		"metal-state": "^2.13.2",
+		"metal-uri": "^3.1.1"
 	},
 	"devDependencies": {
 		"check-source-formatting": "^2.0.4",
