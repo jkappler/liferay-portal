@@ -12,26 +12,14 @@
  * details.
  */
 
-package com.liferay.portal.kernel.transaction;
+package com.liferay.portal.kernel.model.adapter;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.portal.kernel.model.StagedGroupedModel;
+import com.liferay.portal.kernel.model.WorkflowDefinitionLink;
 
 /**
- * @author Shuyang Zhou
+ * @author Mate Thurzo
  */
-@ProviderType
-public interface TransactionStatus {
-
-	/**
-	 * @deprecated As of Judson (7.1.x), with no direct replacement
-	 */
-	@Deprecated
-	public Object getPlatformTransactionManager();
-
-	public boolean isCompleted();
-
-	public boolean isNewTransaction();
-
-	public boolean isRollbackOnly();
-
+public interface StagedGroupedWorkflowDefinitionLink
+	extends StagedGroupedModel, WorkflowDefinitionLink {
 }
