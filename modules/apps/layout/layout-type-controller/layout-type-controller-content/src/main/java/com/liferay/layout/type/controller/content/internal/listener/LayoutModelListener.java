@@ -73,10 +73,6 @@ public class LayoutModelListener extends BaseModelListener<Layout> {
 						LayoutPageTemplateEntry.class.getName()),
 					layoutPageTemplateEntryId);
 
-		if (layoutPageTemplateStructure == null) {
-			return;
-		}
-
 		String data = layoutPageTemplateStructure.getData();
 
 		if (Validator.isNull(data)) {

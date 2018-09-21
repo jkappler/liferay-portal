@@ -310,11 +310,7 @@ public class FragmentsEditorDisplayContext {
 				fetchLayoutPageTemplateStructure(
 					_themeDisplay.getScopeGroupId(), _classNameId, _classPK);
 
-		if (layoutPageTemplateStructure != null) {
-			return layoutPageTemplateStructure.getData();
-		}
-
-		return StringPool.BLANK;
+		return layoutPageTemplateStructure.getData();
 	}
 
 	private LayoutPageTemplateEntry _getLayoutPageTemplateEntry()

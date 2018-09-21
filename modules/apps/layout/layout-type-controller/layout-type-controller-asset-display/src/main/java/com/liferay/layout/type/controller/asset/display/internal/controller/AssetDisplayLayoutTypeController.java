@@ -167,10 +167,6 @@ public class AssetDisplayLayoutTypeController
 						LayoutPageTemplateEntry.class.getName()),
 					layoutPageTemplateEntryId);
 
-		if (layoutPageTemplateStructure == null) {
-			return Collections.emptyList();
-		}
-
 		String data = layoutPageTemplateStructure.getData();
 
 		if (Validator.isNull(data)) {

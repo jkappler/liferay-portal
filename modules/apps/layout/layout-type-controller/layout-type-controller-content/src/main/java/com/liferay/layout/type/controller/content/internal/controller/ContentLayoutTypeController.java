@@ -218,10 +218,6 @@ public class ContentLayoutTypeController extends BaseLayoutTypeControllerImpl {
 					_portal.getClassNameId(Layout.class.getName()),
 					layout.getPlid());
 
-		if (layoutPageTemplateStructure == null) {
-			return Collections.emptyList();
-		}
-
 		String data = layoutPageTemplateStructure.getData();
 
 		if (Validator.isNull(data)) {
