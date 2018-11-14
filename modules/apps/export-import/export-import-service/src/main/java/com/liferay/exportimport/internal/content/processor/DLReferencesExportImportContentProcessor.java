@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.uuid.PortalUUID;
 import com.liferay.portal.kernel.xml.Element;
 
 import java.util.ArrayList;
@@ -121,8 +122,7 @@ public class DLReferencesExportImportContentProcessor
 	}
 
 	protected Map<String, String[]> getDLReferenceParameters(
-		long groupId, String content, int beginPos, int endPos) {
-
+			long groupId, String content, int beginPos, int endPos) {
 		boolean legacyURL = true;
 		String[] stopStrings = _DL_REFERENCE_LEGACY_STOP_STRINGS;
 
@@ -156,22 +156,21 @@ public class DLReferencesExportImportContentProcessor
 			if ("portlet_file_entry".equals(pathArray[2])) {
 				map.put("groupId", new String[] {pathArray[3]});
 				map.put("title", new String[] {_http.decodeURL(pathArray[4])});
-				map.put("uuid", new String[] {pathArray[5]});
 			}
 			else {
 				map.put("groupId", new String[] {pathArray[2]});
 
-				if (pathArray.length == 4) {
-					map.put("uuid", new String[] {pathArray[3]});
-				}
-				else if (pathArray.length == 5) {
+				if (pathArray.length == 5) {
 					map.put("folderId", new String[] {pathArray[3]});
 					map.put(
 						"title", new String[] {_http.decodeURL(pathArray[4])});
 				}
-				else if (pathArray.length > 5) {
-					map.put("uuid", new String[] {pathArray[5]});
-				}
+			}
+
+			List<String> uuids = _portalUUID.getUuids(dlReference);
+
+			if (!uuids.isEmpty()) {
+				map.put("uuid", new String[] {uuids.get(0)});
 			}
 		}
 		else {
@@ -672,5 +671,8 @@ public class DLReferencesExportImportContentProcessor
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private PortalUUID _portalUUID;
 
 }
