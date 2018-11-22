@@ -83,6 +83,24 @@ public class FragmentEntryServiceSoap {
 	}
 
 	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
+		long groupId, long fragmentCollectionId, String name, int type,
+		int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
+					fragmentCollectionId, name, type, status, serviceContext);
+
+			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
 		long groupId, long fragmentCollectionId, String fragmentEntryKey,
 		String name, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -90,6 +108,25 @@ public class FragmentEntryServiceSoap {
 		try {
 			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
 					fragmentCollectionId, fragmentEntryKey, name, status,
+					serviceContext);
+
+			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
+		long groupId, long fragmentCollectionId, String fragmentEntryKey,
+		String name, int type, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
+					fragmentCollectionId, fragmentEntryKey, name, type, status,
 					serviceContext);
 
 			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
@@ -121,6 +158,25 @@ public class FragmentEntryServiceSoap {
 	}
 
 	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
+		long groupId, long fragmentCollectionId, String name, String css,
+		String html, String js, int type, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
+					fragmentCollectionId, name, css, html, js, type, status,
+					serviceContext);
+
+			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
 		long groupId, long fragmentCollectionId, String fragmentEntryKey,
 		String name, String css, String html, String js, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -129,6 +185,25 @@ public class FragmentEntryServiceSoap {
 			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
 					fragmentCollectionId, fragmentEntryKey, name, css, html,
 					js, status, serviceContext);
+
+			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
+		long groupId, long fragmentCollectionId, String fragmentEntryKey,
+		String name, String css, String html, String js, int type, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
+					fragmentCollectionId, fragmentEntryKey, name, css, html,
+					js, type, status, serviceContext);
 
 			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
 		}
