@@ -94,8 +94,6 @@ public class FragmentEntryLinkLocalServiceImpl
 			serviceContext.getCreateDate(new Date()));
 		fragmentEntryLink.setNamespace(StringUtil.randomId());
 
-		_updateClassModel(classNameId, classPK);
-
 		fragmentEntryLinkPersistence.update(fragmentEntryLink);
 
 		return fragmentEntryLink;
@@ -218,6 +216,24 @@ public class FragmentEntryLinkLocalServiceImpl
 			groupId, fragmentEntryId, classNameId, layoutPageTemplateType);
 	}
 
+	public void updateClassModel(long classNameId, long classPK)
+		throws PortalException {
+
+		if (classNameId != _portal.getClassNameId(Layout.class)) {
+			return;
+		}
+
+		Layout layout = _layoutLocalService.fetchLayout(classPK);
+
+		if (layout == null) {
+			return;
+		}
+
+		_layoutLocalService.updateLayout(
+			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
+			layout.getTypeSettings());
+	}
+
 	@Override
 	public FragmentEntryLink updateFragmentEntryLink(
 			long fragmentEntryLinkId, int position)
@@ -227,9 +243,6 @@ public class FragmentEntryLinkLocalServiceImpl
 			fragmentEntryLinkId);
 
 		fragmentEntryLink.setPosition(position);
-
-		_updateClassModel(
-			fragmentEntryLink.getClassNameId(), fragmentEntryLink.getClassPK());
 
 		fragmentEntryLinkPersistence.update(fragmentEntryLink);
 
@@ -279,7 +292,7 @@ public class FragmentEntryLinkLocalServiceImpl
 
 		fragmentEntryLink.setEditableValues(editableValues);
 
-		_updateClassModel(
+		updateClassModel(
 			fragmentEntryLink.getClassNameId(), fragmentEntryLink.getClassPK());
 
 		fragmentEntryLinkPersistence.update(fragmentEntryLink);
@@ -342,30 +355,12 @@ public class FragmentEntryLinkLocalServiceImpl
 
 			fragmentEntryLink.setLastPropagationDate(new Date());
 
-			_updateClassModel(
+			updateClassModel(
 				fragmentEntryLink.getClassNameId(),
 				fragmentEntryLink.getClassPK());
 
 			fragmentEntryLinkPersistence.update(fragmentEntryLink);
 		}
-	}
-
-	private void _updateClassModel(long classNameId, long classPK)
-		throws PortalException {
-
-		if (classNameId != _portal.getClassNameId(Layout.class)) {
-			return;
-		}
-
-		Layout layout = _layoutLocalService.fetchLayout(classPK);
-
-		if (layout == null) {
-			return;
-		}
-
-		_layoutLocalService.updateLayout(
-			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
-			layout.getTypeSettings());
 	}
 
 	@ServiceReference(type = FragmentEntryProcessorRegistry.class)
