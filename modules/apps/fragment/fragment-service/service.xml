@@ -80,6 +80,7 @@
 		<column name="html" type="String" />
 		<column name="js" type="String" />
 		<column name="previewFileEntryId" type="long" />
+		<column name="type" type="int" />
 		<column name="lastPublishDate" type="Date" />
 		<column name="status" type="int" />
 		<column name="statusByUserId" type="long" />
@@ -113,6 +114,11 @@
 			<finder-column name="fragmentCollectionId" />
 			<finder-column case-sensitive="false" comparator="LIKE" name="name" />
 		</finder>
+		<finder name="G_T" return-type="FragmentEntry" unique="true">
+			<finder-column name="groupId" />
+			<finder-column name="fragmentCollectionId" />
+			<finder-column name="type" />
+		</finder>
 		<finder name="G_FCI_S" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="fragmentCollectionId" />
@@ -122,6 +128,12 @@
 			<finder-column name="groupId" />
 			<finder-column name="fragmentCollectionId" />
 			<finder-column case-sensitive="false" comparator="LIKE" name="name" />
+			<finder-column name="status" />
+		</finder>
+		<finder name="G_FCI_T_S" return-type="FragmentEntry" unique="true">
+			<finder-column name="groupId" />
+			<finder-column name="fragmentCollectionId" />
+			<finder-column name="type" />
 			<finder-column name="status" />
 		</finder>
 
