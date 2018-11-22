@@ -996,6 +996,62 @@ public interface FragmentEntryPersistence extends BasePersistence<FragmentEntry>
 		String name);
 
 	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @return the matching fragment entry
+	* @throws NoSuchEntryException if a matching fragment entry could not be found
+	*/
+	public FragmentEntry findByG_T(long groupId, long fragmentCollectionId,
+		int type) throws NoSuchEntryException;
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	*/
+	public FragmentEntry fetchByG_T(long groupId, long fragmentCollectionId,
+		int type);
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	*/
+	public FragmentEntry fetchByG_T(long groupId, long fragmentCollectionId,
+		int type, boolean retrieveFromCache);
+
+	/**
+	* Removes the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @return the fragment entry that was removed
+	*/
+	public FragmentEntry removeByG_T(long groupId, long fragmentCollectionId,
+		int type) throws NoSuchEntryException;
+
+	/**
+	* Returns the number of fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @return the number of matching fragment entries
+	*/
+	public int countByG_T(long groupId, long fragmentCollectionId, int type);
+
+	/**
 	* Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63;.
 	*
 	* @param groupId the group ID
@@ -1328,6 +1384,71 @@ public interface FragmentEntryPersistence extends BasePersistence<FragmentEntry>
 	*/
 	public int countByG_FCI_LikeN_S(long groupId, long fragmentCollectionId,
 		String name, int status);
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @return the matching fragment entry
+	* @throws NoSuchEntryException if a matching fragment entry could not be found
+	*/
+	public FragmentEntry findByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status)
+		throws NoSuchEntryException;
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	*/
+	public FragmentEntry fetchByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status);
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	*/
+	public FragmentEntry fetchByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status,
+		boolean retrieveFromCache);
+
+	/**
+	* Removes the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @return the fragment entry that was removed
+	*/
+	public FragmentEntry removeByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status)
+		throws NoSuchEntryException;
+
+	/**
+	* Returns the number of fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @return the number of matching fragment entries
+	*/
+	public int countByG_FCI_T_S(long groupId, long fragmentCollectionId,
+		int type, int status);
 
 	/**
 	* Caches the fragment entry in the entity cache if it is enabled.

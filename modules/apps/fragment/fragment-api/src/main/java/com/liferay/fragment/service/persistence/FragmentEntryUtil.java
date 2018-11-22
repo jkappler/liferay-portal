@@ -1280,6 +1280,77 @@ public class FragmentEntryUtil {
 	}
 
 	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @return the matching fragment entry
+	* @throws NoSuchEntryException if a matching fragment entry could not be found
+	*/
+	public static FragmentEntry findByG_T(long groupId,
+		long fragmentCollectionId, int type)
+		throws com.liferay.fragment.exception.NoSuchEntryException {
+		return getPersistence().findByG_T(groupId, fragmentCollectionId, type);
+	}
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	*/
+	public static FragmentEntry fetchByG_T(long groupId,
+		long fragmentCollectionId, int type) {
+		return getPersistence().fetchByG_T(groupId, fragmentCollectionId, type);
+	}
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	*/
+	public static FragmentEntry fetchByG_T(long groupId,
+		long fragmentCollectionId, int type, boolean retrieveFromCache) {
+		return getPersistence()
+				   .fetchByG_T(groupId, fragmentCollectionId, type,
+			retrieveFromCache);
+	}
+
+	/**
+	* Removes the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @return the fragment entry that was removed
+	*/
+	public static FragmentEntry removeByG_T(long groupId,
+		long fragmentCollectionId, int type)
+		throws com.liferay.fragment.exception.NoSuchEntryException {
+		return getPersistence().removeByG_T(groupId, fragmentCollectionId, type);
+	}
+
+	/**
+	* Returns the number of fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @return the number of matching fragment entries
+	*/
+	public static int countByG_T(long groupId, long fragmentCollectionId,
+		int type) {
+		return getPersistence().countByG_T(groupId, fragmentCollectionId, type);
+	}
+
+	/**
 	* Returns all the fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and status = &#63;.
 	*
 	* @param groupId the group ID
@@ -1694,6 +1765,88 @@ public class FragmentEntryUtil {
 		return getPersistence()
 				   .countByG_FCI_LikeN_S(groupId, fragmentCollectionId, name,
 			status);
+	}
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @return the matching fragment entry
+	* @throws NoSuchEntryException if a matching fragment entry could not be found
+	*/
+	public static FragmentEntry findByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status)
+		throws com.liferay.fragment.exception.NoSuchEntryException {
+		return getPersistence()
+				   .findByG_FCI_T_S(groupId, fragmentCollectionId, type, status);
+	}
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	*/
+	public static FragmentEntry fetchByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status) {
+		return getPersistence()
+				   .fetchByG_FCI_T_S(groupId, fragmentCollectionId, type, status);
+	}
+
+	/**
+	* Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	*/
+	public static FragmentEntry fetchByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .fetchByG_FCI_T_S(groupId, fragmentCollectionId, type,
+			status, retrieveFromCache);
+	}
+
+	/**
+	* Removes the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @return the fragment entry that was removed
+	*/
+	public static FragmentEntry removeByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status)
+		throws com.liferay.fragment.exception.NoSuchEntryException {
+		return getPersistence()
+				   .removeByG_FCI_T_S(groupId, fragmentCollectionId, type,
+			status);
+	}
+
+	/**
+	* Returns the number of fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param fragmentCollectionId the fragment collection ID
+	* @param type the type
+	* @param status the status
+	* @return the number of matching fragment entries
+	*/
+	public static int countByG_FCI_T_S(long groupId, long fragmentCollectionId,
+		int type, int status) {
+		return getPersistence()
+				   .countByG_FCI_T_S(groupId, fragmentCollectionId, type, status);
 	}
 
 	/**

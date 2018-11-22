@@ -152,6 +152,8 @@ public class FragmentEntryPersistenceTest {
 
 		newFragmentEntry.setPreviewFileEntryId(RandomTestUtil.nextLong());
 
+		newFragmentEntry.setType(RandomTestUtil.nextInt());
+
 		newFragmentEntry.setLastPublishDate(RandomTestUtil.nextDate());
 
 		newFragmentEntry.setStatus(RandomTestUtil.nextInt());
@@ -198,6 +200,8 @@ public class FragmentEntryPersistenceTest {
 			newFragmentEntry.getJs());
 		Assert.assertEquals(existingFragmentEntry.getPreviewFileEntryId(),
 			newFragmentEntry.getPreviewFileEntryId());
+		Assert.assertEquals(existingFragmentEntry.getType(),
+			newFragmentEntry.getType());
 		Assert.assertEquals(Time.getShortTimestamp(
 				existingFragmentEntry.getLastPublishDate()),
 			Time.getShortTimestamp(newFragmentEntry.getLastPublishDate()));
@@ -281,6 +285,14 @@ public class FragmentEntryPersistenceTest {
 	}
 
 	@Test
+	public void testCountByG_T() throws Exception {
+		_persistence.countByG_T(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
+
+		_persistence.countByG_T(0L, 0L, 0);
+	}
+
+	@Test
 	public void testCountByG_FCI_S() throws Exception {
 		_persistence.countByG_FCI_S(RandomTestUtil.nextLong(),
 			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
@@ -296,6 +308,15 @@ public class FragmentEntryPersistenceTest {
 		_persistence.countByG_FCI_LikeN_S(0L, 0L, "null", 0);
 
 		_persistence.countByG_FCI_LikeN_S(0L, 0L, (String)null, 0);
+	}
+
+	@Test
+	public void testCountByG_FCI_T_S() throws Exception {
+		_persistence.countByG_FCI_T_S(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextInt(),
+			RandomTestUtil.nextInt());
+
+		_persistence.countByG_FCI_T_S(0L, 0L, 0, 0);
 	}
 
 	@Test
@@ -326,9 +347,9 @@ public class FragmentEntryPersistenceTest {
 			"userId", true, "userName", true, "createDate", true,
 			"modifiedDate", true, "fragmentCollectionId", true,
 			"fragmentEntryKey", true, "name", true, "css", true, "html", true,
-			"js", true, "previewFileEntryId", true, "lastPublishDate", true,
-			"status", true, "statusByUserId", true, "statusByUserName", true,
-			"statusDate", true);
+			"js", true, "previewFileEntryId", true, "type", true,
+			"lastPublishDate", true, "status", true, "statusByUserId", true,
+			"statusByUserName", true, "statusDate", true);
 	}
 
 	@Test
@@ -547,6 +568,31 @@ public class FragmentEntryPersistenceTest {
 				existingFragmentEntry.getFragmentEntryKey(),
 				ReflectionTestUtil.invoke(existingFragmentEntry,
 					"getOriginalFragmentEntryKey", new Class<?>[0])));
+
+		Assert.assertEquals(Long.valueOf(existingFragmentEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntry,
+				"getOriginalGroupId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(
+				existingFragmentEntry.getFragmentCollectionId()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntry,
+				"getOriginalFragmentCollectionId", new Class<?>[0]));
+		Assert.assertEquals(Integer.valueOf(existingFragmentEntry.getType()),
+			ReflectionTestUtil.<Integer>invoke(existingFragmentEntry,
+				"getOriginalType", new Class<?>[0]));
+
+		Assert.assertEquals(Long.valueOf(existingFragmentEntry.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntry,
+				"getOriginalGroupId", new Class<?>[0]));
+		Assert.assertEquals(Long.valueOf(
+				existingFragmentEntry.getFragmentCollectionId()),
+			ReflectionTestUtil.<Long>invoke(existingFragmentEntry,
+				"getOriginalFragmentCollectionId", new Class<?>[0]));
+		Assert.assertEquals(Integer.valueOf(existingFragmentEntry.getType()),
+			ReflectionTestUtil.<Integer>invoke(existingFragmentEntry,
+				"getOriginalType", new Class<?>[0]));
+		Assert.assertEquals(Integer.valueOf(existingFragmentEntry.getStatus()),
+			ReflectionTestUtil.<Integer>invoke(existingFragmentEntry,
+				"getOriginalStatus", new Class<?>[0]));
 	}
 
 	protected FragmentEntry addFragmentEntry() throws Exception {
@@ -581,6 +627,8 @@ public class FragmentEntryPersistenceTest {
 		fragmentEntry.setJs(RandomTestUtil.randomString());
 
 		fragmentEntry.setPreviewFileEntryId(RandomTestUtil.nextLong());
+
+		fragmentEntry.setType(RandomTestUtil.nextInt());
 
 		fragmentEntry.setLastPublishDate(RandomTestUtil.nextDate());
 

@@ -3920,6 +3920,251 @@ public class FragmentEntryPersistenceImpl extends BasePersistenceImpl<FragmentEn
 	private static final String _FINDER_COLUMN_G_FCI_LIKEN_NAME_1 = "fragmentEntry.name IS NULL";
 	private static final String _FINDER_COLUMN_G_FCI_LIKEN_NAME_2 = "lower(fragmentEntry.name) LIKE ?";
 	private static final String _FINDER_COLUMN_G_FCI_LIKEN_NAME_3 = "(fragmentEntry.name IS NULL OR fragmentEntry.name LIKE '')";
+	public static final FinderPath FINDER_PATH_FETCH_BY_G_T = new FinderPath(FragmentEntryModelImpl.ENTITY_CACHE_ENABLED,
+			FragmentEntryModelImpl.FINDER_CACHE_ENABLED,
+			FragmentEntryImpl.class, FINDER_CLASS_NAME_ENTITY, "fetchByG_T",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName()
+			},
+			FragmentEntryModelImpl.GROUPID_COLUMN_BITMASK |
+			FragmentEntryModelImpl.FRAGMENTCOLLECTIONID_COLUMN_BITMASK |
+			FragmentEntryModelImpl.TYPE_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_G_T = new FinderPath(FragmentEntryModelImpl.ENTITY_CACHE_ENABLED,
+			FragmentEntryModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_T",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName()
+			});
+
+	/**
+	 * Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @return the matching fragment entry
+	 * @throws NoSuchEntryException if a matching fragment entry could not be found
+	 */
+	@Override
+	public FragmentEntry findByG_T(long groupId, long fragmentCollectionId,
+		int type) throws NoSuchEntryException {
+		FragmentEntry fragmentEntry = fetchByG_T(groupId, fragmentCollectionId,
+				type);
+
+		if (fragmentEntry == null) {
+			StringBundler msg = new StringBundler(8);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("groupId=");
+			msg.append(groupId);
+
+			msg.append(", fragmentCollectionId=");
+			msg.append(fragmentCollectionId);
+
+			msg.append(", type=");
+			msg.append(type);
+
+			msg.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchEntryException(msg.toString());
+		}
+
+		return fragmentEntry;
+	}
+
+	/**
+	 * Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	@Override
+	public FragmentEntry fetchByG_T(long groupId, long fragmentCollectionId,
+		int type) {
+		return fetchByG_T(groupId, fragmentCollectionId, type, true);
+	}
+
+	/**
+	 * Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	@Override
+	public FragmentEntry fetchByG_T(long groupId, long fragmentCollectionId,
+		int type, boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] { groupId, fragmentCollectionId, type };
+
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(FINDER_PATH_FETCH_BY_G_T,
+					finderArgs, this);
+		}
+
+		if (result instanceof FragmentEntry) {
+			FragmentEntry fragmentEntry = (FragmentEntry)result;
+
+			if ((groupId != fragmentEntry.getGroupId()) ||
+					(fragmentCollectionId != fragmentEntry.getFragmentCollectionId()) ||
+					(type != fragmentEntry.getType())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(5);
+
+			query.append(_SQL_SELECT_FRAGMENTENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_G_T_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_G_T_FRAGMENTCOLLECTIONID_2);
+
+			query.append(_FINDER_COLUMN_G_T_TYPE_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(fragmentCollectionId);
+
+				qPos.add(type);
+
+				List<FragmentEntry> list = q.list();
+
+				if (list.isEmpty()) {
+					finderCache.putResult(FINDER_PATH_FETCH_BY_G_T, finderArgs,
+						list);
+				}
+				else {
+					FragmentEntry fragmentEntry = list.get(0);
+
+					result = fragmentEntry;
+
+					cacheResult(fragmentEntry);
+				}
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_FETCH_BY_G_T, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (FragmentEntry)result;
+		}
+	}
+
+	/**
+	 * Removes the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @return the fragment entry that was removed
+	 */
+	@Override
+	public FragmentEntry removeByG_T(long groupId, long fragmentCollectionId,
+		int type) throws NoSuchEntryException {
+		FragmentEntry fragmentEntry = findByG_T(groupId, fragmentCollectionId,
+				type);
+
+		return remove(fragmentEntry);
+	}
+
+	/**
+	 * Returns the number of fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @return the number of matching fragment entries
+	 */
+	@Override
+	public int countByG_T(long groupId, long fragmentCollectionId, int type) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_G_T;
+
+		Object[] finderArgs = new Object[] { groupId, fragmentCollectionId, type };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_FRAGMENTENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_G_T_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_G_T_FRAGMENTCOLLECTIONID_2);
+
+			query.append(_FINDER_COLUMN_G_T_TYPE_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(fragmentCollectionId);
+
+				qPos.add(type);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_G_T_GROUPID_2 = "fragmentEntry.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_G_T_FRAGMENTCOLLECTIONID_2 = "fragmentEntry.fragmentCollectionId = ? AND ";
+	private static final String _FINDER_COLUMN_G_T_TYPE_2 = "fragmentEntry.type = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_G_FCI_S = new FinderPath(FragmentEntryModelImpl.ENTITY_CACHE_ENABLED,
 			FragmentEntryModelImpl.FINDER_CACHE_ENABLED,
 			FragmentEntryImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
@@ -5179,6 +5424,281 @@ public class FragmentEntryPersistenceImpl extends BasePersistenceImpl<FragmentEn
 	private static final String _FINDER_COLUMN_G_FCI_LIKEN_S_NAME_2 = "lower(fragmentEntry.name) LIKE ? AND ";
 	private static final String _FINDER_COLUMN_G_FCI_LIKEN_S_NAME_3 = "(fragmentEntry.name IS NULL OR fragmentEntry.name LIKE '') AND ";
 	private static final String _FINDER_COLUMN_G_FCI_LIKEN_S_STATUS_2 = "fragmentEntry.status = ?";
+	public static final FinderPath FINDER_PATH_FETCH_BY_G_FCI_T_S = new FinderPath(FragmentEntryModelImpl.ENTITY_CACHE_ENABLED,
+			FragmentEntryModelImpl.FINDER_CACHE_ENABLED,
+			FragmentEntryImpl.class, FINDER_CLASS_NAME_ENTITY,
+			"fetchByG_FCI_T_S",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName()
+			},
+			FragmentEntryModelImpl.GROUPID_COLUMN_BITMASK |
+			FragmentEntryModelImpl.FRAGMENTCOLLECTIONID_COLUMN_BITMASK |
+			FragmentEntryModelImpl.TYPE_COLUMN_BITMASK |
+			FragmentEntryModelImpl.STATUS_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_G_FCI_T_S = new FinderPath(FragmentEntryModelImpl.ENTITY_CACHE_ENABLED,
+			FragmentEntryModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByG_FCI_T_S",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName()
+			});
+
+	/**
+	 * Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; or throws a {@link NoSuchEntryException} if it could not be found.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @return the matching fragment entry
+	 * @throws NoSuchEntryException if a matching fragment entry could not be found
+	 */
+	@Override
+	public FragmentEntry findByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status)
+		throws NoSuchEntryException {
+		FragmentEntry fragmentEntry = fetchByG_FCI_T_S(groupId,
+				fragmentCollectionId, type, status);
+
+		if (fragmentEntry == null) {
+			StringBundler msg = new StringBundler(10);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("groupId=");
+			msg.append(groupId);
+
+			msg.append(", fragmentCollectionId=");
+			msg.append(fragmentCollectionId);
+
+			msg.append(", type=");
+			msg.append(type);
+
+			msg.append(", status=");
+			msg.append(status);
+
+			msg.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchEntryException(msg.toString());
+		}
+
+		return fragmentEntry;
+	}
+
+	/**
+	 * Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	@Override
+	public FragmentEntry fetchByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status) {
+		return fetchByG_FCI_T_S(groupId, fragmentCollectionId, type, status,
+			true);
+	}
+
+	/**
+	 * Returns the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching fragment entry, or <code>null</code> if a matching fragment entry could not be found
+	 */
+	@Override
+	public FragmentEntry fetchByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status,
+		boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] {
+				groupId, fragmentCollectionId, type, status
+			};
+
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(FINDER_PATH_FETCH_BY_G_FCI_T_S,
+					finderArgs, this);
+		}
+
+		if (result instanceof FragmentEntry) {
+			FragmentEntry fragmentEntry = (FragmentEntry)result;
+
+			if ((groupId != fragmentEntry.getGroupId()) ||
+					(fragmentCollectionId != fragmentEntry.getFragmentCollectionId()) ||
+					(type != fragmentEntry.getType()) ||
+					(status != fragmentEntry.getStatus())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(6);
+
+			query.append(_SQL_SELECT_FRAGMENTENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_G_FCI_T_S_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_G_FCI_T_S_FRAGMENTCOLLECTIONID_2);
+
+			query.append(_FINDER_COLUMN_G_FCI_T_S_TYPE_2);
+
+			query.append(_FINDER_COLUMN_G_FCI_T_S_STATUS_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(fragmentCollectionId);
+
+				qPos.add(type);
+
+				qPos.add(status);
+
+				List<FragmentEntry> list = q.list();
+
+				if (list.isEmpty()) {
+					finderCache.putResult(FINDER_PATH_FETCH_BY_G_FCI_T_S,
+						finderArgs, list);
+				}
+				else {
+					FragmentEntry fragmentEntry = list.get(0);
+
+					result = fragmentEntry;
+
+					cacheResult(fragmentEntry);
+				}
+			}
+			catch (Exception e) {
+				finderCache.removeResult(FINDER_PATH_FETCH_BY_G_FCI_T_S,
+					finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (FragmentEntry)result;
+		}
+	}
+
+	/**
+	 * Removes the fragment entry where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @return the fragment entry that was removed
+	 */
+	@Override
+	public FragmentEntry removeByG_FCI_T_S(long groupId,
+		long fragmentCollectionId, int type, int status)
+		throws NoSuchEntryException {
+		FragmentEntry fragmentEntry = findByG_FCI_T_S(groupId,
+				fragmentCollectionId, type, status);
+
+		return remove(fragmentEntry);
+	}
+
+	/**
+	 * Returns the number of fragment entries where groupId = &#63; and fragmentCollectionId = &#63; and type = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fragmentCollectionId the fragment collection ID
+	 * @param type the type
+	 * @param status the status
+	 * @return the number of matching fragment entries
+	 */
+	@Override
+	public int countByG_FCI_T_S(long groupId, long fragmentCollectionId,
+		int type, int status) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_G_FCI_T_S;
+
+		Object[] finderArgs = new Object[] {
+				groupId, fragmentCollectionId, type, status
+			};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(5);
+
+			query.append(_SQL_COUNT_FRAGMENTENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_G_FCI_T_S_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_G_FCI_T_S_FRAGMENTCOLLECTIONID_2);
+
+			query.append(_FINDER_COLUMN_G_FCI_T_S_TYPE_2);
+
+			query.append(_FINDER_COLUMN_G_FCI_T_S_STATUS_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(fragmentCollectionId);
+
+				qPos.add(type);
+
+				qPos.add(status);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_G_FCI_T_S_GROUPID_2 = "fragmentEntry.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_G_FCI_T_S_FRAGMENTCOLLECTIONID_2 = "fragmentEntry.fragmentCollectionId = ? AND ";
+	private static final String _FINDER_COLUMN_G_FCI_T_S_TYPE_2 = "fragmentEntry.type = ? AND ";
+	private static final String _FINDER_COLUMN_G_FCI_T_S_STATUS_2 = "fragmentEntry.status = ?";
 
 	public FragmentEntryPersistenceImpl() {
 		setModelClass(FragmentEntry.class);
@@ -5192,6 +5712,7 @@ public class FragmentEntryPersistenceImpl extends BasePersistenceImpl<FragmentEn
 			Map<String, String> dbColumnNames = new HashMap<String, String>();
 
 			dbColumnNames.put("uuid", "uuid_");
+			dbColumnNames.put("type", "type_");
 
 			field.set(this, dbColumnNames);
 		}
@@ -5220,6 +5741,19 @@ public class FragmentEntryPersistenceImpl extends BasePersistenceImpl<FragmentEn
 		finderCache.putResult(FINDER_PATH_FETCH_BY_G_FEK,
 			new Object[] {
 				fragmentEntry.getGroupId(), fragmentEntry.getFragmentEntryKey()
+			}, fragmentEntry);
+
+		finderCache.putResult(FINDER_PATH_FETCH_BY_G_T,
+			new Object[] {
+				fragmentEntry.getGroupId(),
+				fragmentEntry.getFragmentCollectionId(), fragmentEntry.getType()
+			}, fragmentEntry);
+
+		finderCache.putResult(FINDER_PATH_FETCH_BY_G_FCI_T_S,
+			new Object[] {
+				fragmentEntry.getGroupId(),
+				fragmentEntry.getFragmentCollectionId(), fragmentEntry.getType(),
+				fragmentEntry.getStatus()
 			}, fragmentEntry);
 
 		fragmentEntry.resetOriginalValues();
@@ -5312,6 +5846,29 @@ public class FragmentEntryPersistenceImpl extends BasePersistenceImpl<FragmentEn
 			Long.valueOf(1), false);
 		finderCache.putResult(FINDER_PATH_FETCH_BY_G_FEK, args,
 			fragmentEntryModelImpl, false);
+
+		args = new Object[] {
+				fragmentEntryModelImpl.getGroupId(),
+				fragmentEntryModelImpl.getFragmentCollectionId(),
+				fragmentEntryModelImpl.getType()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_G_T, args, Long.valueOf(1),
+			false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_G_T, args,
+			fragmentEntryModelImpl, false);
+
+		args = new Object[] {
+				fragmentEntryModelImpl.getGroupId(),
+				fragmentEntryModelImpl.getFragmentCollectionId(),
+				fragmentEntryModelImpl.getType(),
+				fragmentEntryModelImpl.getStatus()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_G_FCI_T_S, args,
+			Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_G_FCI_T_S, args,
+			fragmentEntryModelImpl, false);
 	}
 
 	protected void clearUniqueFindersCache(
@@ -5356,6 +5913,54 @@ public class FragmentEntryPersistenceImpl extends BasePersistenceImpl<FragmentEn
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_G_FEK, args);
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_G_FEK, args);
+		}
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					fragmentEntryModelImpl.getGroupId(),
+					fragmentEntryModelImpl.getFragmentCollectionId(),
+					fragmentEntryModelImpl.getType()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_G_T, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_G_T, args);
+		}
+
+		if ((fragmentEntryModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_G_T.getColumnBitmask()) != 0) {
+			Object[] args = new Object[] {
+					fragmentEntryModelImpl.getOriginalGroupId(),
+					fragmentEntryModelImpl.getOriginalFragmentCollectionId(),
+					fragmentEntryModelImpl.getOriginalType()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_G_T, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_G_T, args);
+		}
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					fragmentEntryModelImpl.getGroupId(),
+					fragmentEntryModelImpl.getFragmentCollectionId(),
+					fragmentEntryModelImpl.getType(),
+					fragmentEntryModelImpl.getStatus()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_G_FCI_T_S, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_G_FCI_T_S, args);
+		}
+
+		if ((fragmentEntryModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_G_FCI_T_S.getColumnBitmask()) != 0) {
+			Object[] args = new Object[] {
+					fragmentEntryModelImpl.getOriginalGroupId(),
+					fragmentEntryModelImpl.getOriginalFragmentCollectionId(),
+					fragmentEntryModelImpl.getOriginalType(),
+					fragmentEntryModelImpl.getOriginalStatus()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_G_FCI_T_S, args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_G_FCI_T_S, args);
 		}
 	}
 
@@ -6149,6 +6754,6 @@ public class FragmentEntryPersistenceImpl extends BasePersistenceImpl<FragmentEn
 	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No FragmentEntry exists with the key {";
 	private static final Log _log = LogFactoryUtil.getLog(FragmentEntryPersistenceImpl.class);
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
-				"uuid"
+				"uuid", "type"
 			});
 }
