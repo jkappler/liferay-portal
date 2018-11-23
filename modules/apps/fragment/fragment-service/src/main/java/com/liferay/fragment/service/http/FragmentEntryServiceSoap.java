@@ -66,23 +66,6 @@ import java.rmi.RemoteException;
 @ProviderType
 public class FragmentEntryServiceSoap {
 	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
-		long groupId, long fragmentCollectionId, String name, int status,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws RemoteException {
-		try {
-			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
-					fragmentCollectionId, name, status, serviceContext);
-
-			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
 		long groupId, long fragmentCollectionId, String name, int type,
 		int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -101,14 +84,12 @@ public class FragmentEntryServiceSoap {
 	}
 
 	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
-		long groupId, long fragmentCollectionId, String fragmentEntryKey,
-		String name, int status,
+		long groupId, long fragmentCollectionId, String name, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
-					fragmentCollectionId, fragmentEntryKey, name, status,
-					serviceContext);
+					fragmentCollectionId, name, status, serviceContext);
 
 			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
 		}
@@ -139,13 +120,13 @@ public class FragmentEntryServiceSoap {
 	}
 
 	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
-		long groupId, long fragmentCollectionId, String name, String css,
-		String html, String js, int status,
+		long groupId, long fragmentCollectionId, String fragmentEntryKey,
+		String name, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
-					fragmentCollectionId, name, css, html, js, status,
+					fragmentCollectionId, fragmentEntryKey, name, status,
 					serviceContext);
 
 			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
@@ -177,14 +158,14 @@ public class FragmentEntryServiceSoap {
 	}
 
 	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
-		long groupId, long fragmentCollectionId, String fragmentEntryKey,
-		String name, String css, String html, String js, int status,
+		long groupId, long fragmentCollectionId, String name, String css,
+		String html, String js, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
 			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
-					fragmentCollectionId, fragmentEntryKey, name, css, html,
-					js, status, serviceContext);
+					fragmentCollectionId, name, css, html, js, status,
+					serviceContext);
 
 			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
 		}
@@ -204,6 +185,25 @@ public class FragmentEntryServiceSoap {
 			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
 					fragmentCollectionId, fragmentEntryKey, name, css, html,
 					js, type, status, serviceContext);
+
+			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.fragment.model.FragmentEntrySoap addFragmentEntry(
+		long groupId, long fragmentCollectionId, String fragmentEntryKey,
+		String name, String css, String html, String js, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.liferay.fragment.model.FragmentEntry returnValue = FragmentEntryServiceUtil.addFragmentEntry(groupId,
+					fragmentCollectionId, fragmentEntryKey, name, css, html,
+					js, status, serviceContext);
 
 			return com.liferay.fragment.model.FragmentEntrySoap.toSoapModel(returnValue);
 		}
