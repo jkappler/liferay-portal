@@ -16,11 +16,14 @@ package com.liferay.asset.display.page.internal.upgrade;
 
 import com.liferay.asset.display.page.internal.upgrade.v1_0_0.UpgradeAssetDisplayPage;
 import com.liferay.asset.display.page.internal.upgrade.v2_0_0.util.AssetDisplayPageEntryTable;
+import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.upgrade.BaseUpgradeSQLServerDatetime;
 import com.liferay.portal.kernel.upgrade.DummyUpgradeStep;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author José Ángel Jiménez
@@ -32,12 +35,20 @@ public class AssetDisplayPageServiceUpgrade implements UpgradeStepRegistrator {
 	public void register(Registry registry) {
 		registry.register("0.0.1", "1.0.0", new DummyUpgradeStep());
 
-		registry.register("1.0.0", "1.1.0", new UpgradeAssetDisplayPage());
+		registry.register(
+			"1.0.0", "1.1.0",
+			new UpgradeAssetDisplayPage(_classNameLocalService));
 
 		registry.register(
 			"1.1.0", "2.0.0",
 			new BaseUpgradeSQLServerDatetime(
 				new Class<?>[] {AssetDisplayPageEntryTable.class}));
 	}
+
+	@Reference
+	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
+	private JournalArticleLocalService _journalArticleLocalService;
 
 }
