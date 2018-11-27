@@ -9,6 +9,7 @@ import {
 	CLEAR_DROP_TARGET,
 	CLEAR_HOVERED_ITEM,
 	MOVE_FRAGMENT_ENTRY_LINK,
+	REMOVE_SECTION,
 	UPDATE_DROP_TARGET,
 	UPDATE_HOVERED_ITEM,
 	UPDATE_LAST_SAVE_DATE,
@@ -355,6 +356,21 @@ class FragmentEntryLinkList extends Component {
 	 */
 	_handleSectionHoverEnd() {
 		this.store.dispatchAction(CLEAR_HOVERED_ITEM);
+	}
+
+	/**
+	 * Callback executed when the remove section button is clicked
+	 * @private
+	 */
+	_handleSectionRemoveButtonClick() {
+		this.store
+			.dispatchAction(
+				REMOVE_SECTION,
+				{
+					sectionId: this.hoveredItemId
+				}
+			)
+			.dispatchAction(CLEAR_HOVERED_ITEM);
 	}
 
 	/**
