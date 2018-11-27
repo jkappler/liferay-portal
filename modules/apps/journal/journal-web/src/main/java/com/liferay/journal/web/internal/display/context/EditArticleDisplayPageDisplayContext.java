@@ -157,9 +157,18 @@ public class EditArticleDisplayPageDisplayContext {
 			getAssetDisplayPageEntry();
 
 		if (assetDisplayPageEntry == null) {
-			_displayPageType = AssetDisplayPageConstants.TYPE_NONE;
+			JournalArticle article = getArticle();
 
-			return _displayPageType;
+			if (Validator.isNotNull(article.getLayoutUuid())) {
+				_displayPageType = AssetDisplayPageConstants.TYPE_SPECIFIC;
+
+				return _displayPageType;
+			}
+			else {
+				_displayPageType = AssetDisplayPageConstants.TYPE_NONE;
+
+				return _displayPageType;
+			}
 		}
 
 		_displayPageType = assetDisplayPageEntry.getType();
