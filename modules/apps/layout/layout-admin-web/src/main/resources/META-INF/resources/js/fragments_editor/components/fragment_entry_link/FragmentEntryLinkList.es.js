@@ -7,8 +7,10 @@ import Soy from 'metal-soy';
 import './FragmentEntryLink.es';
 import {
 	CLEAR_DROP_TARGET,
+	CLEAR_HOVERED_ITEM,
 	MOVE_FRAGMENT_ENTRY_LINK,
 	UPDATE_DROP_TARGET,
+	UPDATE_HOVERED_ITEM,
 	UPDATE_LAST_SAVE_DATE,
 	UPDATE_SAVING_CHANGES_STATUS
 } from '../../actions/actions.es';
@@ -264,6 +266,9 @@ class FragmentEntryLinkList extends Component {
 				)
 				.dispatchAction(
 					CLEAR_DROP_TARGET
+				)
+				.dispatchAction(
+					CLEAR_HOVERED_ITEM
 				);
 		}
 	}
@@ -330,6 +335,29 @@ class FragmentEntryLinkList extends Component {
 	}
 
 	/**
+	 * Callback executed when a section starts being hovered.
+	 * @param {object} event
+	 * @private
+	 */
+	_handleSectionHoverStart(event) {
+		this.store.dispatchAction(
+			UPDATE_HOVERED_ITEM,
+			{
+				hoveredItemId: event.delegateTarget.dataset.layoutSectionId,
+				hoveredItemType: DROP_TARGET_ITEM_TYPES.section
+			}
+		);
+	}
+
+	/**
+	 * Callback executed when a section ends being hovered.
+	 * @private
+	 */
+	_handleSectionHoverEnd() {
+		this.store.dispatchAction(CLEAR_HOVERED_ITEM);
+	}
+
+	/**
 	 * @private
 	 * @review
 	 */
@@ -373,6 +401,26 @@ class FragmentEntryLinkList extends Component {
  * @type {!Object}
  */
 FragmentEntryLinkList.STATE = {
+
+	/**
+	 * Id of the last element that was hovered
+	 * @default {string}
+	 * @instance
+	 * @memberOf FragmentEntryLinkList
+	 * @review
+	 * @type {string}
+	 */
+	hoveredItemId: state.hoveredItemId,
+
+	/**
+	 * Type of the last element that was hovered
+	 * @default {string}
+	 * @instance
+	 * @memberOf FragmentEntryLinkList
+	 * @review
+	 * @type {string}
+	 */
+	hoveredItemType: state.hoveredItemType,
 
 	/**
 	 * Data associated to the layout
