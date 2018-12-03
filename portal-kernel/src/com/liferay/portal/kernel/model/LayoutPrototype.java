@@ -57,9 +57,6 @@ public interface LayoutPrototype extends LayoutPrototypeModel, PersistedModel {
 	public Group getGroup()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
-	public long getGroupId()
-		throws com.liferay.portal.kernel.exception.PortalException;
-
 	public Layout getLayout()
 		throws com.liferay.portal.kernel.exception.PortalException;
 

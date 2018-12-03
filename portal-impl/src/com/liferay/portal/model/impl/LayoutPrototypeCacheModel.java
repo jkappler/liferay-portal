@@ -79,7 +79,7 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -87,6 +87,8 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 		sb.append(uuid);
 		sb.append(", layoutPrototypeId=");
 		sb.append(layoutPrototypeId);
+		sb.append(", groupId=");
+		sb.append(groupId);
 		sb.append(", companyId=");
 		sb.append(companyId);
 		sb.append(", userId=");
@@ -124,6 +126,7 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 		}
 
 		layoutPrototypeImpl.setLayoutPrototypeId(layoutPrototypeId);
+		layoutPrototypeImpl.setGroupId(groupId);
 		layoutPrototypeImpl.setCompanyId(companyId);
 		layoutPrototypeImpl.setUserId(userId);
 
@@ -183,6 +186,8 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 
 		layoutPrototypeId = objectInput.readLong();
 
+		groupId = objectInput.readLong();
+
 		companyId = objectInput.readLong();
 
 		userId = objectInput.readLong();
@@ -209,6 +214,8 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 		}
 
 		objectOutput.writeLong(layoutPrototypeId);
+
+		objectOutput.writeLong(groupId);
 
 		objectOutput.writeLong(companyId);
 
@@ -251,6 +258,7 @@ public class LayoutPrototypeCacheModel implements CacheModel<LayoutPrototype>,
 	public long mvccVersion;
 	public String uuid;
 	public long layoutPrototypeId;
+	public long groupId;
 	public long companyId;
 	public long userId;
 	public String userName;

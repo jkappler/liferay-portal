@@ -246,70 +246,6 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	* Returns all the layout prototypes that the user has permission to view where uuid = &#63;.
-	*
-	* @param uuid the uuid
-	* @return the matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByUuid(String uuid) {
-		return getPersistence().filterFindByUuid(uuid);
-	}
-
-	/**
-	* Returns a range of all the layout prototypes that the user has permission to view where uuid = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param uuid the uuid
-	* @param start the lower bound of the range of layout prototypes
-	* @param end the upper bound of the range of layout prototypes (not inclusive)
-	* @return the range of matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByUuid(String uuid,
-		int start, int end) {
-		return getPersistence().filterFindByUuid(uuid, start, end);
-	}
-
-	/**
-	* Returns an ordered range of all the layout prototypes that the user has permissions to view where uuid = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param uuid the uuid
-	* @param start the lower bound of the range of layout prototypes
-	* @param end the upper bound of the range of layout prototypes (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByUuid(String uuid,
-		int start, int end, OrderByComparator<LayoutPrototype> orderByComparator) {
-		return getPersistence()
-				   .filterFindByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	* Returns the layout prototypes before and after the current layout prototype in the ordered set of layout prototypes that the user has permission to view where uuid = &#63;.
-	*
-	* @param layoutPrototypeId the primary key of the current layout prototype
-	* @param uuid the uuid
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next layout prototype
-	* @throws NoSuchLayoutPrototypeException if a layout prototype with the primary key could not be found
-	*/
-	public static LayoutPrototype[] filterFindByUuid_PrevAndNext(
-		long layoutPrototypeId, String uuid,
-		OrderByComparator<LayoutPrototype> orderByComparator)
-		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
-		return getPersistence()
-				   .filterFindByUuid_PrevAndNext(layoutPrototypeId, uuid,
-			orderByComparator);
-	}
-
-	/**
 	* Removes all the layout prototypes where uuid = &#63; from the database.
 	*
 	* @param uuid the uuid
@@ -329,13 +265,63 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	* Returns the number of layout prototypes that the user has permission to view where uuid = &#63;.
+	* Returns the layout prototype where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchLayoutPrototypeException} if it could not be found.
 	*
 	* @param uuid the uuid
-	* @return the number of matching layout prototypes that the user has permission to view
+	* @param groupId the group ID
+	* @return the matching layout prototype
+	* @throws NoSuchLayoutPrototypeException if a matching layout prototype could not be found
 	*/
-	public static int filterCountByUuid(String uuid) {
-		return getPersistence().filterCountByUuid(uuid);
+	public static LayoutPrototype findByUUID_G(String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
+		return getPersistence().findByUUID_G(uuid, groupId);
+	}
+
+	/**
+	* Returns the layout prototype where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param uuid the uuid
+	* @param groupId the group ID
+	* @return the matching layout prototype, or <code>null</code> if a matching layout prototype could not be found
+	*/
+	public static LayoutPrototype fetchByUUID_G(String uuid, long groupId) {
+		return getPersistence().fetchByUUID_G(uuid, groupId);
+	}
+
+	/**
+	* Returns the layout prototype where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param uuid the uuid
+	* @param groupId the group ID
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the matching layout prototype, or <code>null</code> if a matching layout prototype could not be found
+	*/
+	public static LayoutPrototype fetchByUUID_G(String uuid, long groupId,
+		boolean retrieveFromCache) {
+		return getPersistence().fetchByUUID_G(uuid, groupId, retrieveFromCache);
+	}
+
+	/**
+	* Removes the layout prototype where uuid = &#63; and groupId = &#63; from the database.
+	*
+	* @param uuid the uuid
+	* @param groupId the group ID
+	* @return the layout prototype that was removed
+	*/
+	public static LayoutPrototype removeByUUID_G(String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
+		return getPersistence().removeByUUID_G(uuid, groupId);
+	}
+
+	/**
+	* Returns the number of layout prototypes where uuid = &#63; and groupId = &#63;.
+	*
+	* @param uuid the uuid
+	* @param groupId the group ID
+	* @return the number of matching layout prototypes
+	*/
+	public static int countByUUID_G(String uuid, long groupId) {
+		return getPersistence().countByUUID_G(uuid, groupId);
 	}
 
 	/**
@@ -492,77 +478,6 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	* Returns all the layout prototypes that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	*
-	* @param uuid the uuid
-	* @param companyId the company ID
-	* @return the matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByUuid_C(String uuid,
-		long companyId) {
-		return getPersistence().filterFindByUuid_C(uuid, companyId);
-	}
-
-	/**
-	* Returns a range of all the layout prototypes that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param uuid the uuid
-	* @param companyId the company ID
-	* @param start the lower bound of the range of layout prototypes
-	* @param end the upper bound of the range of layout prototypes (not inclusive)
-	* @return the range of matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByUuid_C(String uuid,
-		long companyId, int start, int end) {
-		return getPersistence().filterFindByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
-	* Returns an ordered range of all the layout prototypes that the user has permissions to view where uuid = &#63; and companyId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param uuid the uuid
-	* @param companyId the company ID
-	* @param start the lower bound of the range of layout prototypes
-	* @param end the upper bound of the range of layout prototypes (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByUuid_C(String uuid,
-		long companyId, int start, int end,
-		OrderByComparator<LayoutPrototype> orderByComparator) {
-		return getPersistence()
-				   .filterFindByUuid_C(uuid, companyId, start, end,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the layout prototypes before and after the current layout prototype in the ordered set of layout prototypes that the user has permission to view where uuid = &#63; and companyId = &#63;.
-	*
-	* @param layoutPrototypeId the primary key of the current layout prototype
-	* @param uuid the uuid
-	* @param companyId the company ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next layout prototype
-	* @throws NoSuchLayoutPrototypeException if a layout prototype with the primary key could not be found
-	*/
-	public static LayoutPrototype[] filterFindByUuid_C_PrevAndNext(
-		long layoutPrototypeId, String uuid, long companyId,
-		OrderByComparator<LayoutPrototype> orderByComparator)
-		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
-		return getPersistence()
-				   .filterFindByUuid_C_PrevAndNext(layoutPrototypeId, uuid,
-			companyId, orderByComparator);
-	}
-
-	/**
 	* Removes all the layout prototypes where uuid = &#63; and companyId = &#63; from the database.
 	*
 	* @param uuid the uuid
@@ -584,14 +499,234 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	* Returns the number of layout prototypes that the user has permission to view where uuid = &#63; and companyId = &#63;.
+	* Returns all the layout prototypes where groupId = &#63;.
 	*
-	* @param uuid the uuid
-	* @param companyId the company ID
+	* @param groupId the group ID
+	* @return the matching layout prototypes
+	*/
+	public static List<LayoutPrototype> findByGroupId(long groupId) {
+		return getPersistence().findByGroupId(groupId);
+	}
+
+	/**
+	* Returns a range of all the layout prototypes where groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param start the lower bound of the range of layout prototypes
+	* @param end the upper bound of the range of layout prototypes (not inclusive)
+	* @return the range of matching layout prototypes
+	*/
+	public static List<LayoutPrototype> findByGroupId(long groupId, int start,
+		int end) {
+		return getPersistence().findByGroupId(groupId, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the layout prototypes where groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param start the lower bound of the range of layout prototypes
+	* @param end the upper bound of the range of layout prototypes (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching layout prototypes
+	*/
+	public static List<LayoutPrototype> findByGroupId(long groupId, int start,
+		int end, OrderByComparator<LayoutPrototype> orderByComparator) {
+		return getPersistence()
+				   .findByGroupId(groupId, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the layout prototypes where groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param start the lower bound of the range of layout prototypes
+	* @param end the upper bound of the range of layout prototypes (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching layout prototypes
+	*/
+	public static List<LayoutPrototype> findByGroupId(long groupId, int start,
+		int end, OrderByComparator<LayoutPrototype> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByGroupId(groupId, start, end, orderByComparator,
+			retrieveFromCache);
+	}
+
+	/**
+	* Returns the first layout prototype in the ordered set where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching layout prototype
+	* @throws NoSuchLayoutPrototypeException if a matching layout prototype could not be found
+	*/
+	public static LayoutPrototype findByGroupId_First(long groupId,
+		OrderByComparator<LayoutPrototype> orderByComparator)
+		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
+		return getPersistence().findByGroupId_First(groupId, orderByComparator);
+	}
+
+	/**
+	* Returns the first layout prototype in the ordered set where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching layout prototype, or <code>null</code> if a matching layout prototype could not be found
+	*/
+	public static LayoutPrototype fetchByGroupId_First(long groupId,
+		OrderByComparator<LayoutPrototype> orderByComparator) {
+		return getPersistence().fetchByGroupId_First(groupId, orderByComparator);
+	}
+
+	/**
+	* Returns the last layout prototype in the ordered set where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching layout prototype
+	* @throws NoSuchLayoutPrototypeException if a matching layout prototype could not be found
+	*/
+	public static LayoutPrototype findByGroupId_Last(long groupId,
+		OrderByComparator<LayoutPrototype> orderByComparator)
+		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
+		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
+	}
+
+	/**
+	* Returns the last layout prototype in the ordered set where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching layout prototype, or <code>null</code> if a matching layout prototype could not be found
+	*/
+	public static LayoutPrototype fetchByGroupId_Last(long groupId,
+		OrderByComparator<LayoutPrototype> orderByComparator) {
+		return getPersistence().fetchByGroupId_Last(groupId, orderByComparator);
+	}
+
+	/**
+	* Returns the layout prototypes before and after the current layout prototype in the ordered set where groupId = &#63;.
+	*
+	* @param layoutPrototypeId the primary key of the current layout prototype
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next layout prototype
+	* @throws NoSuchLayoutPrototypeException if a layout prototype with the primary key could not be found
+	*/
+	public static LayoutPrototype[] findByGroupId_PrevAndNext(
+		long layoutPrototypeId, long groupId,
+		OrderByComparator<LayoutPrototype> orderByComparator)
+		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
+		return getPersistence()
+				   .findByGroupId_PrevAndNext(layoutPrototypeId, groupId,
+			orderByComparator);
+	}
+
+	/**
+	* Returns all the layout prototypes that the user has permission to view where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @return the matching layout prototypes that the user has permission to view
+	*/
+	public static List<LayoutPrototype> filterFindByGroupId(long groupId) {
+		return getPersistence().filterFindByGroupId(groupId);
+	}
+
+	/**
+	* Returns a range of all the layout prototypes that the user has permission to view where groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param start the lower bound of the range of layout prototypes
+	* @param end the upper bound of the range of layout prototypes (not inclusive)
+	* @return the range of matching layout prototypes that the user has permission to view
+	*/
+	public static List<LayoutPrototype> filterFindByGroupId(long groupId,
+		int start, int end) {
+		return getPersistence().filterFindByGroupId(groupId, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the layout prototypes that the user has permissions to view where groupId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param start the lower bound of the range of layout prototypes
+	* @param end the upper bound of the range of layout prototypes (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching layout prototypes that the user has permission to view
+	*/
+	public static List<LayoutPrototype> filterFindByGroupId(long groupId,
+		int start, int end, OrderByComparator<LayoutPrototype> orderByComparator) {
+		return getPersistence()
+				   .filterFindByGroupId(groupId, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns the layout prototypes before and after the current layout prototype in the ordered set of layout prototypes that the user has permission to view where groupId = &#63;.
+	*
+	* @param layoutPrototypeId the primary key of the current layout prototype
+	* @param groupId the group ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next layout prototype
+	* @throws NoSuchLayoutPrototypeException if a layout prototype with the primary key could not be found
+	*/
+	public static LayoutPrototype[] filterFindByGroupId_PrevAndNext(
+		long layoutPrototypeId, long groupId,
+		OrderByComparator<LayoutPrototype> orderByComparator)
+		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
+		return getPersistence()
+				   .filterFindByGroupId_PrevAndNext(layoutPrototypeId, groupId,
+			orderByComparator);
+	}
+
+	/**
+	* Removes all the layout prototypes where groupId = &#63; from the database.
+	*
+	* @param groupId the group ID
+	*/
+	public static void removeByGroupId(long groupId) {
+		getPersistence().removeByGroupId(groupId);
+	}
+
+	/**
+	* Returns the number of layout prototypes where groupId = &#63;.
+	*
+	* @param groupId the group ID
+	* @return the number of matching layout prototypes
+	*/
+	public static int countByGroupId(long groupId) {
+		return getPersistence().countByGroupId(groupId);
+	}
+
+	/**
+	* Returns the number of layout prototypes that the user has permission to view where groupId = &#63;.
+	*
+	* @param groupId the group ID
 	* @return the number of matching layout prototypes that the user has permission to view
 	*/
-	public static int filterCountByUuid_C(String uuid, long companyId) {
-		return getPersistence().filterCountByUuid_C(uuid, companyId);
+	public static int filterCountByGroupId(long groupId) {
+		return getPersistence().filterCountByGroupId(groupId);
 	}
 
 	/**
@@ -738,71 +873,6 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	* Returns all the layout prototypes that the user has permission to view where companyId = &#63;.
-	*
-	* @param companyId the company ID
-	* @return the matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByCompanyId(long companyId) {
-		return getPersistence().filterFindByCompanyId(companyId);
-	}
-
-	/**
-	* Returns a range of all the layout prototypes that the user has permission to view where companyId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param companyId the company ID
-	* @param start the lower bound of the range of layout prototypes
-	* @param end the upper bound of the range of layout prototypes (not inclusive)
-	* @return the range of matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByCompanyId(long companyId,
-		int start, int end) {
-		return getPersistence().filterFindByCompanyId(companyId, start, end);
-	}
-
-	/**
-	* Returns an ordered range of all the layout prototypes that the user has permissions to view where companyId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param companyId the company ID
-	* @param start the lower bound of the range of layout prototypes
-	* @param end the upper bound of the range of layout prototypes (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByCompanyId(long companyId,
-		int start, int end, OrderByComparator<LayoutPrototype> orderByComparator) {
-		return getPersistence()
-				   .filterFindByCompanyId(companyId, start, end,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the layout prototypes before and after the current layout prototype in the ordered set of layout prototypes that the user has permission to view where companyId = &#63;.
-	*
-	* @param layoutPrototypeId the primary key of the current layout prototype
-	* @param companyId the company ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next layout prototype
-	* @throws NoSuchLayoutPrototypeException if a layout prototype with the primary key could not be found
-	*/
-	public static LayoutPrototype[] filterFindByCompanyId_PrevAndNext(
-		long layoutPrototypeId, long companyId,
-		OrderByComparator<LayoutPrototype> orderByComparator)
-		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
-		return getPersistence()
-				   .filterFindByCompanyId_PrevAndNext(layoutPrototypeId,
-			companyId, orderByComparator);
-	}
-
-	/**
 	* Removes all the layout prototypes where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
@@ -819,16 +889,6 @@ public class LayoutPrototypeUtil {
 	*/
 	public static int countByCompanyId(long companyId) {
 		return getPersistence().countByCompanyId(companyId);
-	}
-
-	/**
-	* Returns the number of layout prototypes that the user has permission to view where companyId = &#63;.
-	*
-	* @param companyId the company ID
-	* @return the number of matching layout prototypes that the user has permission to view
-	*/
-	public static int filterCountByCompanyId(long companyId) {
-		return getPersistence().filterCountByCompanyId(companyId);
 	}
 
 	/**
@@ -985,77 +1045,6 @@ public class LayoutPrototypeUtil {
 	}
 
 	/**
-	* Returns all the layout prototypes that the user has permission to view where companyId = &#63; and active = &#63;.
-	*
-	* @param companyId the company ID
-	* @param active the active
-	* @return the matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByC_A(long companyId,
-		boolean active) {
-		return getPersistence().filterFindByC_A(companyId, active);
-	}
-
-	/**
-	* Returns a range of all the layout prototypes that the user has permission to view where companyId = &#63; and active = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param companyId the company ID
-	* @param active the active
-	* @param start the lower bound of the range of layout prototypes
-	* @param end the upper bound of the range of layout prototypes (not inclusive)
-	* @return the range of matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByC_A(long companyId,
-		boolean active, int start, int end) {
-		return getPersistence().filterFindByC_A(companyId, active, start, end);
-	}
-
-	/**
-	* Returns an ordered range of all the layout prototypes that the user has permissions to view where companyId = &#63; and active = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LayoutPrototypeModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param companyId the company ID
-	* @param active the active
-	* @param start the lower bound of the range of layout prototypes
-	* @param end the upper bound of the range of layout prototypes (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching layout prototypes that the user has permission to view
-	*/
-	public static List<LayoutPrototype> filterFindByC_A(long companyId,
-		boolean active, int start, int end,
-		OrderByComparator<LayoutPrototype> orderByComparator) {
-		return getPersistence()
-				   .filterFindByC_A(companyId, active, start, end,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the layout prototypes before and after the current layout prototype in the ordered set of layout prototypes that the user has permission to view where companyId = &#63; and active = &#63;.
-	*
-	* @param layoutPrototypeId the primary key of the current layout prototype
-	* @param companyId the company ID
-	* @param active the active
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next layout prototype
-	* @throws NoSuchLayoutPrototypeException if a layout prototype with the primary key could not be found
-	*/
-	public static LayoutPrototype[] filterFindByC_A_PrevAndNext(
-		long layoutPrototypeId, long companyId, boolean active,
-		OrderByComparator<LayoutPrototype> orderByComparator)
-		throws com.liferay.portal.kernel.exception.NoSuchLayoutPrototypeException {
-		return getPersistence()
-				   .filterFindByC_A_PrevAndNext(layoutPrototypeId, companyId,
-			active, orderByComparator);
-	}
-
-	/**
 	* Removes all the layout prototypes where companyId = &#63; and active = &#63; from the database.
 	*
 	* @param companyId the company ID
@@ -1074,17 +1063,6 @@ public class LayoutPrototypeUtil {
 	*/
 	public static int countByC_A(long companyId, boolean active) {
 		return getPersistence().countByC_A(companyId, active);
-	}
-
-	/**
-	* Returns the number of layout prototypes that the user has permission to view where companyId = &#63; and active = &#63;.
-	*
-	* @param companyId the company ID
-	* @param active the active
-	* @return the number of matching layout prototypes that the user has permission to view
-	*/
-	public static int filterCountByC_A(long companyId, boolean active) {
-		return getPersistence().filterCountByC_A(companyId, active);
 	}
 
 	/**

@@ -43,7 +43,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface LayoutPrototypeModel extends BaseModel<LayoutPrototype>,
-	LocalizedModel, MVCCModel, ShardedModel, StagedAuditedModel {
+	GroupedModel, LocalizedModel, MVCCModel, ShardedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -110,6 +110,22 @@ public interface LayoutPrototypeModel extends BaseModel<LayoutPrototype>,
 	 * @param layoutPrototypeId the layout prototype ID of this layout prototype
 	 */
 	public void setLayoutPrototypeId(long layoutPrototypeId);
+
+	/**
+	 * Returns the group ID of this layout prototype.
+	 *
+	 * @return the group ID of this layout prototype
+	 */
+	@Override
+	public long getGroupId();
+
+	/**
+	 * Sets the group ID of this layout prototype.
+	 *
+	 * @param groupId the group ID of this layout prototype
+	 */
+	@Override
+	public void setGroupId(long groupId);
 
 	/**
 	 * Returns the company ID of this layout prototype.

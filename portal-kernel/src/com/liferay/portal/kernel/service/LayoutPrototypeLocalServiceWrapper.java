@@ -227,17 +227,17 @@ public class LayoutPrototypeLocalServiceWrapper
 	}
 
 	/**
-	* Returns the layout prototype with the matching UUID and company.
+	* Returns the layout prototype matching the UUID and group.
 	*
 	* @param uuid the layout prototype's UUID
-	* @param companyId the primary key of the company
+	* @param groupId the primary key of the group
 	* @return the matching layout prototype, or <code>null</code> if a matching layout prototype could not be found
 	*/
 	@Override
-	public com.liferay.portal.kernel.model.LayoutPrototype fetchLayoutPrototypeByUuidAndCompanyId(
-		String uuid, long companyId) {
-		return _layoutPrototypeLocalService.fetchLayoutPrototypeByUuidAndCompanyId(uuid,
-			companyId);
+	public com.liferay.portal.kernel.model.LayoutPrototype fetchLayoutPrototypeByUuidAndGroupId(
+		String uuid, long groupId) {
+		return _layoutPrototypeLocalService.fetchLayoutPrototypeByUuidAndGroupId(uuid,
+			groupId);
 	}
 
 	@Override
@@ -291,20 +291,28 @@ public class LayoutPrototypeLocalServiceWrapper
 			locale);
 	}
 
-	/**
-	* Returns the layout prototype with the matching UUID and company.
-	*
-	* @param uuid the layout prototype's UUID
-	* @param companyId the primary key of the company
-	* @return the matching layout prototype
-	* @throws PortalException if a matching layout prototype could not be found
-	*/
 	@Override
 	public com.liferay.portal.kernel.model.LayoutPrototype getLayoutPrototypeByUuidAndCompanyId(
 		String uuid, long companyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _layoutPrototypeLocalService.getLayoutPrototypeByUuidAndCompanyId(uuid,
 			companyId);
+	}
+
+	/**
+	* Returns the layout prototype matching the UUID and group.
+	*
+	* @param uuid the layout prototype's UUID
+	* @param groupId the primary key of the group
+	* @return the matching layout prototype
+	* @throws PortalException if a matching layout prototype could not be found
+	*/
+	@Override
+	public com.liferay.portal.kernel.model.LayoutPrototype getLayoutPrototypeByUuidAndGroupId(
+		String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _layoutPrototypeLocalService.getLayoutPrototypeByUuidAndGroupId(uuid,
+			groupId);
 	}
 
 	/**
@@ -322,6 +330,38 @@ public class LayoutPrototypeLocalServiceWrapper
 	public java.util.List<com.liferay.portal.kernel.model.LayoutPrototype> getLayoutPrototypes(
 		int start, int end) {
 		return _layoutPrototypeLocalService.getLayoutPrototypes(start, end);
+	}
+
+	/**
+	* Returns all the layout prototypes matching the UUID and company.
+	*
+	* @param uuid the UUID of the layout prototypes
+	* @param companyId the primary key of the company
+	* @return the matching layout prototypes, or an empty list if no matches were found
+	*/
+	@Override
+	public java.util.List<com.liferay.portal.kernel.model.LayoutPrototype> getLayoutPrototypesByUuidAndCompanyId(
+		String uuid, long companyId) {
+		return _layoutPrototypeLocalService.getLayoutPrototypesByUuidAndCompanyId(uuid,
+			companyId);
+	}
+
+	/**
+	* Returns a range of layout prototypes matching the UUID and company.
+	*
+	* @param uuid the UUID of the layout prototypes
+	* @param companyId the primary key of the company
+	* @param start the lower bound of the range of layout prototypes
+	* @param end the upper bound of the range of layout prototypes (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the range of matching layout prototypes, or an empty list if no matches were found
+	*/
+	@Override
+	public java.util.List<com.liferay.portal.kernel.model.LayoutPrototype> getLayoutPrototypesByUuidAndCompanyId(
+		String uuid, long companyId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.kernel.model.LayoutPrototype> orderByComparator) {
+		return _layoutPrototypeLocalService.getLayoutPrototypesByUuidAndCompanyId(uuid,
+			companyId, start, end, orderByComparator);
 	}
 
 	/**

@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.model.LayoutPrototype;
 import com.liferay.portal.kernel.service.LayoutPrototypeLocalServiceUtil;
 import com.liferay.portal.kernel.service.persistence.LayoutPrototypePersistence;
 import com.liferay.portal.kernel.service.persistence.LayoutPrototypeUtil;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -50,6 +51,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -119,6 +121,8 @@ public class LayoutPrototypePersistenceTest {
 
 		newLayoutPrototype.setUuid(RandomTestUtil.randomString());
 
+		newLayoutPrototype.setGroupId(RandomTestUtil.nextLong());
+
 		newLayoutPrototype.setCompanyId(RandomTestUtil.nextLong());
 
 		newLayoutPrototype.setUserId(RandomTestUtil.nextLong());
@@ -147,6 +151,8 @@ public class LayoutPrototypePersistenceTest {
 			newLayoutPrototype.getUuid());
 		Assert.assertEquals(existingLayoutPrototype.getLayoutPrototypeId(),
 			newLayoutPrototype.getLayoutPrototypeId());
+		Assert.assertEquals(existingLayoutPrototype.getGroupId(),
+			newLayoutPrototype.getGroupId());
 		Assert.assertEquals(existingLayoutPrototype.getCompanyId(),
 			newLayoutPrototype.getCompanyId());
 		Assert.assertEquals(existingLayoutPrototype.getUserId(),
@@ -179,12 +185,28 @@ public class LayoutPrototypePersistenceTest {
 	}
 
 	@Test
+	public void testCountByUUID_G() throws Exception {
+		_persistence.countByUUID_G("", RandomTestUtil.nextLong());
+
+		_persistence.countByUUID_G("null", 0L);
+
+		_persistence.countByUUID_G((String)null, 0L);
+	}
+
+	@Test
 	public void testCountByUuid_C() throws Exception {
 		_persistence.countByUuid_C("", RandomTestUtil.nextLong());
 
 		_persistence.countByUuid_C("null", 0L);
 
 		_persistence.countByUuid_C((String)null, 0L);
+	}
+
+	@Test
+	public void testCountByGroupId() throws Exception {
+		_persistence.countByGroupId(RandomTestUtil.nextLong());
+
+		_persistence.countByGroupId(0L);
 	}
 
 	@Test
@@ -224,11 +246,18 @@ public class LayoutPrototypePersistenceTest {
 			getOrderByComparator());
 	}
 
+	@Test
+	public void testFilterFindByGroupId() throws Exception {
+		_persistence.filterFindByGroupId(0, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, getOrderByComparator());
+	}
+
 	protected OrderByComparator<LayoutPrototype> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("LayoutPrototype",
 			"mvccVersion", true, "uuid", true, "layoutPrototypeId", true,
-			"companyId", true, "userId", true, "userName", true, "createDate",
-			true, "modifiedDate", true, "settings", true, "active", true);
+			"groupId", true, "companyId", true, "userId", true, "userName",
+			true, "createDate", true, "modifiedDate", true, "settings", true,
+			"active", true);
 	}
 
 	@Test
@@ -425,6 +454,22 @@ public class LayoutPrototypePersistenceTest {
 		Assert.assertEquals(0, result.size());
 	}
 
+	@Test
+	public void testResetOriginalValues() throws Exception {
+		LayoutPrototype newLayoutPrototype = addLayoutPrototype();
+
+		_persistence.clearCache();
+
+		LayoutPrototype existingLayoutPrototype = _persistence.findByPrimaryKey(newLayoutPrototype.getPrimaryKey());
+
+		Assert.assertTrue(Objects.equals(existingLayoutPrototype.getUuid(),
+				ReflectionTestUtil.invoke(existingLayoutPrototype,
+					"getOriginalUuid", new Class<?>[0])));
+		Assert.assertEquals(Long.valueOf(existingLayoutPrototype.getGroupId()),
+			ReflectionTestUtil.<Long>invoke(existingLayoutPrototype,
+				"getOriginalGroupId", new Class<?>[0]));
+	}
+
 	protected LayoutPrototype addLayoutPrototype() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
@@ -433,6 +478,8 @@ public class LayoutPrototypePersistenceTest {
 		layoutPrototype.setMvccVersion(RandomTestUtil.nextLong());
 
 		layoutPrototype.setUuid(RandomTestUtil.randomString());
+
+		layoutPrototype.setGroupId(RandomTestUtil.nextLong());
 
 		layoutPrototype.setCompanyId(RandomTestUtil.nextLong());
 

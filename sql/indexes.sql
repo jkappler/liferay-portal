@@ -209,7 +209,9 @@ create index IX_F4321A54 on LayoutFriendlyURL (uuid_[$COLUMN_LENGTH:75$], compan
 create unique index IX_326525D6 on LayoutFriendlyURL (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_557A639F on LayoutPrototype (companyId, active_);
+create index IX_F5B893AC on LayoutPrototype (groupId);
 create index IX_63ED2532 on LayoutPrototype (uuid_[$COLUMN_LENGTH:75$], companyId);
+create unique index IX_B8815034 on LayoutPrototype (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_43E8286A on LayoutRevision (head, plid);
 create index IX_E10AC39 on LayoutRevision (layoutSetBranchId, head, plid);

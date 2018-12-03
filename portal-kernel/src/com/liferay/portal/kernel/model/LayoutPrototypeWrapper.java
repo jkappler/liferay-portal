@@ -62,6 +62,7 @@ public class LayoutPrototypeWrapper implements LayoutPrototype,
 		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("uuid", getUuid());
 		attributes.put("layoutPrototypeId", getLayoutPrototypeId());
+		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
 		attributes.put("userName", getUserName());
@@ -93,6 +94,12 @@ public class LayoutPrototypeWrapper implements LayoutPrototype,
 
 		if (layoutPrototypeId != null) {
 			setLayoutPrototypeId(layoutPrototypeId);
+		}
+
+		Long groupId = (Long)attributes.get("groupId");
+
+		if (groupId != null) {
+			setGroupId(groupId);
 		}
 
 		Long companyId = (Long)attributes.get("companyId");
@@ -287,9 +294,13 @@ public class LayoutPrototypeWrapper implements LayoutPrototype,
 		return _layoutPrototype.getGroup();
 	}
 
+	/**
+	* Returns the group ID of this layout prototype.
+	*
+	* @return the group ID of this layout prototype
+	*/
 	@Override
-	public long getGroupId()
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public long getGroupId() {
 		return _layoutPrototype.getGroupId();
 	}
 
@@ -633,6 +644,16 @@ public class LayoutPrototypeWrapper implements LayoutPrototype,
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_layoutPrototype.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	/**
+	* Sets the group ID of this layout prototype.
+	*
+	* @param groupId the group ID of this layout prototype
+	*/
+	@Override
+	public void setGroupId(long groupId) {
+		_layoutPrototype.setGroupId(groupId);
 	}
 
 	/**
