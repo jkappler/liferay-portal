@@ -122,6 +122,13 @@ public class AssetListEntryServiceWrapper implements AssetListEntryService,
 		return _assetListEntryService.getAssetListEntriesCount(groupId, title);
 	}
 
+	@Override
+	public com.liferay.asset.list.model.AssetListEntry getAssetListEntry(
+		long groupId, String title)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _assetListEntryService.getAssetListEntry(groupId, title);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*

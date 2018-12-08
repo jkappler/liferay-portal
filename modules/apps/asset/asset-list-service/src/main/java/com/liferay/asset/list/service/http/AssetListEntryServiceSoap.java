@@ -249,6 +249,21 @@ public class AssetListEntryServiceSoap {
 		}
 	}
 
+	public static com.liferay.asset.list.model.AssetListEntrySoap getAssetListEntry(
+		long groupId, String title) throws RemoteException {
+		try {
+			com.liferay.asset.list.model.AssetListEntry returnValue = AssetListEntryServiceUtil.getAssetListEntry(groupId,
+					title);
+
+			return com.liferay.asset.list.model.AssetListEntrySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static void moveAssetEntrySelection(long assetListEntryId,
 		int position, int newPosition) throws RemoteException {
 		try {

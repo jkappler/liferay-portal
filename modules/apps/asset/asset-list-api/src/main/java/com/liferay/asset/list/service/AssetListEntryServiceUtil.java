@@ -123,6 +123,12 @@ public class AssetListEntryServiceUtil {
 		return getService().getAssetListEntriesCount(groupId, title);
 	}
 
+	public static com.liferay.asset.list.model.AssetListEntry getAssetListEntry(
+		long groupId, String title)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getAssetListEntry(groupId, title);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
