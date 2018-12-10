@@ -182,6 +182,13 @@ public class AssetListEntryServiceImpl extends AssetListEntryServiceBaseImpl {
 	}
 
 	@Override
+	public AssetListEntry getAssetListEntry(long groupId, String title)
+		throws PortalException {
+
+		return assetListEntryPersistence.findByG_T(groupId, title);
+	}
+
+	@Override
 	public void moveAssetEntrySelection(
 			long assetListEntryId, int position, int newPosition)
 		throws PortalException {
