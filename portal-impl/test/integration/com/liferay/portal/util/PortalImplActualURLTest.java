@@ -80,18 +80,18 @@ public class PortalImplActualURLTest {
 			StringPool.BLANK, serviceContext);
 
 		String actualURL = PortalUtil.getActualURL(
-			userGroup.getGroup().getGroupId(), true, Portal.PATH_MAIN,
+			_group.getGroupId(), true, Portal.PATH_MAIN,
 			"/~/" + userGroup.getUserGroupId() + "/child-layout",
-			new HashMap<String, String[]>(), getRequestContext());
+			new HashMap<>(), getRequestContext());
 
 		Assert.assertNotNull(actualURL);
 
 		try {
 			PortalUtil.getActualURL(
-				userGroup.getGroup().getGroupId(), true, Portal.PATH_MAIN,
+				_group.getGroupId(), true, Portal.PATH_MAIN,
 				"/~/" + userGroup.getUserGroupId() +
 					"/nonexistent-child-layout",
-				new HashMap<String, String[]>(), getRequestContext());
+				new HashMap<>(), getRequestContext());
 
 			Assert.fail();
 		}
@@ -111,19 +111,10 @@ public class PortalImplActualURLTest {
 
 		_group = userGroup.getGroup();
 
-		Layout homeLayout = LayoutLocalServiceUtil.addLayout(
-			serviceContext.getUserId(), _group.getGroupId(), true,
-			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "Home", StringPool.BLANK,
-			StringPool.BLANK, LayoutConstants.TYPE_PORTLET, false,
-			StringPool.BLANK, serviceContext);
-
-		String nodeLayoutType = "node";
-
 		Layout nodeLayout = LayoutLocalServiceUtil.addLayout(
 			serviceContext.getUserId(), _group.getGroupId(), true,
-			homeLayout.getLayoutId(), "Node", StringPool.BLANK,
-			StringPool.BLANK, nodeLayoutType, false, StringPool.BLANK,
-			serviceContext);
+			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, "Node", StringPool.BLANK,
+			StringPool.BLANK, "node", false, StringPool.BLANK, serviceContext);
 
 		Layout childLayout = LayoutLocalServiceUtil.addLayout(
 			serviceContext.getUserId(), _group.getGroupId(), true,
@@ -132,9 +123,9 @@ public class PortalImplActualURLTest {
 			StringPool.BLANK, serviceContext);
 
 		String actualURL = PortalUtil.getActualURL(
-			userGroup.getGroup().getGroupId(), true, Portal.PATH_MAIN,
-			"/~/" + userGroup.getUserGroupId() + "/node",
-			new HashMap<String, String[]>(), getRequestContext());
+			_group.getGroupId(), true, Portal.PATH_MAIN,
+			"/~/" + userGroup.getUserGroupId() + "/node", new HashMap<>(),
+			getRequestContext());
 
 		String queryString = HttpUtil.getQueryString(actualURL);
 
