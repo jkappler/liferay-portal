@@ -79,13 +79,19 @@ public class AddPortletMVCActionCommand extends BaseMVCActionCommand {
 			actionRequest);
 
 		try {
+			JSONObject editableValueJSONObject =
+				JSONFactoryUtil.createJSONObject();
+
+			editableValueJSONObject.put("portletId", portletId);
+
 			FragmentEntryLink fragmentEntryLink =
 				_fragmentEntryLinkLocalService.addFragmentEntryLink(
 					serviceContext.getUserId(),
 					serviceContext.getScopeGroupId(), 0, classNameId, classPK,
 					StringPool.BLANK,
 					_getPortletFragmentEntryLinkHTML(portletId),
-					StringPool.BLANK, null, 0, serviceContext);
+					StringPool.BLANK, editableValueJSONObject.toString(), 0,
+					serviceContext);
 
 			jsonObject.put(
 				"content",
