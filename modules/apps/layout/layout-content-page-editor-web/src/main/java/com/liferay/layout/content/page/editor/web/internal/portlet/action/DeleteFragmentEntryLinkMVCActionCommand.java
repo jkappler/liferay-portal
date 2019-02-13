@@ -84,6 +84,24 @@ public class DeleteFragmentEntryLinkMVCActionCommand
 			updateLayoutPageTemplateStructure(
 				serviceContext.getScopeGroupId(), classNameId, classPK, data);
 
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (fragmentEntryLink.getFragmentEntryId() == 0) {
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+				fragmentEntryLink.getEditableValues());
+
+			String portletId = jsonObject.getString(
+				"portletId", StringPool.BLANK);
+
+			if (Validator.isNotNull(portletId)) {
+				_portletPreferencesLocalService.deletePortletPreferences(
+					PortletKeys.PREFS_OWNER_ID_DEFAULT,
+					PortletKeys.PREFS_OWNER_TYPE_LAYOUT, themeDisplay.getPlid(),
+					portletId);
+			}
+		}
+
 		return fragmentEntryLink;
 	}
 
