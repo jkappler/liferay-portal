@@ -24,15 +24,18 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.PropertiesParamUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.navigation.admin.constants.SiteNavigationAdminPortletKeys;
 import com.liferay.site.navigation.exception.SiteNavigationMenuItemNameException;
+import com.liferay.site.navigation.menu.item.util.SiteNavigationMenuItemUtil;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemService;
+
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -69,9 +72,21 @@ public class AddSiteNavigationMenuItemMVCActionCommand
 
 		String type = ParamUtil.getString(actionRequest, "type");
 
+		Map<String, String[]> parameterMap = actionRequest.getParameterMap();
+
+		String[] parameters = {};
+
+		for (String key : parameterMap.keySet()) {
+			if (!key.startsWith("")) {
+				continue;
+			}
+
+			parameters = ArrayUtil.append(parameters, key);
+		}
+
 		UnicodeProperties typeSettingsProperties =
-			PropertiesParamUtil.getProperties(
-				actionRequest, "TypeSettingsProperties--");
+			SiteNavigationMenuItemUtil.getSiteNavigationMenuItemProperties(
+				actionRequest, "TypeSettingsProperties--", parameters);
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			actionRequest);
