@@ -14,6 +14,7 @@
 
 package com.liferay.layout.content.page.editor.web.internal.display.context;
 
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.fragment.constants.FragmentEntryTypeConstants;
 import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
@@ -49,6 +50,8 @@ import com.liferay.portal.kernel.model.PortletCategory;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.portlet.PortletConfigFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
+import com.liferay.portal.kernel.portlet.PortletProvider;
+import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
@@ -138,6 +141,12 @@ public class ContentPageEditorDisplayContext {
 			getFragmentEntryActionURL("/content_layout/add_portlet"));
 		soyContext.put(
 			"availableLanguages", _getAvailableLanguagesSoyContext());
+
+		PortletURL assetBrowserURL = PortletProviderUtil.getPortletURL(
+			request, AssetEntry.class.getName(), PortletProvider.Action.BROWSE);
+
+		soyContext.put("assetBrowserURL", assetBrowserURL.toString());
+
 		soyContext.put("classNameId", classNameId);
 		soyContext.put("classPK", classPK);
 		soyContext.put(
