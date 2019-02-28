@@ -37,7 +37,7 @@
 			<%
 			AssetRenderer assetRenderer = assetEntry.getAssetRenderer();
 
-			AssetRendererFactory assetRendererFactory = assetBrowserDisplayContext.getAssetRendererFactory();
+			AssetRendererFactory assetRendererFactory = assetRenderer.getAssetRendererFactory();
 
 			Group group = GroupLocalServiceUtil.getGroup(assetEntry.getGroupId());
 
