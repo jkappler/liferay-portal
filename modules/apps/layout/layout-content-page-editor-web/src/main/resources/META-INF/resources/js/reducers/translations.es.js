@@ -130,7 +130,7 @@ function _getTranslationStatus(languageIds, editableValues, segmentsExperienceId
 								editableValue[editableValueId][segmentsExperienceId] &&
 								editableValue[editableValueId][segmentsExperienceId][languageId];
 						}
-						
+
 						return result;
 					}
 				)
