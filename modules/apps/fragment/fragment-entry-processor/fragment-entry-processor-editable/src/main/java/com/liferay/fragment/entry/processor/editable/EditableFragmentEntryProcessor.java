@@ -54,6 +54,7 @@ import java.util.stream.Stream;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import org.osgi.service.component.annotations.Component;
@@ -277,9 +278,7 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 			}
 		}
 
-		Element bodyElement = document.body();
-
-		return bodyElement.html();
+		return document.html();
 	}
 
 	@Reference(
@@ -312,7 +311,8 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 	}
 
 	private Document _getDocument(String html) {
-		Document document = Jsoup.parseBodyFragment(html);
+		Document document = Jsoup.parse(
+			html, StringPool.BLANK, Parser.xmlParser());
 
 		Document.OutputSettings outputSettings = new Document.OutputSettings();
 
