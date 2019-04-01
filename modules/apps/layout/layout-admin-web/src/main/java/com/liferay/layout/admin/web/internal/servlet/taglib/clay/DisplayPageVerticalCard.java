@@ -29,6 +29,8 @@ import com.liferay.layout.admin.web.internal.constants.LayoutAdminWebKeys;
 import com.liferay.layout.admin.web.internal.servlet.taglib.util.DisplayPageActionDropdownItemsProvider;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
+import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.RowChecker;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -38,6 +40,8 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutPrototype;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutPrototypeLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -46,6 +50,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,6 +75,8 @@ public class DisplayPageVerticalCard
 		_assetDisplayContributorTracker =
 			(AssetDisplayContributorTracker)renderRequest.getAttribute(
 				LayoutAdminWebKeys.ASSET_DISPLAY_CONTRIBUTOR_TRACKER);
+		_layoutCopyHelper = (LayoutCopyHelper)renderRequest.getAttribute(
+			LayoutAdminWebKeys.LAYOUT_COPY_HELPER);
 		_layoutPageTemplateEntry = (LayoutPageTemplateEntry)baseModel;
 		_themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -128,6 +135,28 @@ public class DisplayPageVerticalCard
 
 			Layout draftLayout = LayoutLocalServiceUtil.fetchLayout(
 				PortalUtil.getClassNameId(Layout.class), layout.getPlid());
+
+			if (draftLayout == null) {
+				ServiceContext serviceContext =
+					ServiceContextFactory.getInstance(_renderRequest);
+
+				draftLayout = LayoutLocalServiceUtil.addLayout(
+					layout.getUserId(), layout.getGroupId(),
+					layout.isPrivateLayout(), layout.getParentLayoutId(),
+					PortalUtil.getClassNameId(Layout.class), layout.getPlid(),
+					layout.getNameMap(), layout.getTitleMap(),
+					layout.getDescriptionMap(), layout.getKeywordsMap(),
+					layout.getRobotsMap(), layout.getType(), StringPool.BLANK,
+					true, true, Collections.emptyMap(), serviceContext);
+
+				LayoutPageTemplateStructureLocalServiceUtil.
+					rebuildLayoutPageTemplateStructure(
+						layout.getGroupId(),
+						PortalUtil.getClassNameId(Layout.class),
+						layout.getPlid());
+
+				_layoutCopyHelper.copyLayout(layout, draftLayout);
+			}
 
 			String layoutFullURL = PortalUtil.getLayoutFullURL(
 				draftLayout, _themeDisplay);
@@ -244,6 +273,7 @@ public class DisplayPageVerticalCard
 
 	private final AssetDisplayContributorTracker
 		_assetDisplayContributorTracker;
+	private final LayoutCopyHelper _layoutCopyHelper;
 	private final LayoutPageTemplateEntry _layoutPageTemplateEntry;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;

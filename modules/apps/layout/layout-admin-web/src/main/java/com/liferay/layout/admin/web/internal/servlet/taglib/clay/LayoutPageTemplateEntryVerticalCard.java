@@ -21,6 +21,9 @@ import com.liferay.layout.admin.web.internal.security.permission.resource.Layout
 import com.liferay.layout.admin.web.internal.servlet.taglib.util.LayoutPageTemplateEntryActionDropdownItemsProvider;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
+import com.liferay.layout.util.LayoutCopyHelper;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.RowChecker;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.BaseModel;
@@ -30,11 +33,14 @@ import com.liferay.portal.kernel.model.LayoutPrototype;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutPrototypeServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -56,6 +62,8 @@ public class LayoutPageTemplateEntryVerticalCard extends BaseVerticalCard {
 
 		_renderResponse = renderResponse;
 
+		_layoutCopyHelper = (LayoutCopyHelper)renderRequest.getAttribute(
+			LayoutAdminWebKeys.LAYOUT_COPY_HELPER);
 		_layoutPageTemplateEntry = (LayoutPageTemplateEntry)baseModel;
 		_request = PortalUtil.getHttpServletRequest(renderRequest);
 	}
@@ -121,6 +129,28 @@ public class LayoutPageTemplateEntryVerticalCard extends BaseVerticalCard {
 			Layout draftLayout = LayoutLocalServiceUtil.fetchLayout(
 				PortalUtil.getClassNameId(Layout.class), layout.getPlid());
 
+			if (draftLayout == null) {
+				ServiceContext serviceContext =
+					ServiceContextFactory.getInstance(renderRequest);
+
+				draftLayout = LayoutLocalServiceUtil.addLayout(
+					layout.getUserId(), layout.getGroupId(),
+					layout.isPrivateLayout(), layout.getParentLayoutId(),
+					PortalUtil.getClassNameId(Layout.class), layout.getPlid(),
+					layout.getNameMap(), layout.getTitleMap(),
+					layout.getDescriptionMap(), layout.getKeywordsMap(),
+					layout.getRobotsMap(), layout.getType(), StringPool.BLANK,
+					true, true, Collections.emptyMap(), serviceContext);
+
+				LayoutPageTemplateStructureLocalServiceUtil.
+					rebuildLayoutPageTemplateStructure(
+						layout.getGroupId(),
+						PortalUtil.getClassNameId(Layout.class),
+						layout.getPlid());
+
+				_layoutCopyHelper.copyLayout(layout, draftLayout);
+			}
+
 			String layoutFullURL = PortalUtil.getLayoutFullURL(
 				draftLayout, themeDisplay);
 
@@ -170,6 +200,7 @@ public class LayoutPageTemplateEntryVerticalCard extends BaseVerticalCard {
 		return HtmlUtil.escape(_layoutPageTemplateEntry.getName());
 	}
 
+	private final LayoutCopyHelper _layoutCopyHelper;
 	private final LayoutPageTemplateEntry _layoutPageTemplateEntry;
 	private final RenderResponse _renderResponse;
 	private final HttpServletRequest _request;
