@@ -115,6 +115,15 @@ public class LayoutPageTemplateStructureLocalServiceImpl
 			return layoutPageTemplateStructure;
 		}
 
+		return rebuildLayoutPageTemplateStructure(
+			groupId, classNameId, classPK);
+	}
+
+	@Override
+	public LayoutPageTemplateStructure rebuildLayoutPageTemplateStructure(
+			long groupId, long classNameId, long classPK)
+		throws PortalException {
+
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		List<FragmentEntryLink> fragmentEntryLinks =
@@ -159,6 +168,14 @@ public class LayoutPageTemplateStructureLocalServiceImpl
 		}
 
 		jsonObject.put("structure", structureJSONArray);
+
+		LayoutPageTemplateStructure layoutPageTemplateStructure =
+			fetchLayoutPageTemplateStructure(groupId, classNameId, classPK);
+
+		if (layoutPageTemplateStructure != null) {
+			return updateLayoutPageTemplateStructure(
+				groupId, classNameId, classPK, jsonObject.toString());
+		}
 
 		return addLayoutPageTemplateStructure(
 			PrincipalThreadLocal.getUserId(), groupId, classNameId, classPK,
