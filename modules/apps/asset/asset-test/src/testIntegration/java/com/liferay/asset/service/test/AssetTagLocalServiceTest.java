@@ -274,6 +274,24 @@ public class AssetTagLocalServiceTest {
 		Assert.assertEquals(0, assetTagStats.getAssetCount());
 	}
 
+	@Test
+	public void testIncrementAssetCountWithAssetTagNameGreaterThan75()
+		throws PortalException {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_group.getGroupId(), TestPropsValues.getUserId());
+
+		AssetTag initialAssetTag = AssetTagLocalServiceUtil.addTag(
+			TestPropsValues.getUserId(), _group.getGroupId(),
+			RandomTestUtil.randomString(100), serviceContext);
+
+		AssetTag finalAssetTag = AssetTagLocalServiceUtil.incrementAssetCount(
+			initialAssetTag.getTagId(), RandomTestUtil.randomLong());
+
+		Assert.assertEquals(1, finalAssetTag.getAssetCount());
+	}
+
 	@DeleteAfterTestRun
 	private Group _group;
 
