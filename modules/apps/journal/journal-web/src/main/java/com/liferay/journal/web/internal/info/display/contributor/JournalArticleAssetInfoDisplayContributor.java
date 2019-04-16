@@ -39,7 +39,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
-import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
@@ -253,10 +252,14 @@ public class JournalArticleAssetInfoDisplayContributor
 
 	private Object _sanitizeFieldValue(
 			JournalArticle article, String type, String value)
-		throws SanitizerException {
+		throws PortalException {
 
 		if (Objects.equals(type, "ddm-image")) {
-			return _transformFileEntryURL(value);
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(value);
+
+			jsonObject.put("url", _transformFileEntryURL(value));
+
+			return jsonObject;
 		}
 
 		return SanitizerUtil.sanitize(
