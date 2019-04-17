@@ -87,7 +87,9 @@ public class DefaultAssetDisplayPageFriendlyURLResolver
 
 		if (Validator.isNull(journalArticle.getLayoutUuid()) &&
 			AssetDisplayPageHelper.hasAssetDisplayPage(
-				groupId, infoDisplayObjectProvider)) {
+				groupId, infoDisplayObjectProvider.getClassNameId(),
+				infoDisplayObjectProvider.getClassPK(),
+				infoDisplayObjectProvider.getClassTypeId())) {
 
 			return super.getActualURL(
 				companyId, groupId, privateLayout, mainPath, friendlyURL,
@@ -119,7 +121,9 @@ public class DefaultAssetDisplayPageFriendlyURLResolver
 
 		if (Validator.isNull(journalArticle.getLayoutUuid()) &&
 			AssetDisplayPageHelper.hasAssetDisplayPage(
-				groupId, infoDisplayObjectProvider)) {
+				groupId, infoDisplayObjectProvider.getClassNameId(),
+				infoDisplayObjectProvider.getClassPK(),
+				infoDisplayObjectProvider.getClassTypeId())) {
 
 			return super.getLayoutFriendlyURLComposite(
 				companyId, groupId, privateLayout, friendlyURL, params,

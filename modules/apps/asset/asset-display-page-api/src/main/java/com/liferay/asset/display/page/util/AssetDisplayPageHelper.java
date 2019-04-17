@@ -17,7 +17,7 @@ package com.liferay.asset.display.page.util;
 import com.liferay.asset.display.page.constants.AssetDisplayPageConstants;
 import com.liferay.asset.display.page.model.AssetDisplayPageEntry;
 import com.liferay.asset.display.page.service.AssetDisplayPageEntryLocalServiceUtil;
-import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
+import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -29,14 +29,12 @@ public class AssetDisplayPageHelper {
 
 	public static LayoutPageTemplateEntry
 			getAssetDisplayPageLayoutPageTemplateEntry(
-				long groupId,
-				InfoDisplayObjectProvider infoDisplayObjectProvider)
+				long groupId, long classNameId, long classPK, long classTypeId)
 		throws PortalException {
 
 		AssetDisplayPageEntry assetDisplayPageEntry =
 			AssetDisplayPageEntryLocalServiceUtil.fetchAssetDisplayPageEntry(
-				groupId, infoDisplayObjectProvider.getClassNameId(),
-				infoDisplayObjectProvider.getClassPK());
+				groupId, classNameId, classPK);
 
 		if ((assetDisplayPageEntry == null) ||
 			(assetDisplayPageEntry.getType() ==
@@ -55,17 +53,32 @@ public class AssetDisplayPageHelper {
 
 		return LayoutPageTemplateEntryServiceUtil.
 			fetchDefaultLayoutPageTemplateEntry(
-				groupId, infoDisplayObjectProvider.getClassNameId(),
-				infoDisplayObjectProvider.getClassTypeId());
+				groupId, classNameId, classTypeId);
 	}
 
 	public static boolean hasAssetDisplayPage(
-			long groupId, InfoDisplayObjectProvider infoDisplayObjectProvider)
+			long groupId, AssetEntry assetEntry)
 		throws PortalException {
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			getAssetDisplayPageLayoutPageTemplateEntry(
-				groupId, infoDisplayObjectProvider);
+				groupId, assetEntry.getClassNameId(), assetEntry.getClassPK(),
+				assetEntry.getClassTypeId());
+
+		if (layoutPageTemplateEntry != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean hasAssetDisplayPage(
+			long groupId, long classNameId, long classPK, long classTypeId)
+		throws PortalException {
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			getAssetDisplayPageLayoutPageTemplateEntry(
+				groupId, classNameId, classPK, classTypeId);
 
 		if (layoutPageTemplateEntry != null) {
 			return true;

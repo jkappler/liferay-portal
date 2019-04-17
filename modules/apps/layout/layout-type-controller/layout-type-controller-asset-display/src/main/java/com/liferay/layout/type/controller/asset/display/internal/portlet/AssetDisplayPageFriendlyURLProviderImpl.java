@@ -53,7 +53,10 @@ public class AssetDisplayPageFriendlyURLProviderImpl
 			infoDisplayContributor.getInfoDisplayObjectProvider(classPK);
 
 		if (!AssetDisplayPageHelper.hasAssetDisplayPage(
-				themeDisplay.getScopeGroupId(), infoDisplayObjectProvider)) {
+				themeDisplay.getScopeGroupId(),
+				infoDisplayObjectProvider.getClassNameId(),
+				infoDisplayObjectProvider.getClassPK(),
+				infoDisplayObjectProvider.getClassTypeId())) {
 
 			return null;
 		}
