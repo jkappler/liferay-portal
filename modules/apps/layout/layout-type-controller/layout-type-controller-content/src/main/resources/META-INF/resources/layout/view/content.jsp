@@ -97,10 +97,56 @@ String ppid = ParamUtil.getString(request, "p_p_id");
 									paddingHorizontal = GetterUtil.getLong(rowConfigJSONObject.getString("paddingHorizontal"), paddingHorizontal);
 									paddingVertical = GetterUtil.getLong(rowConfigJSONObject.getString("paddingVertical"), paddingVertical);
 								}
+
+								StringBuilder rowAttributes = new StringBuilder();
+
+								rowAttributes.append("class=\"");
+
+								if (Validator.isNotNull(backgroundColorCssClass)) {
+									rowAttributes.append(" bg-");
+									rowAttributes.append(backgroundColorCssClass);
+								}
+
+								if (Validator.isNotNull(paddingHorizontal)) {
+									rowAttributes.append(" px-");
+									rowAttributes.append(paddingHorizontal);
+								}
+
+								if (Validator.isNotNull(paddingVertical)) {
+									rowAttributes.append(" py-");
+									rowAttributes.append(paddingVertical);
+								}
+
+								rowAttributes.append("\" style=\"");
+
+								if (Validator.isNotNull(backgroundImage)) {
+									rowAttributes.append("background-image: url(\"");
+									rowAttributes.append(backgroundImage);
+									rowAttributes.append("\");");
+									rowAttributes.append("background-position: 50% 50%;");
+									rowAttributes.append("background-repeat: no-repeat;");
+									rowAttributes.append("background-size: cover;");
+								}
+
+								rowAttributes.append("\"");
 					%>
 
-								<section class="bg-<%= backgroundColorCssClass %> px-<%= paddingHorizontal %> py-<%= paddingVertical %>" style="<%= Validator.isNotNull(backgroundImage) ? "background-image: url(" + backgroundImage + "); background-position: 50% 50%; background-repeat: no-repeat; background-size: cover;" : StringPool.BLANK %>">
-									<div class="<%= Objects.equals(containerType, "fixed") ? "container" : "container-fluid" %> p-0">
+								<section <%= rowAttributes.toString() %>>
+
+									<%
+									StringBuilder rowContainerClassesStringBuilder = new StringBuilder();
+
+									if (Objects.equals(containerType, "fixed")) {
+										rowContainerClassesStringBuilder.append(" container");
+									}
+									else {
+										rowContainerClassesStringBuilder.append(" container-fluid");
+									}
+
+									rowContainerClassesStringBuilder.append("px-0");
+									%>
+
+									<div class="<%= rowContainerClassesStringBuilder.toString() %>">
 										<div class="row <%= !columnSpacing ? "no-gutters" : StringPool.BLANK %>">
 
 											<%
