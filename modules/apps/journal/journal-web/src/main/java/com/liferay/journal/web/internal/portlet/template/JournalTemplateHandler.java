@@ -78,11 +78,9 @@ public class JournalTemplateHandler extends BaseDDMTemplateHandler {
 
 	@Override
 	public String getName(Locale locale) {
-		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-			locale, JournalTemplateHandler.class);
-
 		String portletTitle = _portal.getPortletTitle(
-			JournalPortletKeys.JOURNAL, resourceBundle);
+			JournalPortletKeys.JOURNAL,
+			ResourceBundleUtil.getBundle(locale, getClass()));
 
 		return LanguageUtil.format(locale, "x-template", portletTitle, false);
 	}

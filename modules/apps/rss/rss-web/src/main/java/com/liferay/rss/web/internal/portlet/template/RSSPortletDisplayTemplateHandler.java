@@ -50,11 +50,10 @@ public class RSSPortletDisplayTemplateHandler
 
 	@Override
 	public String getName(Locale locale) {
-		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-			"content.Language", getClass());
-
 		String portletTitle = _portal.getPortletTitle(
-			RSSPortletKeys.RSS, resourceBundle);
+			RSSPortletKeys.RSS,
+			ResourceBundleUtil.getBundle(
+				"content.Language", locale, getClass()));
 
 		return LanguageUtil.format(locale, "x-template", portletTitle, false);
 	}
