@@ -842,9 +842,11 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		// Layout set
 
-		if (updateLayoutSet) {
-			layoutSetLocalService.updatePageCount(
-				layout.getGroupId(), layout.isPrivateLayout());
+		if (updateLayoutSet &&
+			layoutSetLocalService.fetchLayoutSet(
+				layout.getGroupId(), layout.isPrivateLayout()) != null) {
+					layoutSetLocalService.updatePageCount(
+						layout.getGroupId(), layout.isPrivateLayout());
 		}
 
 		// System event
