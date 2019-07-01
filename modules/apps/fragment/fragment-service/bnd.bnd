@@ -5,6 +5,13 @@ Import-Package:\
 	com.liferay.fragment.util.comparator,\
 	\
 	*
+-includeresource:\
+	@icu4j-[0-9]*.jar!/!(module-info.class),\
+	@jakarta.json-api-[0-9]*.jar!/!(module-info.class),\
+	@jakarta.json.bind-api-[0-9]*.jar!/!(module-info.class),\
+	@yasson-[0-9]*.jar!/!(module-info.class),\
+	@jakarta.json-[0-9]*.jar!/!(module-info.class),\
+	@justify-[0-9]*.jar!/!(module-info.class)
 Liferay-Require-SchemaVersion: 2.3.0
 Liferay-Service: true
 -dsannotations-options: inherit
