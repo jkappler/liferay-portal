@@ -431,7 +431,10 @@ public class LayoutPageTemplateEntryStagedModelDataHandler
 				_assetDisplayPageEntryLocalService.fetchAssetDisplayPageEntry(
 					assetDisplayPageEntryId);
 
-			if (existingAssetDisplayPageEntry != null) {
+			if ((existingAssetDisplayPageEntry != null) &&
+				(existingAssetDisplayPageEntry.getGroupId() ==
+					importedLayoutPageTemplateEntry.getGroupId())) {
+
 				existingAssetDisplayPageEntry.setLayoutPageTemplateEntryId(
 					importedLayoutPageTemplateEntry.
 						getLayoutPageTemplateEntryId());
