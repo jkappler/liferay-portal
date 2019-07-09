@@ -1271,7 +1271,7 @@ public class LayoutStagedModelDataHandler
 	protected void importFragmentEntry(
 			PortletDataContext portletDataContext,
 			FragmentEntryLink fragmentEntryLink)
-		throws Exception {
+		throws PortletDataException {
 
 		String path = ExportImportPathUtil.getModelPath(
 			fragmentEntryLink.getGroupId(), FragmentEntry.class.getName(),
@@ -1280,8 +1280,10 @@ public class LayoutStagedModelDataHandler
 		FragmentEntry fragmentEntry =
 			(FragmentEntry)portletDataContext.getZipEntryAsObject(path);
 
-		StagedModelDataHandlerUtil.importStagedModel(
-			portletDataContext, fragmentEntry);
+		if (fragmentEntry != null) {
+			StagedModelDataHandlerUtil.importStagedModel(
+				portletDataContext, fragmentEntry);
+		}
 	}
 
 	protected void importFragmentEntryLinks(
@@ -2019,12 +2021,14 @@ public class LayoutStagedModelDataHandler
 				PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
 
 			FragmentEntry fragmentEntry =
-				_fragmentEntryLocalService.getFragmentEntry(
+				_fragmentEntryLocalService.fetchFragmentEntry(
 					fragmentEntryLink.getFragmentEntryId());
 
-			StagedModelDataHandlerUtil.exportReferenceStagedModel(
-				portletDataContext, fragmentEntryLink, fragmentEntry,
-				PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
+			if (fragmentEntry != null) {
+				StagedModelDataHandlerUtil.exportReferenceStagedModel(
+					portletDataContext, fragmentEntryLink, fragmentEntry,
+					PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
+			}
 		}
 
 		LayoutPageTemplateStructure layoutPageTemplateStructure =
