@@ -110,8 +110,7 @@ public class AssetDisplayPageStagedModelDataHandler
 		}
 
 		_importLayoutPageTemplateEnty(
-			portletDataContext, existingAssetDisplayPageEntry,
-			importedAssetDisplayPageEntry);
+			portletDataContext, importedAssetDisplayPageEntry);
 
 		portletDataContext.importClassedModel(
 			assetDisplayPageEntry, importedAssetDisplayPageEntry);
@@ -126,22 +125,21 @@ public class AssetDisplayPageStagedModelDataHandler
 
 	private void _importLayoutPageTemplateEnty(
 			PortletDataContext portletDataContext,
-			AssetDisplayPageEntry existingAssetDisplayPageEntry,
 			AssetDisplayPageEntry importedAssetDisplayPageEntry)
 		throws PortalException {
 
 		LayoutPageTemplateEntry existingLayoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.fetchLayoutPageTemplateEntry(
-				existingAssetDisplayPageEntry.getLayoutPageTemplateEntryId());
+				importedAssetDisplayPageEntry.getLayoutPageTemplateEntryId());
 
 		if ((existingLayoutPageTemplateEntry == null) ||
 			(existingLayoutPageTemplateEntry.getGroupId() !=
-				existingAssetDisplayPageEntry.getGroupId())) {
+				importedAssetDisplayPageEntry.getGroupId())) {
 
 			String path = ExportImportPathUtil.getModelPath(
 				portletDataContext, LayoutPageTemplateEntry.class.getName(),
 				Long.valueOf(
-					existingAssetDisplayPageEntry.
+					importedAssetDisplayPageEntry.
 						getLayoutPageTemplateEntryId()));
 
 			LayoutPageTemplateEntry layoutPageTemplateEntry =
