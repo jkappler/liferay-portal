@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
@@ -38,6 +39,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.xml.Element;
 
 import java.util.List;
@@ -279,6 +281,31 @@ public class LayoutPageTemplateEntryStagedModelDataHandler
 			LayoutPrototype layoutPrototype =
 				(LayoutPrototype)portletDataContext.getZipEntryAsObject(
 					layoutPrototypePath);
+
+			if (!ExportImportThreadLocal.isStagingInProcess()) {
+				LayoutPrototype layoutPrototypeOld =
+					_layoutPrototypeLocalService.
+						getLayoutPrototypeByUuidAndCompanyId(
+							layoutPrototype.getUuid(),
+							layoutPrototype.getCompanyId());
+
+				if (layoutPrototypeOld != null) {
+					StringBundler sb = new StringBundler(8);
+
+					sb.append(
+						"LayoutPageTemplate with layoutPageTemplateEntryId ");
+					sb.append(
+						layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
+					sb.append(" can not be imported because LayoutPrototype ");
+					sb.append("with uuid ");
+					sb.append(layoutPrototype.getUuid());
+					sb.append(" and companyId ");
+					sb.append(layoutPrototype.getCompanyId());
+					sb.append(" already exists");
+
+					throw new UnsupportedOperationException(sb.toString());
+				}
+			}
 
 			StagedModelDataHandlerUtil.importStagedModel(
 				portletDataContext, layoutPrototype);
