@@ -1,0 +1,10 @@
+{
+	"configurationPath": "index.json",
+	"cssPath": "index.css",
+	"fragmentEntryKey": "configurable-3",
+	"htmlPath": "index.html",
+	"jsPath": "index.js",
+	"name": "Configurable (Invalid HTML)",
+	"thumbnail": "h3.png",
+	"type": "component"
+}
