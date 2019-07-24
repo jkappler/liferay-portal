@@ -18,12 +18,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
-import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 
 /**
  * @author Brian Wing Shun Chan
@@ -44,18 +40,7 @@ public abstract class BaseServiceImpl implements BaseService {
 	public static final String WEBLOGIC_ANONYMOUS = "<anonymous>";
 
 	public User getGuestOrUser() throws PortalException {
-		try {
-			return getUser();
-		}
-		catch (PrincipalException pe) {
-			try {
-				return UserLocalServiceUtil.getDefaultUser(
-					CompanyThreadLocal.getCompanyId());
-			}
-			catch (Exception e) {
-				throw pe;
-			}
-		}
+		return BaseServiceUtil.getGuestOrUser(getUser());
 	}
 
 	public long getGuestOrUserId() throws PrincipalException {
@@ -85,24 +70,11 @@ public abstract class BaseServiceImpl implements BaseService {
 	}
 
 	public User getUser() throws PortalException {
-		return UserLocalServiceUtil.getUserById(getUserId());
+		return BaseServiceUtil.getUser(getUserId());
 	}
 
 	public long getUserId() throws PrincipalException {
-		String name = PrincipalThreadLocal.getName();
-
-		if (Validator.isNull(name)) {
-			throw new PrincipalException("Principal is null");
-		}
-
-		for (String anonymousName : ANONYMOUS_NAMES) {
-			if (StringUtil.equalsIgnoreCase(name, anonymousName)) {
-				throw new PrincipalException(
-					"Principal cannot be " + anonymousName);
-			}
-		}
-
-		return GetterUtil.getLong(name);
+		return BaseServiceUtil.getUserId();
 	}
 
 	protected ClassLoader getClassLoader() {
