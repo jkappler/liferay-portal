@@ -232,6 +232,7 @@
 		<exception>FragmentEntryConfiguration</exception>
 		<exception>FragmentEntryContent</exception>
 		<exception>FragmentEntryName</exception>
+		<exception>InvalidClassNameIdClassPK</exception>
 		<exception>InvalidFile</exception>
 		<exception>RequiredFragmentEntry</exception>
 	</exceptions>
