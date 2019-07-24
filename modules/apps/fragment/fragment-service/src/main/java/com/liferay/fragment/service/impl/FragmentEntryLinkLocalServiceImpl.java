@@ -14,12 +14,16 @@
 
 package com.liferay.fragment.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.document.library.util.DLURLHelper;
+import com.liferay.fragment.exception.InvalidClassNameIdClassPKException;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.base.FragmentEntryLinkLocalServiceBaseImpl;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -155,6 +159,8 @@ public class FragmentEntryLinkLocalServiceImpl
 		throws PortalException {
 
 		User user = userLocalService.getUser(userId);
+
+		validate(classNameId, classPK);
 
 		long fragmentEntryLinkId = counterLocalService.increment();
 
@@ -472,6 +478,8 @@ public class FragmentEntryLinkLocalServiceImpl
 
 		User user = userLocalService.getUser(userId);
 
+		validate(classNameId, classPK);
+
 		FragmentEntryLink fragmentEntryLink = fetchFragmentEntryLink(
 			fragmentEntryLinkId);
 
@@ -584,6 +592,22 @@ public class FragmentEntryLinkLocalServiceImpl
 		}
 	}
 
+	protected void validate(long classNameId, long classPK)
+		throws PortalException {
+
+		String className = _portal.getClassName(classNameId);
+
+		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+			className, classPK);
+
+		if (assetEntry == null) {
+			throw new InvalidClassNameIdClassPKException(
+				StringBundler.concat(
+					"Invalid combination classNameId: ", classNameId,
+					" classPK: ", classPK));
+		}
+	}
+
 	private String _replaceResources(long fragmentEntryId, String html)
 		throws PortalException {
 
@@ -623,6 +647,9 @@ public class FragmentEntryLinkLocalServiceImpl
 
 	private static final Pattern _pattern = Pattern.compile(
 		"\\[resources:(.+?)\\]");
+
+	@Reference
+	private AssetEntryLocalService _assetEntryLocalService;
 
 	@Reference
 	private DLURLHelper _dlURLHelper;
