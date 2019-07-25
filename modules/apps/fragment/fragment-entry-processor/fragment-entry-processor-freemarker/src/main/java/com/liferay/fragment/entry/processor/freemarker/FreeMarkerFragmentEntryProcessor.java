@@ -46,6 +46,7 @@ import com.liferay.segments.constants.SegmentsConstants;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
@@ -145,13 +146,7 @@ public class FreeMarkerFragmentEntryProcessor
 			template.processTemplate(unsyncStringWriter);
 		}
 		catch (TemplateException te) {
-			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-				"content.Language", getClass());
-
-			String message = LanguageUtil.get(
-				resourceBundle, "freemarker-syntax-is-invalid");
-
-			throw new FragmentEntryContentException(message, te);
+			throw new FragmentEntryContentException(_getMessage(te), te);
 		}
 
 		return unsyncStringWriter.toString();
@@ -216,13 +211,7 @@ public class FreeMarkerFragmentEntryProcessor
 			}
 		}
 		catch (TemplateException te) {
-			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-				"content.Language", getClass());
-
-			String message = LanguageUtil.get(
-				resourceBundle, "freemarker-syntax-is-invalid");
-
-			throw new FragmentEntryContentException(message, te);
+			throw new FragmentEntryContentException(_getMessage(te), te);
 		}
 	}
 
@@ -302,6 +291,24 @@ public class FreeMarkerFragmentEntryProcessor
 		}
 
 		return configurationJSONObject;
+	}
+
+	private String _getMessage(TemplateException te) {
+		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+			"content.Language", getClass());
+
+		String message = LanguageUtil.get(
+			resourceBundle, "freemarker-syntax-is-invalid");
+
+		Throwable cause = te.getCause();
+
+		String causeMessage = cause.getLocalizedMessage();
+
+		if (Objects.nonNull(causeMessage)) {
+			message = message + "\n\n" + causeMessage;
+		}
+
+		return message;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
