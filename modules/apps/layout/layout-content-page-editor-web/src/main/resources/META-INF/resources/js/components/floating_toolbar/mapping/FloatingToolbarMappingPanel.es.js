@@ -24,9 +24,10 @@ import {COMPATIBLE_TYPES} from '../../../utils/constants';
 import {encodeAssetId} from '../../../utils/FragmentsEditorIdUtils.es';
 import {openAssetBrowser} from '../../../utils/FragmentsEditorDialogUtils';
 import {setIn} from '../../../utils/FragmentsEditorUpdateUtils.es';
-import {updateEditableValuesAction} from '../../../actions/updateEditableValue.es';
+import {updateEditableValuesMappingAction} from '../../../actions/updateEditableValue.es';
 import getConnectedComponent from '../../../store/ConnectedComponent.es';
 import templates from './FloatingToolbarMappingPanel.soy';
+import {updateMappedContentsAction} from '../../../actions/updateMappedContents.es';
 
 const SOURCE_TYPE_IDS = {
 	content: 'specific_content',
@@ -161,7 +162,7 @@ class FloatingToolbarMappingPanel extends PortletBase {
 	 */
 	_clearEditableValues() {
 		this.store.dispatch(
-			updateEditableValuesAction(
+			updateEditableValuesMappingAction(
 				this.item.fragmentEntryLinkId,
 				this.item.editableId,
 				[
@@ -254,31 +255,35 @@ class FloatingToolbarMappingPanel extends PortletBase {
 		const fieldId = event.delegateTarget.value;
 
 		if (this._selectedSourceTypeId === SOURCE_TYPE_IDS.content) {
-			this.store.dispatch(
-				updateEditableValuesAction(
-					this.item.fragmentEntryLinkId,
-					this.item.editableId,
-					[
-						{
-							content: fieldId,
-							editableValueId: 'fieldId'
-						}
-					]
+			this.store
+				.dispatch(
+					updateEditableValuesMappingAction(
+						this.item.fragmentEntryLinkId,
+						this.item.editableId,
+						[
+							{
+								content: fieldId,
+								editableValueId: 'fieldId'
+							}
+						]
+					)
 				)
-			);
+				.dispatch(updateMappedContentsAction());
 		} else if (this._selectedSourceTypeId === SOURCE_TYPE_IDS.structure) {
-			this.store.dispatch(
-				updateEditableValuesAction(
-					this.item.fragmentEntryLinkId,
-					this.item.editableId,
-					[
-						{
-							content: fieldId,
-							editableValueId: 'mappedField'
-						}
-					]
+			this.store
+				.dispatch(
+					updateEditableValuesMappingAction(
+						this.item.fragmentEntryLinkId,
+						this.item.editableId,
+						[
+							{
+								content: fieldId,
+								editableValueId: 'mappedField'
+							}
+						]
+					)
 				)
-			);
+				.dispatch(updateMappedContentsAction());
 		}
 	}
 
@@ -350,7 +355,7 @@ class FloatingToolbarMappingPanel extends PortletBase {
 	 */
 	_selectAssetEntry(assetEntry) {
 		this.store.dispatch(
-			updateEditableValuesAction(
+			updateEditableValuesMappingAction(
 				this.item.fragmentEntryLinkId,
 				this.item.editableId,
 				[
