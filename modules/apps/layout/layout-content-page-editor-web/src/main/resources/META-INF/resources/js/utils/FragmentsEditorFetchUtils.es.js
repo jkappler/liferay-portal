@@ -122,6 +122,16 @@ function getExperienceUsedPortletIds(segmentsExperienceId) {
 	}).then(response => response.json());
 }
 
+function getMappedContents() {
+	const state = _store.getState();
+	const {classNameId, classPK, getMappedContentsURL} = state;
+
+	return _fetch(getMappedContentsURL, {
+		classNameId,
+		classPK
+	}).then(response => response.json());
+}
+
 /**
  * @param {string} segmentsExperienceId
  * @param {Array<string>} [fragmentEntryLinkIds=[]]
@@ -238,6 +248,7 @@ export {
 	editFragmentEntryLinks,
 	editFragmentEntryLinkComment,
 	getExperienceUsedPortletIds,
+	getMappedContents,
 	removeExperience,
 	removeFragmentEntryLinks,
 	setStore,

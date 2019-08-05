@@ -89,6 +89,7 @@ import {
 	UPDATE_EDITABLE_VALUE_LOADING,
 	UPDATE_FRAGMENT_ENTRY_LINK_COMMENT_REPLY,
 	UPDATE_FRAGMENT_ENTRY_LINK_COMMENT,
+	UPDATE_MAPPED_CONTENTS,
 	UPDATE_ROW_COLUMNS_ERROR,
 	UPDATE_ROW_COLUMNS_LOADING
 } from '../actions/actions.es';
@@ -141,6 +142,7 @@ const reducers = {
 	[UPDATE_ROW_COLUMNS_LOADING]: createSetValueReducer('layoutData'),
 	[UPDATE_ROW_COLUMNS_NUMBER_SUCCESS]: updateRowColumnsNumberReducer,
 	[UPDATE_ROW_CONFIG]: updateRowConfigReducer,
+	[UPDATE_MAPPED_CONTENTS]: createSetValueReducer('mappedContents'),
 	[UPDATE_SAVING_CHANGES_STATUS]: saveChangesReducer,
 	[UPDATE_SEGMENTS_EXPERIENCE_PRIORITY]: updateSegmentsExperiencePriorityReducer,
 	[UPDATE_SELECTED_SIDEBAR_PANEL_ID]: createSetValueReducer(
