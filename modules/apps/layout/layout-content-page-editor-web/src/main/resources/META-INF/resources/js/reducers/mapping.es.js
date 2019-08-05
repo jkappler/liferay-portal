@@ -12,7 +12,10 @@
  * details.
  */
 
-import {ADD_MAPPED_ASSET_ENTRY} from '../actions/actions.es';
+import {
+	ADD_MAPPED_ASSET_ENTRY,
+	UPDATE_MAPPED_CONTENTS
+} from '../actions/actions.es';
 import {setIn} from '../utils/FragmentsEditorUpdateUtils.es';
 
 /**
@@ -45,4 +48,20 @@ function addMappingAssetEntry(state, action) {
 	return nextState;
 }
 
-export {addMappingAssetEntry};
+/**
+ * @param {object} state
+ * @param {object} action
+ * @param {string} action.mappedContents
+ * @param {string} action.type
+ */
+function updateMappedContents(state, action) {
+	let nextState = state;
+
+	if (action.type === UPDATE_MAPPED_CONTENTS) {
+		nextState = setIn(nextState, ['mappedContents'], action.mappedContents);
+	}
+
+	return nextState;
+}
+
+export {addMappingAssetEntry, updateMappedContents};

@@ -25,7 +25,7 @@ import {
 	updateFragmentEntryLinkConfigReducer,
 	updateFragmentEntryLinkContentReducer
 } from './fragments.es';
-import {addMappingAssetEntry} from './mapping.es';
+import {addMappingAssetEntry, updateMappedContents} from './mapping.es';
 import {addPortletReducer} from './portlets.es';
 import {
 	addRowReducer,
@@ -94,6 +94,7 @@ const reducers = [
 	updateFragmentEntryLinkConfigReducer,
 	updateFragmentEntryLinkContentReducer,
 	updateHoveredItemReducer,
+	updateMappedContents,
 	updateRowColumnsNumberReducer,
 	updateRowColumnsReducer,
 	updateRowConfigReducer,
