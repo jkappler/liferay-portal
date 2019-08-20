@@ -56,6 +56,8 @@ renderResponse.setTitle(siteNavigationAdminDisplayContext.getSiteNavigationMenuN
 	<liferay-ui:message arguments='<%= ModelHintsUtil.getMaxLength(SiteNavigationMenuItem.class.getName(), "name") %>' key="please-enter-a-name-with-fewer-than-x-characters" translateArguments="<%= false %>" />
 </liferay-ui:error>
 
+<liferay-ui:error exception="<%= NoSuchLayoutException.class %>" message="aaaaaaaa-bbb"/>
+
 <div class="container-fluid-1280 contextual-sidebar-content site-navigation-content">
 	<div class="lfr-search-container-wrapper site-navigation-menu-container">
 
