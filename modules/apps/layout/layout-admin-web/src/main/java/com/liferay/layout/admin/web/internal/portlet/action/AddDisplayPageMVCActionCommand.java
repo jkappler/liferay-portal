@@ -14,12 +14,14 @@
 
 package com.liferay.layout.admin.web.internal.portlet.action;
 
+import com.liferay.asset.kernel.NoSuchClassTypeException;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.admin.web.internal.handler.LayoutPageTemplateEntryExceptionRequestHandler;
-import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
+import com.liferay.portal.kernel.exception.NoSuchClassNameException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -27,6 +29,7 @@ import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.LayoutService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.MultiSessionMessages;
@@ -36,9 +39,12 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
+import java.util.ResourceBundle;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -53,58 +59,32 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + LayoutAdminPortletKeys.GROUP_PAGES,
-		"mvc.command.name=/layout/add_layout_page_template_entry"
+		"mvc.command.name=/layout/add_display_page"
 	},
 	service = MVCActionCommand.class
 )
-public class AddLayoutPageTemplateEntryMVCActionCommand
-	extends BaseMVCActionCommand {
+public class AddDisplayPageMVCActionCommand extends BaseMVCActionCommand {
 
 	@Override
 	protected void doProcessAction(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		long layoutPageTemplateCollectionId = ParamUtil.getLong(
-			actionRequest, "layoutPageTemplateCollectionId");
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			actionRequest);
 
-		String name = ParamUtil.getString(actionRequest, "name");
+		JSONObject jsonObject = _addDisplayPage(actionRequest, serviceContext);
 
-		int type = ParamUtil.getInteger(
-			actionRequest, "type",
-			LayoutPageTemplateEntryTypeConstants.TYPE_BASIC);
+		JSONPortletResponseUtil.writeJSON(
+			actionRequest, actionResponse, jsonObject);
 
-		try {
-			ServiceContext serviceContext = ServiceContextFactory.getInstance(
-				actionRequest);
+		if (SessionErrors.contains(
+				actionRequest, "layoutPageTemplateEntryNameInvalid")) {
 
-			LayoutPageTemplateEntry layoutPageTemplateEntry =
-				_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
-					serviceContext.getScopeGroupId(),
-					layoutPageTemplateCollectionId, name, type,
-					WorkflowConstants.STATUS_DRAFT, serviceContext);
-
-			JSONObject jsonObject = JSONUtil.put(
-				"redirectURL",
-				getRedirectURL(actionRequest, layoutPageTemplateEntry));
-
-			JSONPortletResponseUtil.writeJSON(
-				actionRequest, actionResponse, jsonObject);
-
-			if (type == LayoutPageTemplateEntryTypeConstants.TYPE_BASIC) {
-				MultiSessionMessages.add(
-					actionRequest, "layoutPageTemplateAdded");
-			}
+			addSuccessMessage(actionRequest, actionResponse);
 		}
-		catch (PortalException pe) {
-			SessionErrors.add(
-				actionRequest, "layoutPageTemplateEntryNameInvalid");
 
-			hideDefaultErrorMessage(actionRequest);
-
-			_layoutPageTemplateEntryExceptionRequestHandler.
-				handlePortalException(actionRequest, actionResponse, pe);
-		}
+		MultiSessionMessages.add(actionRequest, "displayPageAdded");
 	}
 
 	protected String getRedirectURL(
@@ -137,6 +117,62 @@ public class AddLayoutPageTemplateEntryMVCActionCommand
 		return layoutFullURL;
 	}
 
+	private JSONObject _addDisplayPage(
+		ActionRequest actionRequest, ServiceContext serviceContext) {
+
+		JSONObject errorJSONObject = JSONFactoryUtil.createJSONObject();
+
+		long layoutPageTemplateCollectionId = ParamUtil.getLong(
+			actionRequest, "layoutPageTemplateCollectionId");
+
+		String name = ParamUtil.getString(actionRequest, "name");
+
+		long classNameId = ParamUtil.getLong(actionRequest, "classNameId");
+		long classTypeId = ParamUtil.getLong(actionRequest, "classTypeId");
+
+		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+			serviceContext.getLocale(), AddDisplayPageMVCActionCommand.class);
+
+		try {
+			LayoutPageTemplateEntry layoutPageTemplateEntry =
+				_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
+					serviceContext.getScopeGroupId(),
+					layoutPageTemplateCollectionId, name,
+					WorkflowConstants.STATUS_DRAFT, classNameId, classTypeId,
+					serviceContext);
+
+			return JSONUtil.put(
+				"redirectURL",
+				getRedirectURL(actionRequest, layoutPageTemplateEntry));
+		}
+		catch (NoSuchClassNameException nscne) {
+			errorJSONObject = JSONUtil.put(
+				"classNameId",
+				ResourceBundleUtil.getString(
+					resourceBundle, "invalid-content-type"));
+		}
+		catch (NoSuchClassTypeException nscte) {
+			errorJSONObject = JSONUtil.put(
+				"classTypeId",
+				ResourceBundleUtil.getString(
+					resourceBundle, "invalid-subtype"));
+		}
+		catch (PortalException pe) {
+			SessionErrors.add(
+				actionRequest, "layoutPageTemplateEntryNameInvalid");
+
+			hideDefaultErrorMessage(actionRequest);
+
+			JSONObject jsonObject =
+				_layoutPageTemplateEntryExceptionRequestHandler.
+					createErrorJSONObject(actionRequest, pe);
+
+			errorJSONObject = JSONUtil.put("name", jsonObject.get("error"));
+		}
+
+		return JSONUtil.put("error", errorJSONObject);
+	}
+
 	@Reference
 	private Http _http;
 
@@ -149,6 +185,9 @@ public class AddLayoutPageTemplateEntryMVCActionCommand
 
 	@Reference
 	private LayoutPageTemplateEntryService _layoutPageTemplateEntryService;
+
+	@Reference
+	private LayoutService _layoutService;
 
 	@Reference
 	private Portal _portal;
