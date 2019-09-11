@@ -16,6 +16,7 @@ package com.liferay.asset.publisher.web.internal.util;
 
 import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetCategoryModel;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
@@ -68,6 +69,7 @@ import com.liferay.sites.kernel.util.SitesUtil;
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -77,6 +79,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
@@ -836,6 +840,17 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 			if (category == null) {
 				continue;
 			}
+
+			List<AssetCategory> childCategories =
+				_assetCategoryLocalService.getChildCategories(assetCategoryId);
+
+			assetCategoryIdsList.addAll(
+				Arrays.asList(
+					ArrayUtil.toLongArray(
+						_filterAssetCategoryIds(
+							ListUtil.toLongArray(
+								childCategories,
+								AssetCategoryModel::getCategoryId)))));
 
 			assetCategoryIdsList.add(assetCategoryId);
 		}
