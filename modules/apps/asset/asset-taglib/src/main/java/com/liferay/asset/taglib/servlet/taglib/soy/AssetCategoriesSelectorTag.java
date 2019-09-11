@@ -126,6 +126,10 @@ public class AssetCategoriesSelectorTag extends ComponentRendererTag {
 		_ignoreRequestValue = ignoreRequestValue;
 	}
 
+	public void setShowOnlyRequiredVocabularies(boolean showOnlyRequiredVocabularies) {
+		_showOnlyRequiredVocabularies = showOnlyRequiredVocabularies;
+	}
+
 	public void setShowRequiredLabel(boolean showRequiredLabel) {
 		_showRequiredLabel = showRequiredLabel;
 	}
@@ -146,6 +150,7 @@ public class AssetCategoriesSelectorTag extends ComponentRendererTag {
 		_hiddenInput = "assetCategoryIds";
 		_ignoreRequestValue = false;
 		_namespace = null;
+		_showOnlyRequiredVocabularies = false;
 		_showRequiredLabel = true;
 		_singleSelect = false;
 	}
@@ -162,6 +167,12 @@ public class AssetCategoriesSelectorTag extends ComponentRendererTag {
 		return ListUtil.filter(
 			vocabularies,
 			vocabulary -> {
+				if (_showOnlyRequiredVocabularies && !vocabulary.isRequired(
+						PortalUtil.getClassNameId(_className), _classTypePK)) {
+
+					return false;
+				}
+
 				int vocabularyCategoriesCount =
 					AssetCategoryServiceUtil.getVocabularyCategoriesCount(
 						vocabulary.getGroupId(), vocabulary.getVocabularyId());
@@ -400,6 +411,7 @@ public class AssetCategoriesSelectorTag extends ComponentRendererTag {
 	private String _hiddenInput = "assetCategoryIds";
 	private boolean _ignoreRequestValue;
 	private String _namespace;
+	private boolean _showOnlyRequiredVocabularies = false;
 	private boolean _showRequiredLabel = true;
 	private boolean _singleSelect;
 
