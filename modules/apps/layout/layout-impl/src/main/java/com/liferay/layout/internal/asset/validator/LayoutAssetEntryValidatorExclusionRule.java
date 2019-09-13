@@ -41,22 +41,6 @@ public class LayoutAssetEntryValidatorExclusionRule
 		long groupId, String className, long classPK, long classTypePK,
 		long[] categoryIds, String[] tagNames) {
 
-		if (MergeLayoutPrototypesThreadLocal.isInProgress()) {
-			return true;
-		}
-
-		Layout layout = _layoutLocalService.fetchLayout(classPK);
-
-		UnicodeProperties typeSettingsProperties =
-			layout.getTypeSettingsProperties();
-
-		boolean layoutUpdateable = GetterUtil.getBoolean(
-			typeSettingsProperties.get(Sites.LAYOUT_UPDATEABLE));
-
-		if (!layoutUpdateable) {
-			return true;
-		}
-
 		return false;
 	}
 
