@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil;
@@ -347,11 +348,19 @@ public class JournalEditArticleDisplayContext {
 
 		try {
 			siteDefaultLocale = PortalUtil.getSiteDefaultLocale(getGroupId());
+
+			User user = _themeDisplay.getUser();
+
+			if (!Objects.equals(siteDefaultLocale, _themeDisplay.getLocale()) &&
+				!Objects.equals(_themeDisplay.getLocale(), user.getLocale())) {
+
+				return _themeDisplay.getLanguageId();
+			}
 		}
 		catch (PortalException pe) {
 			_log.error(pe, pe);
 
-			siteDefaultLocale = LocaleUtil.getSiteDefault();
+			siteDefaultLocale = _themeDisplay.getSiteDefaultLocale();
 		}
 
 		if (_article == null) {
