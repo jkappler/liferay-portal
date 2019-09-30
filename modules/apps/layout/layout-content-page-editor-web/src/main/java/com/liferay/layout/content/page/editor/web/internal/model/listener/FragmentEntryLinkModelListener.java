@@ -255,6 +255,9 @@ public class FragmentEntryLinkModelListener
 	private ClassNameLocalService _classNameLocalService;
 
 	@Reference
+	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
 	private CommentManager _commentManager;
 
 	@Reference
