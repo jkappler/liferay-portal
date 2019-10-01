@@ -85,6 +85,16 @@ public class LayoutConverterTest {
 	}
 
 	@Test
+	public void testConvertOneColumnMultiplePortlets() throws Exception {
+		_testConvertOneColumn(
+			new String[] {
+				"com_liferay_hello_world_web_portlet_HelloWorldPortlet",
+				"hello_soy_portlet",
+				"com_liferay_hello_world_web_portlet_HelloWorldPortlet"
+			});
+	}
+
+	@Test
 	public void testConvertOneColumnNoPortlets() throws Exception {
 		_testConvertOneColumn(new String[0]);
 	}
