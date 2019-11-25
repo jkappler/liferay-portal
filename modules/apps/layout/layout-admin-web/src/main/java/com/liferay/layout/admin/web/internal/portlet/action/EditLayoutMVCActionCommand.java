@@ -174,7 +174,7 @@ public class EditLayoutMVCActionCommand extends BaseMVCActionCommand {
 
 			boolean isFriendlyURL = false;
 			List<Layout> layouts = _layoutLocalService.getLayouts(
-				themeDisplay.getCompanyId());
+				groupId, false);
 
 			for (Layout friendlyLayout : layouts) {
 				String friendlyURL = friendlyLayout.getFriendlyURL(
