@@ -48,6 +48,7 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rubén Pulido
@@ -302,6 +303,9 @@ public class PageDefinitionConverterUtil {
 	private static Settings _toSettings(
 		com.liferay.portal.kernel.model.Layout layout) {
 
+		UnicodeProperties unicodeProperties =
+			layout.getTypeSettingsProperties();
+
 		return new Settings() {
 			{
 				setColorSchemeName(
@@ -331,6 +335,21 @@ public class PageDefinitionConverterUtil {
 						}
 
 						return layout.getCss();
+					});
+
+				setJavascript(
+					() -> {
+						for (Map.Entry<String, String> entry :
+								unicodeProperties.entrySet()) {
+
+							String key = entry.getKey();
+
+							if (key.equals("javascript")) {
+								return entry.getValue();
+							}
+						}
+
+						return null;
 					});
 			}
 		};
