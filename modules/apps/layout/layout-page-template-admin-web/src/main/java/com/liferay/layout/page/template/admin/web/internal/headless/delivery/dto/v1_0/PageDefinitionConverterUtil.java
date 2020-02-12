@@ -44,6 +44,8 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ColorScheme;
+import com.liferay.portal.kernel.model.Theme;
+import com.liferay.portal.kernel.service.ThemeLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -371,6 +373,18 @@ public class PageDefinitionConverterUtil {
 								name = layoutPageTemplateEntry.getName();
 							}
 						};
+					});
+
+				setThemeName(
+					() -> {
+						Theme theme = ThemeLocalServiceUtil.fetchTheme(
+							layout.getCompanyId(), layout.getThemeId());
+
+						if (theme == null) {
+							return null;
+						}
+
+						return theme.getName();
 					});
 			}
 		};
