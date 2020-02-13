@@ -19,11 +19,16 @@ import com.liferay.fragment.renderer.FragmentRendererTracker;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.headless.delivery.dto.v1_0.ColumnDefinition;
 import com.liferay.headless.delivery.dto.v1_0.FragmentImage;
+import com.liferay.headless.delivery.dto.v1_0.Layout;
+import com.liferay.headless.delivery.dto.v1_0.MasterPage;
 import com.liferay.headless.delivery.dto.v1_0.PageDefinition;
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
 import com.liferay.headless.delivery.dto.v1_0.RowDefinition;
 import com.liferay.headless.delivery.dto.v1_0.SectionDefinition;
+import com.liferay.headless.delivery.dto.v1_0.Settings;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
 import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
 import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
@@ -33,13 +38,20 @@ import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.util.structure.RootLayoutStructureItem;
 import com.liferay.layout.util.structure.RowLayoutStructureItem;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ColorScheme;
+import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rubén Pulido
@@ -50,16 +62,66 @@ public class PageDefinitionConverterUtil {
 		FragmentCollectionContributorTracker
 			fragmentCollectionContributorTracker,
 		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
-		FragmentRendererTracker fragmentRendererTracker, Layout layout) {
+		FragmentRendererTracker fragmentRendererTracker,
+		com.liferay.portal.kernel.model.Layout layout) {
 
 		return new PageDefinition() {
 			{
-				pageElements = _toPageElements(
+				pageElement = _toPageElement(
 					fragmentCollectionContributorTracker,
 					fragmentEntryConfigurationParser, fragmentRendererTracker,
 					layout);
+				settings = _toSettings(layout);
 			}
 		};
+	}
+
+	private static PageElement _toPageElement(
+		FragmentCollectionContributorTracker
+			fragmentCollectionContributorTracker,
+		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
+		FragmentRendererTracker fragmentRendererTracker,
+		com.liferay.portal.kernel.model.Layout layout) {
+
+		LayoutPageTemplateStructure layoutPageTemplateStructure =
+			LayoutPageTemplateStructureLocalServiceUtil.
+				fetchLayoutPageTemplateStructure(
+					layout.getGroupId(),
+					PortalUtil.getClassNameId(
+						com.liferay.portal.kernel.model.Layout.class),
+					layout.getPlid());
+
+		LayoutStructure layoutStructure = LayoutStructure.of(
+			layoutPageTemplateStructure.getData(0L));
+
+		LayoutStructureItem mainLayoutStructureItem =
+			layoutStructure.getLayoutStructureItem(
+				layoutStructure.getMainItemId());
+
+		List<PageElement> mainPageElements = new ArrayList<>();
+
+		for (String childItemId :
+				mainLayoutStructureItem.getChildrenItemIds()) {
+
+			mainPageElements.add(
+				_toPageElement(
+					fragmentCollectionContributorTracker,
+					fragmentEntryConfigurationParser, fragmentRendererTracker,
+					layoutStructure,
+					layoutStructure.getLayoutStructureItem(childItemId)));
+		}
+
+		PageElement pageElement = _toPageElement(
+			fragmentCollectionContributorTracker,
+			fragmentEntryConfigurationParser, fragmentRendererTracker,
+			mainLayoutStructureItem);
+
+		if (!mainPageElements.isEmpty()) {
+			pageElement.setPageElements(
+				mainPageElements.toArray(new PageElement[0]));
+		}
+
+		return pageElement;
 	}
 
 	private static PageElement _toPageElement(
@@ -103,7 +165,10 @@ public class PageDefinitionConverterUtil {
 			fragmentEntryConfigurationParser, fragmentRendererTracker,
 			layoutStructureItem);
 
-		pageElement.setPageElements(pageElements.toArray(new PageElement[0]));
+		if (!pageElements.isEmpty()) {
+			pageElement.setPageElements(
+				pageElements.toArray(new PageElement[0]));
+		}
 
 		return pageElement;
 	}
@@ -143,13 +208,19 @@ public class PageDefinitionConverterUtil {
 								containerLayoutStructureItem.
 									getBackgroundColorCssClass(),
 								null);
-							paddingBottom =
-								containerLayoutStructureItem.getPaddingBottom();
-							paddingHorizontal =
-								containerLayoutStructureItem.
-									getPaddingHorizontal();
-							paddingTop =
-								containerLayoutStructureItem.getPaddingTop();
+							layout = new Layout() {
+								{
+									paddingBottom =
+										containerLayoutStructureItem.
+											getPaddingBottom();
+									paddingHorizontal =
+										containerLayoutStructureItem.
+											getPaddingHorizontal();
+									paddingTop =
+										containerLayoutStructureItem.
+											getPaddingTop();
+								}
+							};
 
 							setBackgroundImage(
 								() -> {
@@ -195,11 +266,12 @@ public class PageDefinitionConverterUtil {
 			return new PageElement() {
 				{
 					definition =
-						FragmentDefinitionConverterUtil.toFragmentDefinition(
-							fragmentCollectionContributorTracker,
-							fragmentEntryConfigurationParser,
-							fragmentLayoutStructureItem,
-							fragmentRendererTracker);
+						FragmentInstanceDefinitionConverterUtil.
+							toFragmentInstanceDefinition(
+								fragmentCollectionContributorTracker,
+								fragmentEntryConfigurationParser,
+								fragmentLayoutStructureItem,
+								fragmentRendererTracker);
 					type = PageElement.Type.FRAGMENT;
 				}
 			};
@@ -234,51 +306,114 @@ public class PageDefinitionConverterUtil {
 		return null;
 	}
 
-	private static PageElement[] _toPageElements(
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
-		FragmentRendererTracker fragmentRendererTracker, Layout layout) {
+	private static Settings _toSettings(
+		com.liferay.portal.kernel.model.Layout layout) {
 
-		List<PageElement> pageElements = new ArrayList<>();
+		UnicodeProperties unicodeProperties =
+			layout.getTypeSettingsProperties();
 
-		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			LayoutPageTemplateStructureLocalServiceUtil.
-				fetchLayoutPageTemplateStructure(
-					layout.getGroupId(),
-					PortalUtil.getClassNameId(Layout.class), layout.getPlid());
+		return new Settings() {
+			{
+				setColorSchemeName(
+					() -> {
+						ColorScheme colorScheme = null;
 
-		LayoutStructure layoutStructure = LayoutStructure.of(
-			layoutPageTemplateStructure.getData(0L));
+						try {
+							colorScheme = layout.getColorScheme();
+						}
+						catch (PortalException portalException) {
+							if (_log.isWarnEnabled()) {
+								_log.warn(portalException, portalException);
+							}
+						}
 
-		LayoutStructureItem mainLayoutStructureItem =
-			layoutStructure.getLayoutStructureItem(
-				layoutStructure.getMainItemId());
+						if (colorScheme == null) {
+							return null;
+						}
 
-		List<PageElement> mainPageElements = new ArrayList<>();
+						return colorScheme.getName();
+					});
 
-		for (String childItemId :
-				mainLayoutStructureItem.getChildrenItemIds()) {
+				setCss(
+					() -> {
+						if (Validator.isNull(layout.getCss())) {
+							return null;
+						}
 
-			mainPageElements.add(
-				_toPageElement(
-					fragmentCollectionContributorTracker,
-					fragmentEntryConfigurationParser, fragmentRendererTracker,
-					layoutStructure,
-					layoutStructure.getLayoutStructureItem(childItemId)));
-		}
+						return layout.getCss();
+					});
 
-		PageElement pageElement = _toPageElement(
-			fragmentCollectionContributorTracker,
-			fragmentEntryConfigurationParser, fragmentRendererTracker,
-			mainLayoutStructureItem);
+				setJavascript(
+					() -> {
+						for (Map.Entry<String, String> entry :
+								unicodeProperties.entrySet()) {
 
-		pageElement.setPageElements(
-			mainPageElements.toArray(new PageElement[0]));
+							String key = entry.getKey();
 
-		pageElements.add(pageElement);
+							if (key.equals("javascript")) {
+								return entry.getValue();
+							}
+						}
 
-		return pageElements.toArray(new PageElement[0]);
+						return null;
+					});
+
+				setMasterPage(
+					() -> {
+						LayoutPageTemplateEntry layoutPageTemplateEntry =
+							LayoutPageTemplateEntryLocalServiceUtil.
+								fetchLayoutPageTemplateEntryByPlid(
+									layout.getMasterLayoutPlid());
+
+						if (layoutPageTemplateEntry == null) {
+							return null;
+						}
+
+						return new MasterPage() {
+							{
+								name = layoutPageTemplateEntry.getName();
+							}
+						};
+					});
+
+				setThemeName(
+					() -> {
+						Theme theme = layout.getTheme();
+
+						if (theme == null) {
+							return null;
+						}
+
+						return theme.getName();
+					});
+
+				setThemeSettings(
+					() -> {
+						UnicodeProperties themeSettingsUnicodeProperties =
+							new UnicodeProperties();
+
+						for (Map.Entry<String, String> entry :
+								unicodeProperties.entrySet()) {
+
+							String key = entry.getKey();
+
+							if (key.startsWith("lfr-theme:")) {
+								themeSettingsUnicodeProperties.setProperty(
+									key, entry.getValue());
+							}
+						}
+
+						if (themeSettingsUnicodeProperties.isEmpty()) {
+							return null;
+						}
+
+						return themeSettingsUnicodeProperties;
+					});
+			}
+		};
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		PageDefinitionConverterUtil.class);
 
 }

@@ -15,8 +15,6 @@
 package com.liferay.headless.delivery.client.serdes.v1_0;
 
 import com.liferay.headless.delivery.client.dto.v1_0.PageDefinition;
-import com.liferay.headless.delivery.client.dto.v1_0.PageElement;
-import com.liferay.headless.delivery.client.dto.v1_0.TaxonomyCategory;
 import com.liferay.headless.delivery.client.json.BaseJSONParser;
 
 import java.util.Iterator;
@@ -24,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 
@@ -58,48 +55,14 @@ public class PageDefinitionSerDes {
 
 		sb.append("{");
 
-		if (pageDefinition.getFriendlyURLPath() != null) {
+		if (pageDefinition.getPageElement() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"friendlyURLPath\": ");
+			sb.append("\"pageElement\": ");
 
-			sb.append("\"");
-
-			sb.append(_escape(pageDefinition.getFriendlyURLPath()));
-
-			sb.append("\"");
-		}
-
-		if (pageDefinition.getId() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"id\": ");
-
-			sb.append(pageDefinition.getId());
-		}
-
-		if (pageDefinition.getPageElements() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"pageElements\": ");
-
-			sb.append("[");
-
-			for (int i = 0; i < pageDefinition.getPageElements().length; i++) {
-				sb.append(String.valueOf(pageDefinition.getPageElements()[i]));
-
-				if ((i + 1) < pageDefinition.getPageElements().length) {
-					sb.append(", ");
-				}
-			}
-
-			sb.append("]");
+			sb.append(String.valueOf(pageDefinition.getPageElement()));
 		}
 
 		if (pageDefinition.getSettings() != null) {
@@ -110,65 +73,6 @@ public class PageDefinitionSerDes {
 			sb.append("\"settings\": ");
 
 			sb.append(String.valueOf(pageDefinition.getSettings()));
-		}
-
-		if (pageDefinition.getTaxonomyCategories() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"taxonomyCategories\": ");
-
-			sb.append("[");
-
-			for (int i = 0; i < pageDefinition.getTaxonomyCategories().length;
-				 i++) {
-
-				sb.append(
-					String.valueOf(pageDefinition.getTaxonomyCategories()[i]));
-
-				if ((i + 1) < pageDefinition.getTaxonomyCategories().length) {
-					sb.append(", ");
-				}
-			}
-
-			sb.append("]");
-		}
-
-		if (pageDefinition.getTaxonomyCategoryIds() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"taxonomyCategoryIds\": ");
-
-			sb.append("[");
-
-			for (int i = 0; i < pageDefinition.getTaxonomyCategoryIds().length;
-				 i++) {
-
-				sb.append(pageDefinition.getTaxonomyCategoryIds()[i]);
-
-				if ((i + 1) < pageDefinition.getTaxonomyCategoryIds().length) {
-					sb.append(", ");
-				}
-			}
-
-			sb.append("]");
-		}
-
-		if (pageDefinition.getUuid() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"uuid\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(pageDefinition.getUuid()));
-
-			sb.append("\"");
 		}
 
 		sb.append("}");
@@ -190,29 +94,12 @@ public class PageDefinitionSerDes {
 
 		Map<String, String> map = new TreeMap<>();
 
-		if (pageDefinition.getFriendlyURLPath() == null) {
-			map.put("friendlyURLPath", null);
+		if (pageDefinition.getPageElement() == null) {
+			map.put("pageElement", null);
 		}
 		else {
 			map.put(
-				"friendlyURLPath",
-				String.valueOf(pageDefinition.getFriendlyURLPath()));
-		}
-
-		if (pageDefinition.getId() == null) {
-			map.put("id", null);
-		}
-		else {
-			map.put("id", String.valueOf(pageDefinition.getId()));
-		}
-
-		if (pageDefinition.getPageElements() == null) {
-			map.put("pageElements", null);
-		}
-		else {
-			map.put(
-				"pageElements",
-				String.valueOf(pageDefinition.getPageElements()));
+				"pageElement", String.valueOf(pageDefinition.getPageElement()));
 		}
 
 		if (pageDefinition.getSettings() == null) {
@@ -220,31 +107,6 @@ public class PageDefinitionSerDes {
 		}
 		else {
 			map.put("settings", String.valueOf(pageDefinition.getSettings()));
-		}
-
-		if (pageDefinition.getTaxonomyCategories() == null) {
-			map.put("taxonomyCategories", null);
-		}
-		else {
-			map.put(
-				"taxonomyCategories",
-				String.valueOf(pageDefinition.getTaxonomyCategories()));
-		}
-
-		if (pageDefinition.getTaxonomyCategoryIds() == null) {
-			map.put("taxonomyCategoryIds", null);
-		}
-		else {
-			map.put(
-				"taxonomyCategoryIds",
-				String.valueOf(pageDefinition.getTaxonomyCategoryIds()));
-		}
-
-		if (pageDefinition.getUuid() == null) {
-			map.put("uuid", null);
-		}
-		else {
-			map.put("uuid", String.valueOf(pageDefinition.getUuid()));
 		}
 
 		return map;
@@ -268,62 +130,16 @@ public class PageDefinitionSerDes {
 			PageDefinition pageDefinition, String jsonParserFieldName,
 			Object jsonParserFieldValue) {
 
-			if (Objects.equals(jsonParserFieldName, "friendlyURLPath")) {
+			if (Objects.equals(jsonParserFieldName, "pageElement")) {
 				if (jsonParserFieldValue != null) {
-					pageDefinition.setFriendlyURLPath(
-						(String)jsonParserFieldValue);
-				}
-			}
-			else if (Objects.equals(jsonParserFieldName, "id")) {
-				if (jsonParserFieldValue != null) {
-					pageDefinition.setId(
-						Long.valueOf((String)jsonParserFieldValue));
-				}
-			}
-			else if (Objects.equals(jsonParserFieldName, "pageElements")) {
-				if (jsonParserFieldValue != null) {
-					pageDefinition.setPageElements(
-						Stream.of(
-							toStrings((Object[])jsonParserFieldValue)
-						).map(
-							object -> PageElementSerDes.toDTO((String)object)
-						).toArray(
-							size -> new PageElement[size]
-						));
+					pageDefinition.setPageElement(
+						PageElementSerDes.toDTO((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "settings")) {
 				if (jsonParserFieldValue != null) {
 					pageDefinition.setSettings(
 						SettingsSerDes.toDTO((String)jsonParserFieldValue));
-				}
-			}
-			else if (Objects.equals(
-						jsonParserFieldName, "taxonomyCategories")) {
-
-				if (jsonParserFieldValue != null) {
-					pageDefinition.setTaxonomyCategories(
-						Stream.of(
-							toStrings((Object[])jsonParserFieldValue)
-						).map(
-							object -> TaxonomyCategorySerDes.toDTO(
-								(String)object)
-						).toArray(
-							size -> new TaxonomyCategory[size]
-						));
-				}
-			}
-			else if (Objects.equals(
-						jsonParserFieldName, "taxonomyCategoryIds")) {
-
-				if (jsonParserFieldValue != null) {
-					pageDefinition.setTaxonomyCategoryIds(
-						toLongs((Object[])jsonParserFieldValue));
-				}
-			}
-			else if (Objects.equals(jsonParserFieldName, "uuid")) {
-				if (jsonParserFieldValue != null) {
-					pageDefinition.setUuid((String)jsonParserFieldValue);
 				}
 			}
 			else {

@@ -936,57 +936,52 @@ components:
             required:
                 - name
             type: object
-        FragmentContentField:
+        FragmentField:
             properties:
-                fragmentLink:
-                    $ref: "#/components/schemas/FragmentLink"
                 id:
                     type: string
                 value:
                     oneOf:
-                        - $ref: "#/components/schemas/FragmentContentFieldBackgroundImage"
-                        - $ref: "#/components/schemas/FragmentContentFieldHTML"
-                        - $ref: "#/components/schemas/FragmentContentFieldImage"
-                        - $ref: "#/components/schemas/FragmentContentFieldText"
+                        - $ref: "#/components/schemas/FragmentFieldBackgroundImage"
+                        - $ref: "#/components/schemas/FragmentFieldCustom"
+                        - $ref: "#/components/schemas/FragmentFieldHTML"
+                        - $ref: "#/components/schemas/FragmentFieldImage"
+                        - $ref: "#/components/schemas/FragmentFieldText"
             type: object
-        FragmentContentFieldBackgroundImage:
+        FragmentFieldBackgroundImage:
             properties:
                 backgroundImage:
                     $ref: "#/components/schemas/FragmentImage"
             type: object
-        FragmentContentFieldHTML:
+        FragmentFieldCustom:
+            properties:
+                type:
+                    type: string
+                value:
+                    type: object
+            type: object
+        FragmentFieldHTML:
             properties:
                 html:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
                         - $ref: "#/components/schemas/MappedValue"
             type: object
-        FragmentContentFieldImage:
+        FragmentFieldImage:
             properties:
                 fragmentImage:
                     $ref: "#/components/schemas/FragmentImage"
+                fragmentLink:
+                    $ref: "#/components/schemas/FragmentLink"
             type: object
-        FragmentContentFieldText:
+        FragmentFieldText:
             properties:
+                fragmentLink:
+                    $ref: "#/components/schemas/FragmentLink"
                 text:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
                         - $ref: "#/components/schemas/MappedValue"
-            type: object
-        FragmentDefinition:
-            properties:
-                fragmentCollectionName:
-                    type: string
-                fragmentConfig:
-                    additionalProperties:
-                        type: object
-                    type: object
-                fragmentContentFields:
-                    items:
-                        $ref: "#/components/schemas/FragmentContentField"
-                    type: array
-                fragmentName:
-                    type: string
             type: object
         FragmentImage:
             properties:
@@ -998,6 +993,24 @@ components:
                     oneOf:
                         - $ref: "#/components/schemas/InlineValue"
                         - $ref: "#/components/schemas/MappedValue"
+            type: object
+        FragmentInstanceDefinition:
+            properties:
+                fragment:
+                    properties:
+                        fragmentCollectionName:
+                            type: string
+                        fragmentName:
+                            type: string
+                    type: object
+                fragmentConfig:
+                    additionalProperties:
+                        type: object
+                    type: object
+                fragmentFields:
+                    items:
+                        $ref: "#/components/schemas/FragmentField"
+                    type: array
             type: object
         FragmentLink:
             properties:
@@ -1727,62 +1740,33 @@ components:
             description:
                 ""
             properties:
-                friendlyURLPath:
-                    type: string
-                id:
-                    format: int64
-                    readOnly: true
-                    type: integer
-                pageElements:
-                    items:
-                        $ref: "#/components/schemas/PageElement"
-                    type: array
+                pageElement:
+                    $ref: "#/components/schemas/PageElement"
                 settings:
                     properties:
-                        lookAndFeel:
-                            properties:
-                                colorSchemeName:
-                                    type: string
-                                css:
-                                    type: string
-                                javascript:
-                                    type: string
-                                themeName:
-                                    type: string
-                                themeSettings:
-                                    type: object
-                            type: object
+                        colorSchemeName:
+                            type: string
+                        css:
+                            type: string
+                        javascript:
+                            type: string
                         masterPage:
                             properties:
                                 name:
                                     type: string
                             type: object
+                        themeName:
+                            type: string
+                        themeSettings:
+                            type: object
                     type: object
-                taxonomyCategories:
-                    description:
-                        The categories associated with this article.
-                    items:
-                        $ref: "#/components/schemas/TaxonomyCategory"
-                    readOnly: true
-                    type: array
-                taxonomyCategoryIds:
-                    items:
-                        format: int64
-                        type: integer
-                    type: array
-                    writeOnly: true
-                uuid:
-                    description:
-                        A valid external identifier to reference this structured content.
-                    readOnly: true
-                    type: string
             type: object
         PageElement:
             properties:
                 definition:
                     oneOf:
                         - $ref: "#/components/schemas/ColumnDefinition"
-                        - $ref: "#/components/schemas/FragmentDefinition"
+                        - $ref: "#/components/schemas/FragmentInstanceDefinition"
                         - $ref: "#/components/schemas/RootDefinition"
                         - $ref: "#/components/schemas/RowDefinition"
                         - $ref: "#/components/schemas/SectionDefinition"
@@ -1824,6 +1808,24 @@ components:
                     type: string
                 pageDefinition:
                     $ref: "#/components/schemas/PageDefinition"
+                taxonomyCategories:
+                    description:
+                        The categories associated with this page template.
+                    items:
+                        $ref: "#/components/schemas/TaxonomyCategory"
+                    readOnly: true
+                    type: array
+                taxonomyCategoryIds:
+                    items:
+                        format: int64
+                        type: integer
+                    type: array
+                    writeOnly: true
+                uuid:
+                    description:
+                        A valid external identifier to reference this page template.
+                    readOnly: true
+                    type: string
             type: object
         Rating:
             description:
@@ -1915,15 +1917,18 @@ components:
                     type: string
                 backgroundImage:
                     $ref: "#/components/schemas/FragmentImage"
-                containerType:
-                    enum: [Fixed, Fluid]
-                    type: string
-                paddingBottom:
-                    type: integer
-                paddingHorizontal:
-                    type: integer
-                paddingTop:
-                    type: integer
+                layout:
+                    properties:
+                        containerType:
+                            enum: [Fixed, Fluid]
+                            type: string
+                        paddingBottom:
+                            type: integer
+                        paddingHorizontal:
+                            type: integer
+                        paddingTop:
+                            type: integer
+                    type: object
             type: object
         StructuredContent:
             description:
