@@ -71,6 +71,7 @@ import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -405,14 +406,16 @@ public class JournalUtil {
 
 		return transform(
 			themeDisplay, tokens, viewMode, languageId, document,
-			portletRequestModel, script, langType, false);
+			portletRequestModel, script, langType, false,
+			Collections.emptyMap());
 	}
 
 	public static String transform(
 			ThemeDisplay themeDisplay, Map<String, String> tokens,
 			String viewMode, String languageId, Document document,
 			PortletRequestModel portletRequestModel, String script,
-			String langType, boolean propagateException)
+			String langType, boolean propagateException,
+			Map<String, Object> contextObjects)
 		throws Exception {
 
 		TemplateManager templateManager =
@@ -421,8 +424,6 @@ public class JournalUtil {
 		TemplateHandler templateHandler =
 			TemplateHandlerRegistryUtil.getTemplateHandler(
 				JournalArticle.class.getName());
-
-		Map<String, Object> contextObjects = new HashMap<>();
 
 		templateManager.addContextObjects(
 			contextObjects, templateHandler.getCustomContextObjects());
