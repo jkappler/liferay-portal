@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.LayoutTemplate;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
-import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
@@ -171,13 +170,6 @@ public class AddDefaultLayoutPortalInstanceLifecycleListener
 		if (updateLayoutSet) {
 			_layoutSetLocalService.updateLayoutSet(layoutSet);
 		}
-	}
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.portal.kernel.model.Layout)",
-		unbind = "-"
-	)
-	protected void setIndexer(Indexer indexer) {
 	}
 
 	@Reference(
