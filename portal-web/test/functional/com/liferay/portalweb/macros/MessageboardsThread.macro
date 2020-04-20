@@ -105,8 +105,6 @@ definition {
 		if (isSet(source)) {
 			Click(locator1 = "CKEditor#TOOLBAR_SOURCE_BUTTON");
 
-			SelectFrame.selectFrameNoLoading(locator1 = "CKEditor#BODY_FIELD_IFRAME");
-
 			Type(
 				locator1 = "CKEditor#BODY_FIELD_SOURCE_ON",
 				value1 = "${threadBody}");
@@ -213,6 +211,8 @@ definition {
 		Type(
 			locator1 = "CKEditor#BODY",
 			value1 = "${threadBody}");
+
+		SelectFrame(value1 = "relative=top");
 
 		Panel.expandPanel(panel = "Permissions");
 
