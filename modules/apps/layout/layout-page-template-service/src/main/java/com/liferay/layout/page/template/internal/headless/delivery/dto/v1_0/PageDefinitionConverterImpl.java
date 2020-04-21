@@ -96,54 +96,29 @@ import org.osgi.service.component.annotations.Reference;
 public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 
 	@Override
-	public PageDefinition toPageDefinition(
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
-		FragmentRendererTracker fragmentRendererTracker,
-		InfoDisplayContributorTracker infoDisplayContributorTracker,
-		Layout layout) {
-
-		return toPageDefinition(
-			fragmentCollectionContributorTracker,
-			fragmentEntryConfigurationParser, fragmentRendererTracker,
-			infoDisplayContributorTracker, layout, true, true);
+	public PageDefinition toPageDefinition(Layout layout) {
+		return toPageDefinition(layout, true, true);
 	}
 
 	@Override
 	public PageDefinition toPageDefinition(
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
-		FragmentRendererTracker fragmentRendererTracker,
-		InfoDisplayContributorTracker infoDisplayContributorTracker,
 		Layout layout, boolean saveInlineContent,
 		boolean saveMappingConfiguration) {
 
 		return toPageDefinition(
-			fragmentCollectionContributorTracker,
-			fragmentEntryConfigurationParser, fragmentRendererTracker,
-			infoDisplayContributorTracker, layout, saveInlineContent,
-			saveMappingConfiguration, 0);
+			layout, saveInlineContent, saveMappingConfiguration, 0);
 	}
 
 	@Override
 	public PageDefinition toPageDefinition(
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
-		FragmentRendererTracker fragmentRendererTracker,
-		InfoDisplayContributorTracker infoDisplayContributorTracker,
 		Layout layout, boolean saveInlineContent,
 		boolean saveMappingConfiguration, long segmentsExperienceId) {
 
 		return new PageDefinition() {
 			{
 				pageElement = _toPageElement(
-					fragmentCollectionContributorTracker,
-					fragmentEntryConfigurationParser, fragmentRendererTracker,
-					infoDisplayContributorTracker, layout, saveInlineContent,
-					saveMappingConfiguration, segmentsExperienceId);
+					layout, saveInlineContent, saveMappingConfiguration,
+					segmentsExperienceId);
 				settings = _toSettings(layout);
 			}
 		};
@@ -151,12 +126,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 
 	@Override
 	public PageElement toPageElement(
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
-		FragmentRendererTracker fragmentRendererTracker, long groupId,
-		InfoDisplayContributorTracker infoDisplayContributorTracker,
-		LayoutStructure layoutStructure,
+		long groupId, LayoutStructure layoutStructure,
 		LayoutStructureItem layoutStructureItem, boolean saveInlineContent,
 		boolean saveMappingConfiguration, long segmentsExperienceId) {
 
@@ -174,30 +144,21 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 			if (grandChildrenItemIds.isEmpty()) {
 				pageElements.add(
 					_toPageElement(
-						fragmentCollectionContributorTracker,
-						fragmentEntryConfigurationParser,
-						fragmentRendererTracker, groupId,
-						infoDisplayContributorTracker, childLayoutStructureItem,
-						saveInlineContent, saveMappingConfiguration,
-						segmentsExperienceId));
+						groupId, childLayoutStructureItem, saveInlineContent,
+						saveMappingConfiguration, segmentsExperienceId));
 			}
 			else {
 				pageElements.add(
 					toPageElement(
-						fragmentCollectionContributorTracker,
-						fragmentEntryConfigurationParser,
-						fragmentRendererTracker, groupId,
-						infoDisplayContributorTracker, layoutStructure,
-						childLayoutStructureItem, saveInlineContent,
-						saveMappingConfiguration, segmentsExperienceId));
+						groupId, layoutStructure, childLayoutStructureItem,
+						saveInlineContent, saveMappingConfiguration,
+						segmentsExperienceId));
 			}
 		}
 
 		PageElement pageElement = _toPageElement(
-			fragmentCollectionContributorTracker,
-			fragmentEntryConfigurationParser, fragmentRendererTracker, groupId,
-			infoDisplayContributorTracker, layoutStructureItem,
-			saveInlineContent, saveMappingConfiguration, segmentsExperienceId);
+			groupId, layoutStructureItem, saveInlineContent,
+			saveMappingConfiguration, segmentsExperienceId);
 
 		if (!pageElements.isEmpty()) {
 			pageElement.setPageElements(
@@ -239,12 +200,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 		};
 	}
 
-	private boolean _isFragmentEntryKey(
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		String fragmentEntryKey,
-		FragmentRendererTracker fragmentRendererTracker, long groupId) {
-
+	private boolean _isFragmentEntryKey(String fragmentEntryKey, long groupId) {
 		FragmentEntry fragmentEntry =
 			_fragmentEntryLocalService.fetchFragmentEntry(
 				groupId, fragmentEntryKey);
@@ -253,7 +209,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 			return true;
 		}
 
-		fragmentEntry = fragmentCollectionContributorTracker.getFragmentEntry(
+		fragmentEntry = _fragmentCollectionContributorTracker.getFragmentEntry(
 			fragmentEntryKey);
 
 		if (fragmentEntry != null) {
@@ -261,7 +217,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 		}
 
 		FragmentRenderer fragmentRenderer =
-			fragmentRendererTracker.getFragmentRenderer(fragmentEntryKey);
+			_fragmentRendererTracker.getFragmentRenderer(fragmentEntryKey);
 
 		if (fragmentRenderer != null) {
 			return true;
@@ -287,7 +243,6 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 	}
 
 	private FragmentImage _toBackgroundFragmentImage(
-		InfoDisplayContributorTracker infoDisplayContributorTracker,
 		JSONObject jsonObject, boolean saveMappingConfiguration) {
 
 		if (jsonObject == null) {
@@ -307,7 +262,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 
 							return _toFragmentMappedValue(
 								_toDefaultMappingValue(
-									infoDisplayContributorTracker, jsonObject,
+									jsonObject,
 									_getImageURLTransformerFunction()),
 								jsonObject);
 						}
@@ -327,7 +282,6 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 	}
 
 	private FragmentInlineValue _toDefaultMappingValue(
-		InfoDisplayContributorTracker infoDisplayContributorTracker,
 		JSONObject jsonObject, Function<Object, String> transformerFunction) {
 
 		long classNameId = jsonObject.getLong("classNameId");
@@ -354,7 +308,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 		}
 
 		InfoDisplayContributor infoDisplayContributor =
-			infoDisplayContributorTracker.getInfoDisplayContributor(className);
+			_infoDisplayContributorTracker.getInfoDisplayContributor(className);
 
 		if (infoDisplayContributor == null) {
 			return null;
@@ -443,18 +397,12 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 	}
 
 	private Fragment[] _toFragments(
-		List<String> fragmentEntryKeys,
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		FragmentRendererTracker fragmentRendererTracker, long groupId) {
+		List<String> fragmentEntryKeys, long groupId) {
 
 		List<Fragment> fragments = new ArrayList<>();
 
 		for (String fragmentEntryKey : fragmentEntryKeys) {
-			if (_isFragmentEntryKey(
-					fragmentCollectionContributorTracker, fragmentEntryKey,
-					fragmentRendererTracker, groupId)) {
-
+			if (_isFragmentEntryKey(fragmentEntryKey, groupId)) {
 				fragments.add(
 					new Fragment() {
 						{
@@ -468,36 +416,24 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 	}
 
 	private Map<String, Fragment[]> _toFragmentSettingsMap(
-		DropZoneLayoutStructureItem dropZoneLayoutStructureItem,
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		FragmentRendererTracker fragmentRendererTracker, long groupId) {
+		DropZoneLayoutStructureItem dropZoneLayoutStructureItem, long groupId) {
 
 		if (dropZoneLayoutStructureItem.isAllowNewFragmentEntries()) {
 			return HashMapBuilder.put(
 				"unallowedFragments",
 				_toFragments(
-					dropZoneLayoutStructureItem.getFragmentEntryKeys(),
-					fragmentCollectionContributorTracker,
-					fragmentRendererTracker, groupId)
+					dropZoneLayoutStructureItem.getFragmentEntryKeys(), groupId)
 			).build();
 		}
 
 		return HashMapBuilder.put(
 			"allowedFragments",
 			_toFragments(
-				dropZoneLayoutStructureItem.getFragmentEntryKeys(),
-				fragmentCollectionContributorTracker, fragmentRendererTracker,
-				groupId)
+				dropZoneLayoutStructureItem.getFragmentEntryKeys(), groupId)
 		).build();
 	}
 
 	private PageElement _toPageElement(
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
-		FragmentRendererTracker fragmentRendererTracker,
-		InfoDisplayContributorTracker infoDisplayContributorTracker,
 		Layout layout, boolean saveInlineContent,
 		boolean saveMappingConfiguration, long segmentsExperienceId) {
 
@@ -520,19 +456,13 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 
 			mainPageElements.add(
 				toPageElement(
-					fragmentCollectionContributorTracker,
-					fragmentEntryConfigurationParser, fragmentRendererTracker,
-					layout.getGroupId(), infoDisplayContributorTracker,
-					layoutStructure,
+					layout.getGroupId(), layoutStructure,
 					layoutStructure.getLayoutStructureItem(childItemId),
 					saveInlineContent, saveMappingConfiguration, 0));
 		}
 
 		PageElement pageElement = _toPageElement(
-			fragmentCollectionContributorTracker,
-			fragmentEntryConfigurationParser, fragmentRendererTracker,
-			layout.getGroupId(), infoDisplayContributorTracker,
-			mainLayoutStructureItem, saveInlineContent,
+			layout.getGroupId(), mainLayoutStructureItem, saveInlineContent,
 			saveMappingConfiguration, segmentsExperienceId);
 
 		if (!mainPageElements.isEmpty()) {
@@ -544,13 +474,9 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 	}
 
 	private PageElement _toPageElement(
-		FragmentCollectionContributorTracker
-			fragmentCollectionContributorTracker,
-		FragmentEntryConfigurationParser fragmentEntryConfigurationParser,
-		FragmentRendererTracker fragmentRendererTracker, long groupId,
-		InfoDisplayContributorTracker infoDisplayContributorTracker,
-		LayoutStructureItem layoutStructureItem, boolean saveInlineContent,
-		boolean saveMappingConfiguration, long segmentsExperienceId) {
+		long groupId, LayoutStructureItem layoutStructureItem,
+		boolean saveInlineContent, boolean saveMappingConfiguration,
+		long segmentsExperienceId) {
 
 		if (layoutStructureItem instanceof CollectionLayoutStructureItem) {
 			CollectionLayoutStructureItem collectionLayoutStructureItem =
@@ -624,7 +550,6 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 									getBackgroundColorCssClass(),
 								null);
 							backgroundImage = _toBackgroundFragmentImage(
-								infoDisplayContributorTracker,
 								containerLayoutStructureItem.
 									getBackgroundImageJSONObject(),
 								saveMappingConfiguration);
@@ -684,9 +609,7 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 					definition = new PageDropZoneDefinition() {
 						{
 							fragmentSettings = _toFragmentSettingsMap(
-								dropZoneLayoutStructureItem,
-								fragmentCollectionContributorTracker,
-								fragmentRendererTracker, groupId);
+								dropZoneLayoutStructureItem, groupId);
 						}
 					};
 					type = PageElement.Type.DROP_ZONE;
@@ -724,11 +647,11 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 						definition =
 							PageFragmentInstanceDefinitionConverterUtil.
 								toPageFragmentInstanceDefinition(
-									fragmentCollectionContributorTracker,
-									fragmentEntryConfigurationParser,
+									_fragmentCollectionContributorTracker,
+									_fragmentEntryConfigurationParser,
 									fragmentLayoutStructureItem,
-									fragmentRendererTracker,
-									infoDisplayContributorTracker,
+									_fragmentRendererTracker,
+									_infoDisplayContributorTracker,
 									saveInlineContent, saveMappingConfiguration,
 									segmentsExperienceId);
 						type = PageElement.Type.FRAGMENT;
@@ -902,10 +825,23 @@ public class PageDefinitionConverterImpl implements PageDefinitionConverter {
 		PageDefinitionConverterImpl.class);
 
 	@Reference
+	private FragmentCollectionContributorTracker
+		_fragmentCollectionContributorTracker;
+
+	@Reference
+	private FragmentEntryConfigurationParser _fragmentEntryConfigurationParser;
+
+	@Reference
 	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
 
 	@Reference
 	private FragmentEntryLocalService _fragmentEntryLocalService;
+
+	@Reference
+	private FragmentRendererTracker _fragmentRendererTracker;
+
+	@Reference
+	private InfoDisplayContributorTracker _infoDisplayContributorTracker;
 
 	@Reference
 	private LayoutPageTemplateEntryLocalService
