@@ -132,6 +132,8 @@ public class PageDefinitionResourceTest
 							JSONUtil.put(
 								"id", "element-text"
 							).put(
+								"type", "Text"
+							).put(
 								"value",
 								JSONUtil.put(
 									"text",

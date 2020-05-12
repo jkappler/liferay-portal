@@ -26,6 +26,7 @@
 				"fragmentFields": [
 					{
 						"id": "link",
+						"type": "Text",
 						"value": {
 							"fragmentLink": {
 								"href": {
