@@ -71,6 +71,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -102,8 +103,16 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 			_group2, TestPropsValues.getUserId());
 	}
 
+	@After
+	public void tearDown() {
+		ServiceContextThreadLocal.popServiceContext();
+		ServiceContextThreadLocal.popServiceContext();
+	}
+
 	@Test
 	public void testExportImportLayoutPageTemplateEntry() throws Exception {
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext1);
+
 		LayoutPageTemplateCollection layoutPageTemplateCollection =
 			_layoutPageTemplateCollectionLocalService.
 				addLayoutPageTemplateCollection(
@@ -178,6 +187,8 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 		File file = ReflectionTestUtil.invoke(
 			_mvcResourceCommand, "getFile", new Class<?>[] {long[].class},
 			layoutPageTemplateEntryIds);
+
+		ServiceContextThreadLocal.pushServiceContext(_serviceContext2);
 
 		_addFragmentEntry(
 			_group2.getGroupId(), "test-text-fragment", "Test Text Fragment",

@@ -17,6 +17,7 @@
 					"fragmentFields": [
 						{
 							"id": "element-text",
+							"type": "Text",
 							"value": {
 								"text": {
 									"value_i18n": {
