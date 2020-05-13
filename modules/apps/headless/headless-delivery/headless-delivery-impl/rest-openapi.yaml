@@ -1848,6 +1848,17 @@ components:
                 ""
             properties:
                 collectionConfig:
+                    properties:
+                        collectionReference:
+                            oneOf:
+                                - $ref: "#/components/schemas/ClassNameReference"
+                                - $ref: "#/components/schemas/ClassPKItemReference"
+                        collectionType:
+                            enum: [Collection, CollectionProvider]
+                            type: string
+                    required:
+                        - collectionReference
+                        - collectionType
                     type: object
                 numberOfColumns:
                     type: integer
