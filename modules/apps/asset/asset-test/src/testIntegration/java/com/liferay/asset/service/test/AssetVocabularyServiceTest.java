@@ -315,7 +315,7 @@ public class AssetVocabularyServiceTest {
 				_group.getGroupId());
 
 		Assert.assertEquals(
-			PropsValues.ASSET_VOCABULARY_DEFAULT,
+			"something else",
 			vocabulary.getTitle(LocaleUtil.US, true));
 	}
 
