@@ -220,6 +220,17 @@ components:
                     type: string
                     writeOnly: true
             type: object
+        ClassPKItemReference:
+            properties:
+                itemClassName:
+                    type: string
+                itemClassPK:
+                    format: int64
+                    type: integer
+            required:
+                - itemClassName
+                - itemClassPK
+            type: object
         Comment:
             description:
                 Represents a comment. See [Comment](https://www.schema.org/Comment) for more details.
@@ -613,6 +624,17 @@ components:
                         A flag that indicates whether the structure's end target should render the field label.
                     readOnly: true
                     type: boolean
+            type: object
+        ContextItemReference:
+            properties:
+                contextSource:
+                    enum: [CollectionItem, DisplayPageItem]
+                    type: string
+                itemClassPK:
+                    format: int64
+                    type: integer
+            required:
+                - contextSource
             type: object
         Creator:
             description:
@@ -1068,15 +1090,12 @@ components:
                     $ref: "#/components/schemas/FragmentInlineValue"
                 mapping:
                     properties:
-                        collectionItemFieldKey:
-                            type: string
                         fieldKey:
                             type: string
-                        itemClassName:
-                            type: string
-                        itemClassPK:
-                            format: int64
-                            type: integer
+                        itemReference:
+                            oneOf:
+                                - $ref: "#/components/schemas/ClassPKItemReference"
+                                - $ref: "#/components/schemas/ContextItemReference"
                     type: object
             type: object
         FragmentSettingsAllowed:
