@@ -220,6 +220,12 @@ components:
                     type: string
                     writeOnly: true
             type: object
+        ClassNameReference:
+            properties:
+                className:
+                    type: string
+            required:
+                - className
         ClassPKItemReference:
             properties:
                 itemClassName:
