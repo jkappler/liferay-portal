@@ -47,7 +47,6 @@ import com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCrite
 import com.liferay.item.selector.criteria.info.item.criterion.InfoItemItemSelectorCriterion;
 import com.liferay.item.selector.criteria.info.item.criterion.InfoListItemSelectorCriterion;
 import com.liferay.item.selector.criteria.url.criterion.URLItemSelectorCriterion;
-import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.content.page.editor.sidebar.panel.ContentPageEditorSidebarPanel;
 import com.liferay.layout.content.page.editor.web.internal.comment.CommentUtil;
@@ -240,10 +239,6 @@ public class ContentPageEditorDisplayContext {
 			).put(
 				"deleteItemURL",
 				getFragmentEntryActionURL("/content_layout/delete_item")
-			).put(
-				"discardDraftRedirectURL", themeDisplay.getURLCurrent()
-			).put(
-				"discardDraftURL", _getDiscardDraftURL()
 			).put(
 				"draft",
 				() -> {
@@ -743,40 +738,6 @@ public class ContentPageEditorDisplayContext {
 		).build();
 
 		return _defaultConfigurations;
-	}
-
-	private String _getDiscardDraftURL() {
-		Layout publishedLayout = _getPublishedLayout();
-
-		if (!Objects.equals(
-				publishedLayout.getType(), LayoutConstants.TYPE_PORTLET)) {
-
-			return getFragmentEntryActionURL(
-				"/content_layout/discard_draft_layout");
-		}
-
-		PortletURL deleteLayoutURL = PortalUtil.getControlPanelPortletURL(
-			httpServletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
-			PortletRequest.ACTION_PHASE);
-
-		deleteLayoutURL.setParameter(
-			ActionRequest.ACTION_NAME, "/layout/delete_layout");
-
-		PortletURL redirectURL = PortalUtil.getControlPanelPortletURL(
-			httpServletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
-			PortletRequest.RENDER_PHASE);
-
-		redirectURL.setParameter(
-			"selPlid", String.valueOf(publishedLayout.getPlid()));
-
-		deleteLayoutURL.setParameter("redirect", redirectURL.toString());
-
-		Layout draftLayout = themeDisplay.getLayout();
-
-		deleteLayoutURL.setParameter(
-			"selPlid", String.valueOf(draftLayout.getPlid()));
-
-		return deleteLayoutURL.toString();
 	}
 
 	private List<Map<String, Object>> _getDynamicFragments() {
