@@ -965,8 +965,6 @@ definition {
 
 		var key_text = "Discard Conversion Draft";
 
-		AssertElementPresent(locator1 = "Button#ANY");
-
 		AssertVisible(
 			key_alertMessage = "The page conversion is shown in the preview below. Make modifications needed before publishing the conversion, or discard the draft to leave the widget page in its original state.",
 			key_type = "info",
