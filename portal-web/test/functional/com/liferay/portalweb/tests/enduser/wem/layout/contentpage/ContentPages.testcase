@@ -456,6 +456,7 @@ definition {
 	@priority = "5"
 	test DiscardContentPageDraft {
 		property portal.acceptance = "true";
+		property portal.upstream = "quarantine";
 
 		task ("Assert the Discard Draft button starts off disabled but Publish button starts off enabled") {
 			ContentPagesNavigator.openEditContentPage(
