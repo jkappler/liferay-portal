@@ -162,6 +162,14 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 	}
 
 	@Override
+	public FragmentEntry fetchFragmentEntriesByPublishedFragmentEntryId(
+		long publishedFragmentEntryId) {
+
+		return fragmentEntryPersistence.fetchByPublishedFragmentEntryId_First(
+			publishedFragmentEntryId, null);
+	}
+
+	@Override
 	public FragmentEntry fetchFragmentEntry(long fragmentEntryId)
 		throws PortalException {
 
