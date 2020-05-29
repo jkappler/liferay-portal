@@ -17,8 +17,6 @@ package com.liferay.layout.type.controller.collection.internal.layout.type.contr
 import com.liferay.fragment.constants.FragmentActionKeys;
 import com.liferay.fragment.renderer.FragmentRendererController;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorWebKeys;
-import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
-import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.security.permission.resource.LayoutContentModelResourcePermission;
 import com.liferay.layout.type.controller.BaseLayoutTypeControllerImpl;
 import com.liferay.layout.type.controller.collection.internal.constants.CollectionLayoutTypeControllerConstants;
@@ -146,29 +144,11 @@ public class CollectionLayoutTypeController
 			RequestDispatcher.INCLUDE_SERVLET_PATH);
 
 		try {
-			LayoutPageTemplateEntry layoutPageTemplateEntry = null;
+			httpServletRequest.setAttribute(
+				ContentPageEditorWebKeys.CLASS_NAME, Layout.class.getName());
 
-			if (layoutMode.equals(Constants.EDIT)) {
-				layoutPageTemplateEntry = _fetchLayoutPageTemplateEntry(layout);
-			}
-
-			if (layoutPageTemplateEntry != null) {
-				httpServletRequest.setAttribute(
-					ContentPageEditorWebKeys.CLASS_NAME,
-					LayoutPageTemplateEntry.class.getName());
-
-				httpServletRequest.setAttribute(
-					ContentPageEditorWebKeys.CLASS_PK,
-					layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
-			}
-			else {
-				httpServletRequest.setAttribute(
-					ContentPageEditorWebKeys.CLASS_NAME,
-					Layout.class.getName());
-
-				httpServletRequest.setAttribute(
-					ContentPageEditorWebKeys.CLASS_PK, layout.getPlid());
-			}
+			httpServletRequest.setAttribute(
+				ContentPageEditorWebKeys.CLASS_PK, layout.getPlid());
 
 			addAttributes(httpServletRequest);
 
@@ -301,28 +281,6 @@ public class CollectionLayoutTypeController
 		this.servletContext = servletContext;
 	}
 
-	private LayoutPageTemplateEntry _fetchLayoutPageTemplateEntry(
-		Layout layout) {
-
-		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_layoutPageTemplateEntryLocalService.
-				fetchLayoutPageTemplateEntryByPlid(layout.getPlid());
-
-		if (layoutPageTemplateEntry != null) {
-			return layoutPageTemplateEntry;
-		}
-
-		if (layout.getClassNameId() == _portal.getClassNameId(Layout.class)) {
-			Layout publishedLayout = _layoutLocalService.fetchLayout(
-				layout.getClassPK());
-
-			return _layoutPageTemplateEntryLocalService.
-				fetchLayoutPageTemplateEntryByPlid(publishedLayout.getPlid());
-		}
-
-		return null;
-	}
-
 	private boolean _hasUpdatePermissions(
 		PermissionChecker permissionChecker, Layout layout) {
 
@@ -367,10 +325,6 @@ public class CollectionLayoutTypeController
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
-
-	@Reference
-	private LayoutPageTemplateEntryLocalService
-		_layoutPageTemplateEntryLocalService;
 
 	@Reference
 	private LayoutPermission _layoutPermission;
