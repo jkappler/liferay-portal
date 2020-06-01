@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutTypeController;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -44,6 +45,7 @@ import com.liferay.portal.kernel.util.PropertiesParamUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.util.LayoutTypeControllerTracker;
 import com.liferay.portal.util.PropsValues;
 
 import java.util.HashMap;
@@ -93,7 +95,12 @@ public class AddSimpleLayoutMVCActionCommand
 		long masterLayoutPlid = ParamUtil.getLong(
 			actionRequest, "masterLayoutPlid");
 
-		if (!Objects.equals(type, LayoutConstants.TYPE_CONTENT)) {
+		LayoutTypeController layoutTypeController =
+			LayoutTypeControllerTracker.getLayoutTypeController(type);
+
+		if (!Objects.equals(
+				layoutTypeController.getType(), LayoutConstants.TYPE_CONTENT)) {
+
 			LayoutPageTemplateEntry defaultLayoutPageTemplateEntry =
 				_layoutPageTemplateEntryService.
 					fetchDefaultLayoutPageTemplateEntry(
@@ -156,7 +163,10 @@ public class AddSimpleLayoutMVCActionCommand
 			String redirectURL = getRedirectURL(
 				actionRequest, actionResponse, layout);
 
-			if (Objects.equals(type, LayoutConstants.TYPE_CONTENT)) {
+			if (Objects.equals(
+					layoutTypeController.getType(),
+					LayoutConstants.TYPE_CONTENT)) {
+
 				redirectURL = getContentRedirectURL(actionRequest, layout);
 			}
 
