@@ -93,7 +93,9 @@ public class AddSimpleLayoutMVCActionCommand
 		long masterLayoutPlid = ParamUtil.getLong(
 			actionRequest, "masterLayoutPlid");
 
-		if (!Objects.equals(type, LayoutConstants.TYPE_CONTENT)) {
+		if (!(Objects.equals(type, LayoutConstants.TYPE_COLLECTION) ||
+			  Objects.equals(type, LayoutConstants.TYPE_CONTENT))) {
+
 			LayoutPageTemplateEntry defaultLayoutPageTemplateEntry =
 				_layoutPageTemplateEntryService.
 					fetchDefaultLayoutPageTemplateEntry(
@@ -156,7 +158,9 @@ public class AddSimpleLayoutMVCActionCommand
 			String redirectURL = getRedirectURL(
 				actionRequest, actionResponse, layout);
 
-			if (Objects.equals(type, LayoutConstants.TYPE_CONTENT)) {
+			if (Objects.equals(type, LayoutConstants.TYPE_COLLECTION) ||
+				Objects.equals(type, LayoutConstants.TYPE_CONTENT)) {
+
 				redirectURL = getContentRedirectURL(actionRequest, layout);
 			}
 
