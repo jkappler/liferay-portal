@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.HashMap;
@@ -72,7 +73,13 @@ public class SelectBasicTemplatesVerticalCard implements VerticalCard {
 			addLayoutURL.setParameter(
 				"privateLayout", String.valueOf(privateLayout));
 
-			addLayoutURL.setParameter("type", LayoutConstants.TYPE_CONTENT);
+			String type = ParamUtil.getString(_httpServletRequest, "type");
+
+			if (Validator.isNull(type)) {
+				type = LayoutConstants.TYPE_CONTENT;
+			}
+
+			addLayoutURL.setParameter("type", type);
 			addLayoutURL.setParameter(
 				"masterLayoutPlid",
 				String.valueOf(_layoutPageTemplateEntry.getPlid()));

@@ -860,6 +860,7 @@ public class LayoutsAdminDisplayContext {
 			"selPlid", String.valueOf(selPlid));
 		selectBasicTemplatesURL.setParameter(
 			"privateLayout", String.valueOf(privateLayout));
+		selectBasicTemplatesURL.setParameter("type", "collection");
 
 		return selectBasicTemplatesURL.toString();
 	}
