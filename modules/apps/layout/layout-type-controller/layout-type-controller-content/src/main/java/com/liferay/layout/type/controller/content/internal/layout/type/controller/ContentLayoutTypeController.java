@@ -65,7 +65,7 @@ public class ContentLayoutTypeController extends BaseLayoutTypeControllerImpl {
 
 	@Override
 	public String getType() {
-		return LayoutConstants.TYPE_PORTLET;
+		return LayoutConstants.TYPE_CONTENT;
 	}
 
 	@Override
