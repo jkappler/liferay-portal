@@ -46,6 +46,7 @@ import com.liferay.portal.kernel.model.LayoutReference;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.model.LayoutType;
+import com.liferay.portal.kernel.model.LayoutTypeController;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.PortalPreferences;
 import com.liferay.portal.kernel.model.PortletConstants;
@@ -85,6 +86,7 @@ import com.liferay.portal.kernel.util.comparator.LayoutPriorityComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowThreadLocal;
 import com.liferay.portal.service.base.LayoutLocalServiceBaseImpl;
+import com.liferay.portal.util.LayoutTypeControllerTracker;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.PortalPreferencesImpl;
 import com.liferay.sites.kernel.util.Sites;
@@ -390,10 +392,15 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		layout.setPublishDate(serviceContext.getModifiedDate(now));
 
+		LayoutTypeController layoutTypeController =
+			LayoutTypeControllerTracker.getLayoutTypeController(type);
+
 		if (workflowDefinitionLinkLocalService.hasWorkflowDefinitionLink(
 				layout.getCompanyId(), layout.getGroupId(),
 				Layout.class.getName()) &&
-			Objects.equals(type, LayoutConstants.TYPE_CONTENT) && !system) {
+			Objects.equals(
+				layoutTypeController.getType(), LayoutConstants.TYPE_CONTENT) &&
+			!system) {
 
 			layout.setStatus(WorkflowConstants.STATUS_DRAFT);
 		}
@@ -461,7 +468,8 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 		// Draft layout
 
 		if (!system &&
-			(Objects.equals(type, LayoutConstants.TYPE_CONTENT) ||
+			(Objects.equals(
+				layoutTypeController.getType(), LayoutConstants.TYPE_CONTENT) ||
 			 layout.isTypeAssetDisplay())) {
 
 			serviceContext.setModifiedDate(now);
@@ -3457,7 +3465,12 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 		layout.setType(type);
 
-		if (Objects.equals(type, LayoutConstants.TYPE_CONTENT)) {
+		LayoutTypeController layoutTypeController =
+			LayoutTypeControllerTracker.getLayoutTypeController(type);
+
+		if (Objects.equals(
+				layoutTypeController.getType(), LayoutConstants.TYPE_CONTENT)) {
+
 			layout.setLayoutPrototypeUuid(StringPool.BLANK);
 			layout.setLayoutPrototypeLinkEnabled(false);
 		}
