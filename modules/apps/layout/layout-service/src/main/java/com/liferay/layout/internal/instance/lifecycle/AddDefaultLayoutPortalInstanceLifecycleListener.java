@@ -21,6 +21,8 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
@@ -115,6 +117,8 @@ public class AddDefaultLayoutPortalInstanceLifecycleListener
 				WorkflowConstants.STATUS_APPROVED, serviceContext);
 		}
 		catch (Exception exception) {
+			_log.error(exception, exception);
+
 			throw new PortalException(exception);
 		}
 		finally {
@@ -184,6 +188,9 @@ public class AddDefaultLayoutPortalInstanceLifecycleListener
 	protected void setModuleServiceLifecycle(
 		ModuleServiceLifecycle moduleServiceLifecycle) {
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		AddDefaultLayoutPortalInstanceLifecycleListener.class);
 
 	@Reference
 	private DefaultLayoutDefinitionImporter _defaultLayoutDefinitionImporter;
