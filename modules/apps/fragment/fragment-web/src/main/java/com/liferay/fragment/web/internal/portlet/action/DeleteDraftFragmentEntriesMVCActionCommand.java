@@ -15,12 +15,11 @@
 package com.liferay.fragment.web.internal.portlet.action;
 
 import com.liferay.fragment.constants.FragmentPortletKeys;
-import com.liferay.fragment.exception.RequiredFragmentEntryException;
+import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentEntryService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
-import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ParamUtil;
 
@@ -37,39 +36,48 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + FragmentPortletKeys.FRAGMENT,
-		"mvc.command.name=/fragment/delete_fragment_entries"
+		"mvc.command.name=/fragment/delete_draft_fragment_entries"
 	},
 	service = MVCActionCommand.class
 )
-public class DeleteFragmentEntriesMVCActionCommand
+public class DeleteDraftFragmentEntriesMVCActionCommand
 	extends BaseMVCActionCommand {
 
 	@Override
 	protected void doProcessAction(
 			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws Exception {
+		throws PortalException {
 
 		long fragmentEntryId = ParamUtil.getLong(
 			actionRequest, "fragmentEntryId");
 
-		try {
-			_deleteFragmentEntry(fragmentEntryId);
-		}
-		catch (RequiredFragmentEntryException requiredFragmentEntryException) {
-			SessionErrors.add(
-				actionRequest, requiredFragmentEntryException.getClass());
+		FragmentEntry fragmentEntry = _fragmentEntryService.fetchFragmentEntry(
+			fragmentEntryId);
 
-			hideDefaultErrorMessage(actionRequest);
-
-			sendRedirect(actionRequest, actionResponse);
+		if (fragmentEntry == null) {
+			return;
 		}
+
+		_deleteDraftFragmentEntry(fragmentEntry);
 	}
 
 	@Transactional(rollbackFor = PortalException.class)
-	private void _deleteFragmentEntry(long fragmentEntryId)
+	private void _deleteDraftFragmentEntry(FragmentEntry fragmentEntry)
 		throws PortalException {
 
-		_fragmentEntryService.deleteFragmentEntry(fragmentEntryId);
+		if (fragmentEntry.isDraft()) {
+			_fragmentEntryService.deleteFragmentEntry(
+				fragmentEntry.getFragmentEntryId());
+		}
+		else {
+			FragmentEntry draftFragmentEntry =
+				fragmentEntry.getDraftFragmentEntry();
+
+			if (draftFragmentEntry != null) {
+				_fragmentEntryService.deleteFragmentEntry(
+					draftFragmentEntry.getFragmentEntryId());
+			}
+		}
 	}
 
 	@Reference
