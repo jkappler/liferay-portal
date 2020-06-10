@@ -855,7 +855,12 @@ public class FragmentEntryModelImpl
 	@JSON
 	@Override
 	public int getStatus() {
-		return _status;
+		if (isHead()) {
+			return WorkflowConstants.STATUS_APPROVED;
+		}
+		else {
+			return WorkflowConstants.STATUS_DRAFT;
+		}
 	}
 
 	@Override
@@ -937,7 +942,7 @@ public class FragmentEntryModelImpl
 
 	@Override
 	public boolean isApproved() {
-		if (getStatus() == WorkflowConstants.STATUS_APPROVED) {
+		if (isHead()) {
 			return true;
 		}
 		else {
@@ -957,11 +962,11 @@ public class FragmentEntryModelImpl
 
 	@Override
 	public boolean isDraft() {
-		if (getStatus() == WorkflowConstants.STATUS_DRAFT) {
-			return true;
+		if (isHead()) {
+			return false;
 		}
 		else {
-			return false;
+			return true;
 		}
 	}
 
