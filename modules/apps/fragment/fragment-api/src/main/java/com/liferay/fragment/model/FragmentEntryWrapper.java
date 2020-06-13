@@ -233,6 +233,11 @@ public class FragmentEntryWrapper
 		}
 	}
 
+	@Override
+	public FragmentEntry fetchDraft() {
+		return model.fetchDraft();
+	}
+
 	/**
 	 * Returns the cacheable of this fragment entry.
 	 *
