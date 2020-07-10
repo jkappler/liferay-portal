@@ -210,6 +210,40 @@ public class LayoutPageTemplateEntryServiceTest {
 	}
 
 	@Test
+	public void testAddWidgetLayoutPageTemplateEntry() throws PortalException {
+		/*
+		There are four types of page template entries. TYPE_BASIC,
+		TYPE_DISPLAY_PAGE, TYPE_MASTER_LAYOUT, TYPE_WIDGET_PAGE
+
+		What we want to test here is TYPE_WIDGET_PAGE. This is a special type
+		since it has another model associated with it. When creating a page
+		template of this type, another object of type LayoutPrototype is also
+		created.
+
+		So this test should check that. Suggested steps for the tests are:
+
+		1 - Create a new page template entry of type TYPE_WIDGET_PAGE
+		2 - Check that it was created
+		3 - Check that the LayoutPrototype for it was also created
+
+		Tips and tricks
+
+		1 - Theres a property in LayoutPageTemplateEntry that's called getLayoutPrototypeId()'
+		2 - Service for LayoutPrototype is in kernel
+
+		Bonus points
+
+		1 - Create other tests to see if the group was specified correctly
+		2 - Check that the name of the layout prototype is consistent
+		3 - Test that you cannot add duplicate names
+		4 - We also have a method called addGlobalLayoutPageTemplateEntry that we can test
+
+		Overall: HAVE FUN
+		 */
+		Assert.assertTrue(true); //Don't forget to remove this
+	}
+
+	@Test
 	public void testDeleteLayoutPageTemplateEntries() throws Exception {
 		LayoutPageTemplateEntry layoutPageTemplateEntry1 =
 			LayoutPageTemplateTestUtil.addLayoutPageTemplateEntry(
