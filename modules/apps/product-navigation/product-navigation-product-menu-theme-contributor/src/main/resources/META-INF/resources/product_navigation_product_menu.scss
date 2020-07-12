@@ -238,9 +238,9 @@
 		}
 
 		&.goto-link {
-			display: inline-flex;
-			font-size: 0.8rem;
+			font-size: 0.75rem;
 			max-width: 100%;
+			padding: 6px 22px;
 
 			&:hover {
 				color: white;
