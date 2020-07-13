@@ -240,7 +240,29 @@ public class LayoutPageTemplateEntryServiceTest {
 
 		Overall: HAVE FUN
 		 */
-		Assert.assertTrue(true); //Don't forget to remove this
+	
+		String name = RandomTestUtil.randomString();
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_group.getGroupId(), TestPropsValues.getUserId());
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
+				_group.getGroupId(),
+				_layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId(),
+				name, LayoutPageTemplateEntryTypeConstants.TYPE_WIDGET_PAGE,
+				WorkflowConstants.STATUS_APPROVED, serviceContext);
+
+		LayoutPageTemplateEntry persistedLayoutPageTemplateEntry =
+			_layoutPageTemplateEntryPersistence.fetchByPrimaryKey(
+				layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
+
+		Assert.assertEquals(
+			name, persistedLayoutPageTemplateEntry.getName());
+
+		Assert.assertNotNull(layoutPageTemplateEntry.getLayoutPrototypeId());
 	}
 
 	@Test
