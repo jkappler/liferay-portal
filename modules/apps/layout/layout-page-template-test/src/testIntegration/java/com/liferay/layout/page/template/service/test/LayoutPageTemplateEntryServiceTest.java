@@ -34,9 +34,9 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.service.LayoutPrototypeLocalService;
 import com.liferay.portal.kernel.service.LayoutPrototypeService;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.persistence.LayoutPrototypePersistence;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -297,7 +297,7 @@ public class LayoutPageTemplateEntryServiceTest {
 					getLayoutPageTemplateCollectionId());
 
 		LayoutPrototype persistedLayoutPrototype =
-			_layoutPrototypePersistence.fetchByPrimaryKey(
+			_layoutPrototypeLocalService.getLayoutPrototype(
 				layoutPageTemplateEntry.getLayoutPrototypeId());
 
 		LayoutPrototype layoutPrototype =
@@ -543,7 +543,7 @@ public class LayoutPageTemplateEntryServiceTest {
 	private LayoutPageTemplateEntryService _layoutPageTemplateEntryService;
 
 	@Inject
-	private LayoutPrototypePersistence _layoutPrototypePersistence;
+	private LayoutPrototypeLocalService _layoutPrototypeLocalService;
 
 	@Inject
 	private LayoutPrototypeService _layoutPrototypeService;
