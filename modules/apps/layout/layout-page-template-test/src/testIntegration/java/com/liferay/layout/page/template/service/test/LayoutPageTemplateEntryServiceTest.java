@@ -108,23 +108,13 @@ public class LayoutPageTemplateEntryServiceTest {
 	public void testAddDuplicateWidgetLayoutPageTemplateEntries() throws Exception {
 		String name = RandomTestUtil.randomString();
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				_group.getGroupId(), TestPropsValues.getUserId());
+		LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
+			_layoutPageTemplateCollection.getLayoutPageTemplateCollectionId(),
+			name);
 
-		_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
-			_group.getGroupId(),
-			_layoutPageTemplateCollection.
-				getLayoutPageTemplateCollectionId(),
-			name, LayoutPageTemplateEntryTypeConstants.TYPE_WIDGET_PAGE,
-			WorkflowConstants.STATUS_APPROVED, serviceContext);
-
-		_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
-			_group.getGroupId(),
-			_layoutPageTemplateCollection.
-				getLayoutPageTemplateCollectionId(),
-			name, LayoutPageTemplateEntryTypeConstants.TYPE_WIDGET_PAGE,
-			WorkflowConstants.STATUS_APPROVED, serviceContext);
+		LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
+			_layoutPageTemplateCollection.getLayoutPageTemplateCollectionId(),
+			name);
 	}
 
 	@Test(expected = LayoutPageTemplateEntryNameException.class)
@@ -269,45 +259,27 @@ public class LayoutPageTemplateEntryServiceTest {
 		Overall: HAVE FUN
 		 */
 	
-		String name = RandomTestUtil.randomString();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				_group.getGroupId(), TestPropsValues.getUserId());
-
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
-				_group.getGroupId(),
+			LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
 				_layoutPageTemplateCollection.
-					getLayoutPageTemplateCollectionId(),
-				name, LayoutPageTemplateEntryTypeConstants.TYPE_WIDGET_PAGE,
-				WorkflowConstants.STATUS_APPROVED, serviceContext);
+					getLayoutPageTemplateCollectionId());
 
 		LayoutPageTemplateEntry persistedLayoutPageTemplateEntry =
 			_layoutPageTemplateEntryPersistence.fetchByPrimaryKey(
 				layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
 
 		Assert.assertEquals(
-			name, persistedLayoutPageTemplateEntry.getName());
+			layoutPageTemplateEntry.getName(), persistedLayoutPageTemplateEntry.getName());
 
 		Assert.assertNotNull(layoutPageTemplateEntry.getLayoutPrototypeId());
 	}
 
 	@Test
 	public void testAssertGroupOfWidgetLayoutPageTemplateEntry() throws PortalException {
-		String name = RandomTestUtil.randomString();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				_group.getGroupId(), TestPropsValues.getUserId());
-
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
-				_group.getGroupId(),
+			LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
 				_layoutPageTemplateCollection.
-					getLayoutPageTemplateCollectionId(),
-				name, LayoutPageTemplateEntryTypeConstants.TYPE_WIDGET_PAGE,
-				WorkflowConstants.STATUS_APPROVED, serviceContext);
+					getLayoutPageTemplateCollectionId());
 
 		LayoutPageTemplateEntry persistedLayoutPageTemplateEntry =
 			_layoutPageTemplateEntryPersistence.fetchByPrimaryKey(
@@ -319,19 +291,10 @@ public class LayoutPageTemplateEntryServiceTest {
 
 	@Test
 	public void testAssertNameOfLayoutPrototype() throws PortalException {
-		String name = RandomTestUtil.randomString();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(
-				_group.getGroupId(), TestPropsValues.getUserId());
-
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
-				_group.getGroupId(),
+			LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
 				_layoutPageTemplateCollection.
-					getLayoutPageTemplateCollectionId(),
-				name, LayoutPageTemplateEntryTypeConstants.TYPE_WIDGET_PAGE,
-				WorkflowConstants.STATUS_APPROVED, serviceContext);
+					getLayoutPageTemplateCollectionId());
 
 		LayoutPrototype persistedLayoutPrototype =
 			_layoutPrototypePersistence.fetchByPrimaryKey(
