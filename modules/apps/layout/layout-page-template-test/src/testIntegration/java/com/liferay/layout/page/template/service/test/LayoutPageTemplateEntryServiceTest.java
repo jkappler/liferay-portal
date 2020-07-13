@@ -102,6 +102,31 @@ public class LayoutPageTemplateEntryServiceTest {
 			name);
 	}
 
+	@Test(
+		expected = LayoutPageTemplateEntryNameException.MustNotBeDuplicate.class
+	)
+	public void testAddDuplicateWidgetLayoutPageTemplateEntries() throws Exception {
+		String name = RandomTestUtil.randomString();
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_group.getGroupId(), TestPropsValues.getUserId());
+
+		_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
+			_group.getGroupId(),
+			_layoutPageTemplateCollection.
+				getLayoutPageTemplateCollectionId(),
+			name, LayoutPageTemplateEntryTypeConstants.TYPE_WIDGET_PAGE,
+			WorkflowConstants.STATUS_APPROVED, serviceContext);
+
+		_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
+			_group.getGroupId(),
+			_layoutPageTemplateCollection.
+				getLayoutPageTemplateCollectionId(),
+			name, LayoutPageTemplateEntryTypeConstants.TYPE_WIDGET_PAGE,
+			WorkflowConstants.STATUS_APPROVED, serviceContext);
+	}
+
 	@Test(expected = LayoutPageTemplateEntryNameException.class)
 	public void testAddLayoutPageEntryWithNullName() throws Exception {
 		LayoutPageTemplateTestUtil.addLayoutPageTemplateEntry(
