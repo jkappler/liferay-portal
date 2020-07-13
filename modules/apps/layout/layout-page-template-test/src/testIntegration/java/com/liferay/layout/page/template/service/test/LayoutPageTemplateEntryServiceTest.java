@@ -260,7 +260,6 @@ public class LayoutPageTemplateEntryServiceTest {
 
 		Overall: HAVE FUN
 		 */
-	
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
 				_layoutPageTemplateCollection.
@@ -271,13 +270,16 @@ public class LayoutPageTemplateEntryServiceTest {
 				layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
 
 		Assert.assertEquals(
-			layoutPageTemplateEntry.getName(), persistedLayoutPageTemplateEntry.getName());
+			layoutPageTemplateEntry.getName(),
+			persistedLayoutPageTemplateEntry.getName());
 
 		Assert.assertNotNull(layoutPageTemplateEntry.getLayoutPrototypeId());
 	}
 
 	@Test
-	public void testAssertGroupOfWidgetLayoutPageTemplateEntry() throws PortalException {
+	public void testAssertGroupOfWidgetLayoutPageTemplateEntry()
+		throws PortalException {
+
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
 				_layoutPageTemplateCollection.
@@ -307,8 +309,7 @@ public class LayoutPageTemplateEntryServiceTest {
 				layoutPageTemplateEntry.getLayoutPrototypeId());
 
 		Assert.assertEquals(
-			layoutPrototype.getName(),
-			persistedLayoutPrototype.getName());
+			layoutPrototype.getName(), persistedLayoutPrototype.getName());
 	}
 
 	@Test
