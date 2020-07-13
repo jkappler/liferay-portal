@@ -105,7 +105,9 @@ public class LayoutPageTemplateEntryServiceTest {
 	@Test(
 		expected = LayoutPageTemplateEntryNameException.MustNotBeDuplicate.class
 	)
-	public void testAddDuplicateWidgetLayoutPageTemplateEntries() throws Exception {
+	public void testAddDuplicateWidgetLayoutPageTemplateEntries()
+		throws Exception {
+
 		String name = RandomTestUtil.randomString();
 
 		LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
