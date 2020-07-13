@@ -33,6 +33,9 @@ import com.liferay.layout.page.template.service.test.util.LayoutPageTemplateTest
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.service.persistence.LayoutPrototypePersistence;
+import com.liferay.portal.kernel.service.LayoutPrototypeService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -290,6 +293,31 @@ public class LayoutPageTemplateEntryServiceTest {
 	}
 
 	@Test
+	public void testAssertNameOfLayoutPrototype() throws PortalException {
+		String name = RandomTestUtil.randomString();
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_group.getGroupId(), TestPropsValues.getUserId());
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
+				_group.getGroupId(),
+				_layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId(),
+				name, LayoutPageTemplateEntryTypeConstants.TYPE_WIDGET_PAGE,
+				WorkflowConstants.STATUS_APPROVED, serviceContext);
+
+		LayoutPrototype persistedLayoutPrototype =
+			_layoutPrototypePersistence.fetchByPrimaryKey(
+				layoutPageTemplateEntry.getLayoutPrototypeId());
+
+		Assert.assertEquals(
+			_layoutPrototypeService.getLayoutPrototype(layoutPageTemplateEntry.getLayoutPrototypeId()).getName(),
+			persistedLayoutPrototype.getName());
+	}
+
+	@Test
 	public void testDeleteLayoutPageTemplateEntries() throws Exception {
 		LayoutPageTemplateEntry layoutPageTemplateEntry1 =
 			LayoutPageTemplateTestUtil.addLayoutPageTemplateEntry(
@@ -521,5 +549,11 @@ public class LayoutPageTemplateEntryServiceTest {
 
 	@Inject
 	private LayoutPageTemplateEntryService _layoutPageTemplateEntryService;
+
+	@Inject
+	private LayoutPrototypePersistence _layoutPrototypePersistence;
+
+	@Inject
+	private LayoutPrototypeService _layoutPrototypeService;
 
 }
