@@ -33,6 +33,9 @@ import com.liferay.layout.page.template.service.test.util.LayoutPageTemplateTest
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.service.LayoutPrototypeLocalService;
+import com.liferay.portal.kernel.service.LayoutPrototypeService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -95,6 +98,23 @@ public class LayoutPageTemplateEntryServiceTest {
 			name);
 
 		LayoutPageTemplateTestUtil.addLayoutPageTemplateEntry(
+			_layoutPageTemplateCollection.getLayoutPageTemplateCollectionId(),
+			name);
+	}
+
+	@Test(
+		expected = LayoutPageTemplateEntryNameException.MustNotBeDuplicate.class
+	)
+	public void testAddDuplicateWidgetLayoutPageTemplateEntries()
+		throws Exception {
+
+		String name = RandomTestUtil.randomString();
+
+		LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
+			_layoutPageTemplateCollection.getLayoutPageTemplateCollectionId(),
+			name);
+
+		LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
 			_layoutPageTemplateCollection.getLayoutPageTemplateCollectionId(),
 			name);
 	}
@@ -240,7 +260,56 @@ public class LayoutPageTemplateEntryServiceTest {
 
 		Overall: HAVE FUN
 		 */
-		Assert.assertTrue(true); //Don't forget to remove this
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
+				_layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId());
+
+		LayoutPageTemplateEntry persistedLayoutPageTemplateEntry =
+			_layoutPageTemplateEntryPersistence.fetchByPrimaryKey(
+				layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
+
+		Assert.assertEquals(
+			layoutPageTemplateEntry.getName(),
+			persistedLayoutPageTemplateEntry.getName());
+
+		Assert.assertNotNull(layoutPageTemplateEntry.getLayoutPrototypeId());
+	}
+
+	@Test
+	public void testAssertGroupOfWidgetLayoutPageTemplateEntry()
+		throws PortalException {
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
+				_layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId());
+
+		LayoutPageTemplateEntry persistedLayoutPageTemplateEntry =
+			_layoutPageTemplateEntryPersistence.fetchByPrimaryKey(
+				layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
+
+		Assert.assertEquals(
+			_group.getGroupId(), persistedLayoutPageTemplateEntry.getGroupId());
+	}
+
+	@Test
+	public void testAssertNameOfLayoutPrototype() throws PortalException {
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			LayoutPageTemplateTestUtil.addWidgetLayoutPageTemplateEntry(
+				_layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId());
+
+		LayoutPrototype persistedLayoutPrototype =
+			_layoutPrototypeLocalService.getLayoutPrototype(
+				layoutPageTemplateEntry.getLayoutPrototypeId());
+
+		LayoutPrototype layoutPrototype =
+			_layoutPrototypeService.getLayoutPrototype(
+				layoutPageTemplateEntry.getLayoutPrototypeId());
+
+		Assert.assertEquals(
+			layoutPrototype.getName(), persistedLayoutPrototype.getName());
 	}
 
 	@Test
@@ -475,5 +544,11 @@ public class LayoutPageTemplateEntryServiceTest {
 
 	@Inject
 	private LayoutPageTemplateEntryService _layoutPageTemplateEntryService;
+
+	@Inject
+	private LayoutPrototypeLocalService _layoutPrototypeLocalService;
+
+	@Inject
+	private LayoutPrototypeService _layoutPrototypeService;
 
 }
