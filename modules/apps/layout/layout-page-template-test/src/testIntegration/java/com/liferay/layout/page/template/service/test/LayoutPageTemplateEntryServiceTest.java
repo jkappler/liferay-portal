@@ -190,6 +190,8 @@ public class LayoutPageTemplateEntryServiceTest {
 		Assert.assertEquals(
 			layoutPageTemplateEntry.getName(),
 			persistedLayoutPageTemplateEntry.getName());
+		Assert.assertEquals(
+			_group.getGroupId(), persistedLayoutPageTemplateEntry.getGroupId());
 
 		Assert.assertNotEquals(
 			0, layoutPageTemplateEntry.getLayoutPrototypeId());
