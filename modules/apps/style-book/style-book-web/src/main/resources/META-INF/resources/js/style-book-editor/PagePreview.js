@@ -81,6 +81,8 @@ export default function PagePreview() {
 					)}
 				</div>
 			)}
+
+			<div className="style-book-editor__page-preview-overlay" />
 		</div>
 	);
 }

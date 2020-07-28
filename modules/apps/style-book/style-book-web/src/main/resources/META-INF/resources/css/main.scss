@@ -50,13 +50,12 @@ $toolbarDesktopHeight: 56px;
 			justify-content: center;
 		}
 
-		&::after {
-			content: '';
+		&-overlay {
 			cursor: not-allowed;
 			display: block;
 			height: 100%;
 			left: 0;
-			position: fixed;
+			position: absolute;
 			top: 0;
 			width: 100%;
 		}
