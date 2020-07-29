@@ -631,8 +631,17 @@ public class EditAssetListDisplayContext {
 			new AssetRendererFactoryTypeNameComparator(
 				_themeDisplay.getLocale()));
 
+		AssetListEntry assetListEntry = getAssetListEntry();
+
 		for (AssetRendererFactory<?> curRendererFactory :
 				assetRendererFactories) {
+
+			if (!Objects.equals(
+					assetListEntry.getAssetEntryType(),
+					curRendererFactory.getClassName())) {
+
+				continue;
+			}
 
 			if (!curRendererFactory.isSupportsClassTypes()) {
 				manualAddIconDataMap.put(
@@ -656,6 +665,16 @@ public class EditAssetListDisplayContext {
 					_themeDisplay.getLocale());
 
 			for (ClassType assetAvailableClassType : assetAvailableClassTypes) {
+				if (Validator.isNotNull(
+						assetListEntry.getAssetEntrySubtype()) &&
+					!Objects.equals(
+						assetListEntry.getAssetEntrySubtype(),
+						String.valueOf(
+							assetAvailableClassType.getClassTypeId()))) {
+
+					continue;
+				}
+
 				manualAddIconDataMap.put(
 					assetAvailableClassType.getName(),
 					_getDataMap(
