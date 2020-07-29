@@ -451,18 +451,14 @@ public class AssetListEntryLocalServiceImpl
 
 		assetListEntry.setModifiedDate(new Date());
 
-		if (assetListEntry.getType() ==
-				AssetListEntryTypeConstants.TYPE_DYNAMIC) {
+		String assetEntryType = _getSegmentsAssetEntryType(
+			assetListEntryId, segmentsEntryId, typeSettings);
 
-			String assetEntryType = _getSegmentsAssetEntryType(
-				assetListEntryId, segmentsEntryId, typeSettings);
-
-			assetListEntry.setAssetEntrySubtype(
-				_getSegmentsAssetEntrySubtype(
-					assetEntryType, assetListEntryId, segmentsEntryId,
-					typeSettings));
-			assetListEntry.setAssetEntryType(assetEntryType);
-		}
+		assetListEntry.setAssetEntrySubtype(
+			_getSegmentsAssetEntrySubtype(
+				assetEntryType, assetListEntryId, segmentsEntryId,
+				typeSettings));
+		assetListEntry.setAssetEntryType(assetEntryType);
 
 		assetListEntryPersistence.update(assetListEntry);
 
