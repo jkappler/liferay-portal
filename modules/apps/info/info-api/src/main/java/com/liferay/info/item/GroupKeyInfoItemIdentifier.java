@@ -12,23 +12,27 @@
  * details.
  */
 
-package com.liferay.translation.importer;
-
-import com.liferay.info.item.InfoItemFieldValues;
-import com.liferay.info.item.InfoItemReference;
-import com.liferay.portal.kernel.exception.PortalException;
-
-import java.io.IOException;
-import java.io.InputStream;
+package com.liferay.info.item;
 
 /**
- * @author Alejandro Tardín
+ * @author Jorge Ferrer
  */
-public interface TranslationInfoItemFieldValuesImporter {
+public class GroupKeyInfoItemIdentifier extends InfoItemIdentifier {
 
-	public InfoItemFieldValues importInfoItemFieldValues(
-			long groupId, InfoItemReference infoItemReference,
-			InputStream inputStream)
-		throws IOException, PortalException;
+	public GroupKeyInfoItemIdentifier(long groupId, String key) {
+		_groupId = groupId;
+		_key = key;
+	}
+
+	public long getGroupId() {
+		return _groupId;
+	}
+
+	public String getKey() {
+		return _key;
+	}
+
+	private final long _groupId;
+	private final String _key;
 
 }

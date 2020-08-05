@@ -12,23 +12,36 @@
  * details.
  */
 
-package com.liferay.translation.importer;
+package com.liferay.info.item;
 
-import com.liferay.info.item.InfoItemFieldValues;
-import com.liferay.info.item.InfoItemReference;
-import com.liferay.portal.kernel.exception.PortalException;
-
-import java.io.IOException;
-import java.io.InputStream;
+import com.liferay.petra.string.StringBundler;
 
 /**
- * @author Alejandro Tardín
+ * @author Jorge Ferrer
  */
-public interface TranslationInfoItemFieldValuesImporter {
+public class ClassPKInfoItemIdentifier extends InfoItemIdentifier {
 
-	public InfoItemFieldValues importInfoItemFieldValues(
-			long groupId, InfoItemReference infoItemReference,
-			InputStream inputStream)
-		throws IOException, PortalException;
+	public ClassPKInfoItemIdentifier(long classPK) {
+		_classPK = classPK;
+	}
+
+	public long getClassPK() {
+		return _classPK;
+	}
+
+	@Override
+	public String toString() {
+		StringBundler sb = new StringBundler(5);
+
+		sb.append("{className=");
+		sb.append(ClassPKInfoItemIdentifier.class.getName());
+		sb.append(", classPK=");
+		sb.append(_classPK);
+		sb.append("}");
+
+		return sb.toString();
+	}
+
+	private final long _classPK;
 
 }

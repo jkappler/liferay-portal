@@ -12,23 +12,31 @@
  * details.
  */
 
-package com.liferay.translation.importer;
+package com.liferay.info.item;
 
-import com.liferay.info.item.InfoItemFieldValues;
-import com.liferay.info.item.InfoItemReference;
-import com.liferay.portal.kernel.exception.PortalException;
+import java.util.Optional;
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * @author Alejandro Tardín
+ * @author Jürgen Kappler
  */
-public interface TranslationInfoItemFieldValuesImporter {
+@ProviderType
+public abstract class InfoItemIdentifier {
 
-	public InfoItemFieldValues importInfoItemFieldValues(
-			long groupId, InfoItemReference infoItemReference,
-			InputStream inputStream)
-		throws IOException, PortalException;
+	public static final String VERSION_LATEST = "VERSION_LATEST";
+
+	public static final String VERSION_LATEST_APPROVED =
+		"VERSION_LATEST_APPROVED";
+
+	public Optional<String> getVersionOptional() {
+		return Optional.ofNullable(_version);
+	}
+
+	public void setVersion(String version) {
+		_version = version;
+	}
+
+	private String _version;
 
 }
