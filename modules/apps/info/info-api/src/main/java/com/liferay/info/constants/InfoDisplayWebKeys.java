@@ -19,6 +19,9 @@ package com.liferay.info.constants;
  */
 public class InfoDisplayWebKeys {
 
+	/**
+	 * * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
 	public static final String INFO_DISPLAY_CONTRIBUTOR =
 		"INFO_DISPLAY_CONTRIBUTOR";
 
@@ -44,6 +47,9 @@ public class InfoDisplayWebKeys {
 	public static final String INFO_LIST_DISPLAY_OBJECT =
 		"INFO_LIST_DISPLAY_OBJECT";
 
+	/**
+	 * * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
 	public static final String VERSION_CLASS_PK = "VERSION_CLASS_PK";
 
 }
