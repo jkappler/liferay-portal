@@ -16,7 +16,6 @@ package com.liferay.layout.type.controller.portlet.internal.display.context;
 
 import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
 import com.liferay.asset.info.display.contributor.util.ContentAccessor;
-import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
@@ -170,26 +169,6 @@ public class PortletLayoutDisplayContext {
 
 		return layoutListRetriever.getList(
 			listObjectReference, defaultLayoutListRetrieverContext);
-	}
-
-	public InfoDisplayContributor<?> getCollectionInfoDisplayContributor(
-		CollectionLayoutStructureItem collectionLayoutStructureItem) {
-
-		ListObjectReference listObjectReference = _getListObjectReference(
-			collectionLayoutStructureItem.getCollectionJSONObject());
-
-		if (listObjectReference == null) {
-			return null;
-		}
-
-		String className = listObjectReference.getItemType();
-
-		if (Objects.equals(className, DLFileEntry.class.getName())) {
-			className = FileEntry.class.getName();
-		}
-
-		return _infoDisplayContributorTracker.getInfoDisplayContributor(
-			className);
 	}
 
 	public String getContainerLinkHref(
