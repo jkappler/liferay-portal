@@ -18,9 +18,11 @@ import com.liferay.flags.taglib.servlet.taglib.react.FlagsTag;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.renderer.FragmentRenderer;
 import com.liferay.fragment.renderer.FragmentRendererContext;
-import com.liferay.info.constants.InfoDisplayWebKeys;
-import com.liferay.info.display.contributor.InfoDisplayContributor;
-import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
+import com.liferay.info.field.InfoFieldValue;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.InfoItemServiceTracker;
+import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -35,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Pavel Savinov
@@ -99,7 +102,9 @@ public class ContentFlagsFragmentRenderer
 		Tuple displayObject = getDisplayObject(
 			fragmentRendererContext, httpServletRequest);
 
-		flagsTag.setClassName(GetterUtil.getString(displayObject.getObject(0)));
+		String className = GetterUtil.getString(displayObject.getObject(0));
+
+		flagsTag.setClassName(className);
 
 		long classPK = GetterUtil.getLong(displayObject.getObject(1));
 
@@ -120,19 +125,28 @@ public class ContentFlagsFragmentRenderer
 							fragmentEntryLink.getEditableValues(),
 							"message"))));
 
-			InfoDisplayContributor<?> infoDisplayContributor =
-				(InfoDisplayContributor<?>)httpServletRequest.getAttribute(
-					InfoDisplayWebKeys.INFO_DISPLAY_CONTRIBUTOR);
+			InfoItemObjectProvider<Object> infoItemObjectProvider =
+				_infoItemServiceTracker.getFirstInfoItemService(
+					InfoItemObjectProvider.class, className);
 
-			if (infoDisplayContributor != null) {
-				InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
-					infoDisplayContributor.getInfoDisplayObjectProvider(
-						classPK);
+			if (infoItemObjectProvider != null) {
+				InfoItemFieldValuesProvider<Object>
+					infoItemFieldValuesProvider =
+						_infoItemServiceTracker.getFirstInfoItemService(
+							InfoItemFieldValuesProvider.class, className);
 
-				if (infoDisplayObjectProvider != null) {
+				Object infoItem = infoItemObjectProvider.getInfoItem(
+					new ClassPKInfoItemIdentifier(classPK));
+
+				InfoFieldValue<Object> infoFieldValue =
+					infoItemFieldValuesProvider.getInfoItemFieldValue(
+						infoItem, "title");
+
+				if (infoFieldValue != null) {
 					flagsTag.setContentTitle(
-						infoDisplayObjectProvider.getTitle(
-							fragmentRendererContext.getLocale()));
+						String.valueOf(
+							infoFieldValue.getValue(
+								fragmentRendererContext.getLocale())));
 				}
 			}
 
@@ -145,5 +159,8 @@ public class ContentFlagsFragmentRenderer
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ContentFlagsFragmentRenderer.class);
+
+	@Reference
+	private InfoItemServiceTracker _infoItemServiceTracker;
 
 }

@@ -20,7 +20,6 @@ import com.liferay.fragment.renderer.DefaultFragmentRendererContext;
 import com.liferay.fragment.renderer.FragmentRendererController;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.info.constants.InfoDisplayWebKeys;
-import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemIdentifier;
@@ -102,10 +101,6 @@ public class GetFragmentEntryLinkMVCResourceCommand
 			HttpServletRequest httpServletRequest =
 				_portal.getHttpServletRequest(resourceRequest);
 
-			InfoDisplayContributor<?> currentInfoDisplayContributor =
-				(InfoDisplayContributor<?>)httpServletRequest.getAttribute(
-					InfoDisplayWebKeys.INFO_DISPLAY_CONTRIBUTOR);
-
 			if (Validator.isNotNull(collectionItemClassName) &&
 				(collectionItemClassPK > 0)) {
 
@@ -127,16 +122,6 @@ public class GetFragmentEntryLinkMVCResourceCommand
 						InfoDisplayWebKeys.INFO_LIST_DISPLAY_OBJECT,
 						infoItemObject);
 				}
-
-				InfoDisplayContributor<?> infoDisplayContributor =
-					_infoDisplayContributorTracker.getInfoDisplayContributor(
-						collectionItemClassName);
-
-				if (infoDisplayContributor != null) {
-					httpServletRequest.setAttribute(
-						InfoDisplayWebKeys.INFO_DISPLAY_CONTRIBUTOR,
-						infoDisplayContributor);
-				}
 			}
 
 			try {
@@ -155,10 +140,6 @@ public class GetFragmentEntryLinkMVCResourceCommand
 			finally {
 				httpServletRequest.removeAttribute(
 					InfoDisplayWebKeys.INFO_LIST_DISPLAY_OBJECT);
-
-				httpServletRequest.setAttribute(
-					InfoDisplayWebKeys.INFO_DISPLAY_CONTRIBUTOR,
-					currentInfoDisplayContributor);
 			}
 
 			if (SessionErrors.contains(
