@@ -14,9 +14,11 @@
 
 package com.liferay.fragment.util.configuration;
 
-import com.liferay.info.display.contributor.InfoDisplayContributor;
-import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
-import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
+import com.liferay.info.field.InfoFieldValue;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.InfoItemServiceTracker;
+import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -107,26 +109,44 @@ public class FragmentConfigurationField {
 				String className = defaultValueJSONObject.getString(
 					"className");
 
-				InfoDisplayContributorTracker infoDisplayContributorTracker =
+				InfoItemServiceTracker infoItemServiceTracker =
 					_serviceTracker.getService();
 
-				InfoDisplayContributor<?> infoDisplayContributor =
-					infoDisplayContributorTracker.getInfoDisplayContributor(
-						className);
+				InfoItemFieldValuesProvider<Object>
+					infoItemFieldValuesProvider =
+						infoItemServiceTracker.getFirstInfoItemService(
+							InfoItemFieldValuesProvider.class, className);
 
-				if (infoDisplayContributor == null) {
+				InfoItemObjectProvider<Object> infoItemObjectProvider =
+					infoItemServiceTracker.getFirstInfoItemService(
+						InfoItemObjectProvider.class, className);
+
+				if ((infoItemFieldValuesProvider == null) ||
+					(infoItemObjectProvider == null)) {
+
 					return _defaultValue;
 				}
 
 				long classPK = defaultValueJSONObject.getLong("classPK");
 
-				InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
-					infoDisplayContributor.getInfoDisplayObjectProvider(
-						classPK);
+				Object infoItem = infoItemObjectProvider.getInfoItem(
+					new ClassPKInfoItemIdentifier(classPK));
+
+				if (infoItem == null) {
+					return _defaultValue;
+				}
+
+				InfoFieldValue<Object> infoFieldValue =
+					infoItemFieldValuesProvider.getInfoItemFieldValue(
+						infoItem, "title");
+
+				if (infoItem == infoFieldValue) {
+					return _defaultValue;
+				}
 
 				defaultValueJSONObject.put(
 					"title",
-					infoDisplayObjectProvider.getTitle(
+					infoFieldValue.getValue(
 						LocaleUtil.getMostRelevantLocale()));
 
 				return defaultValueJSONObject.toString();
@@ -144,16 +164,14 @@ public class FragmentConfigurationField {
 		FragmentConfigurationField.class);
 
 	private static final ServiceTracker
-		<InfoDisplayContributorTracker, InfoDisplayContributorTracker>
-			_serviceTracker;
+		<InfoItemServiceTracker, InfoItemServiceTracker> _serviceTracker;
 
 	static {
 		Bundle bundle = FrameworkUtil.getBundle(
 			FragmentConfigurationField.class);
 
 		_serviceTracker = new ServiceTracker<>(
-			bundle.getBundleContext(), InfoDisplayContributorTracker.class,
-			null);
+			bundle.getBundleContext(), InfoItemServiceTracker.class, null);
 
 		_serviceTracker.open();
 	}
