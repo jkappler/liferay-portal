@@ -15,7 +15,6 @@
 package com.liferay.layout.type.controller.portlet.internal.display.context;
 
 import com.liferay.asset.info.display.contributor.util.ContentAccessor;
-import com.liferay.info.constants.InfoDisplayWebKeys;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceTracker;
@@ -178,26 +177,6 @@ public class PortletLayoutDisplayContext {
 
 		if (linkJSONObject == null) {
 			return StringPool.BLANK;
-		}
-
-		String mappedField = linkJSONObject.getString("mappedField");
-
-		if (Validator.isNotNull(mappedField)) {
-			Object infoItem = _httpServletRequest.getAttribute(
-				InfoDisplayWebKeys.INFO_ITEM);
-
-			InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider =
-				(InfoItemFieldValuesProvider)_httpServletRequest.getAttribute(
-					InfoDisplayWebKeys.INFO_ITEM_FIELD_VALUES_PROVIDER);
-
-			if (infoItemFieldValuesProvider != null) {
-				String fieldValue = _getInfoItemFieldValue(
-					mappedField, infoItem, infoItemFieldValuesProvider);
-
-				if (fieldValue != null) {
-					return fieldValue;
-				}
-			}
 		}
 
 		String fieldId = linkJSONObject.getString("fieldId");
