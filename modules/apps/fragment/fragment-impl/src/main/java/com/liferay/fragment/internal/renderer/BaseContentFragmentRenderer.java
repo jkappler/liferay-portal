@@ -23,6 +23,7 @@ import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.ClassedModel;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -53,12 +54,19 @@ public abstract class BaseContentFragmentRenderer implements FragmentRenderer {
 				getConfiguration(fragmentRendererContext),
 				fragmentEntryLink.getEditableValues(), "itemSelector");
 
-		if ((jsonObject != null) && jsonObject.has("className") &&
-			jsonObject.has("classPK")) {
+		if ((jsonObject != null) && jsonObject.has("classPK")) {
+			if (jsonObject.has("className")) {
+				return new Tuple(
+					jsonObject.getString("className"),
+					jsonObject.getLong("classPK"));
+			}
 
-			return new Tuple(
-				jsonObject.getString("className"),
-				jsonObject.getLong("classPK"));
+			if (jsonObject.has("classNameId")) {
+				String className = PortalUtil.getClassName(
+					jsonObject.getLong("classNameId"));
+
+				return new Tuple(className, jsonObject.getLong("classPK"));
+			}
 		}
 
 		Optional<Object> displayObjectOptional =
