@@ -17,9 +17,9 @@ package com.liferay.journal.internal.asset.util;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.publisher.constants.AssetPublisherPortletKeys;
-import com.liferay.info.display.contributor.InfoDisplayContributor;
-import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
-import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.InfoItemServiceTracker;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalContentSearch;
 import com.liferay.journal.service.JournalContentSearchLocalService;
@@ -65,30 +65,31 @@ public class JournalArticleLayoutClassedModelUsageRecorder
 			return;
 		}
 
-		InfoDisplayContributor<?> infoDisplayContributor =
-			_infoDisplayContributorTracker.getInfoDisplayContributor(
+		InfoItemObjectProvider<?> infoItemObjectProvider =
+			_infoItemServiceTracker.getFirstInfoItemService(
+				InfoItemObjectProvider.class,
 				_portal.getClassName(classNameId));
 
-		InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
-			infoDisplayContributor.getInfoDisplayObjectProvider(classPK);
+		if (infoItemObjectProvider == null) {
+			return;
+		}
 
-		_recordJournalContentSearches(infoDisplayObjectProvider);
-		_recordPortletPreferences(infoDisplayObjectProvider, true);
-		_recordPortletPreferences(infoDisplayObjectProvider, false);
+		JournalArticle article =
+			(JournalArticle)infoItemObjectProvider.getInfoItem(
+				new ClassPKInfoItemIdentifier(classPK));
+
+		_recordJournalContentSearches(article);
+		_recordPortletPreferences(article, true);
+		_recordPortletPreferences(article, false);
 
 		_layoutClassedModelUsageLocalService.addDefaultLayoutClassedModelUsage(
-			infoDisplayObjectProvider.getGroupId(), classNameId, classPK,
+			article.getGroupId(), classNameId, classPK,
 			ServiceContextThreadLocal.getServiceContext());
 	}
 
-	private void _recordJournalContentSearches(
-		InfoDisplayObjectProvider<?> infoDisplayObjectProvider) {
-
+	private void _recordJournalContentSearches(JournalArticle article) {
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
-
-		JournalArticle article =
-			(JournalArticle)infoDisplayObjectProvider.getDisplayObject();
 
 		List<JournalContentSearch> contentSearches =
 			_journalContentSearchLocalService.getArticleContentSearches(
@@ -102,8 +103,7 @@ public class JournalArticleLayoutClassedModelUsageRecorder
 			LayoutClassedModelUsage layoutClassedModelUsage =
 				_layoutClassedModelUsageLocalService.
 					fetchLayoutClassedModelUsage(
-						infoDisplayObjectProvider.getClassNameId(),
-						infoDisplayObjectProvider.getClassPK(),
+						article.getClassNameId(), article.getResourcePrimKey(),
 						contentSearch.getPortletId(),
 						_portal.getClassNameId(Portlet.class),
 						layout.getPlid());
@@ -113,21 +113,15 @@ public class JournalArticleLayoutClassedModelUsageRecorder
 			}
 
 			_layoutClassedModelUsageLocalService.addLayoutClassedModelUsage(
-				contentSearch.getGroupId(),
-				infoDisplayObjectProvider.getClassNameId(),
-				infoDisplayObjectProvider.getClassPK(),
-				contentSearch.getPortletId(),
+				contentSearch.getGroupId(), article.getClassNameId(),
+				article.getResourcePrimKey(), contentSearch.getPortletId(),
 				_portal.getClassNameId(Portlet.class), layout.getPlid(),
 				serviceContext);
 		}
 	}
 
 	private void _recordPortletPreferences(
-		InfoDisplayObjectProvider<?> infoDisplayObjectProvider,
-		boolean privateLayout) {
-
-		JournalArticle article =
-			(JournalArticle)infoDisplayObjectProvider.getDisplayObject();
+		JournalArticle article, boolean privateLayout) {
 
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
@@ -160,8 +154,7 @@ public class JournalArticleLayoutClassedModelUsageRecorder
 				"assetEntryXml", StringPool.BLANK);
 
 			AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
-				infoDisplayObjectProvider.getClassNameId(),
-				infoDisplayObjectProvider.getClassPK());
+				article.getClassNameId(), article.getResourcePrimKey());
 
 			if ((assetEntry == null) ||
 				!assetEntryXml.contains(assetEntry.getClassUuid())) {
@@ -172,8 +165,7 @@ public class JournalArticleLayoutClassedModelUsageRecorder
 			LayoutClassedModelUsage layoutClassedModelUsage =
 				_layoutClassedModelUsageLocalService.
 					fetchLayoutClassedModelUsage(
-						infoDisplayObjectProvider.getClassNameId(),
-						infoDisplayObjectProvider.getClassPK(),
+						article.getClassNameId(), article.getClassPK(),
 						portletPreferences.getPortletId(),
 						_portal.getClassNameId(Portlet.class),
 						portletPreferences.getPlid());
@@ -183,10 +175,8 @@ public class JournalArticleLayoutClassedModelUsageRecorder
 			}
 
 			_layoutClassedModelUsageLocalService.addLayoutClassedModelUsage(
-				infoDisplayObjectProvider.getGroupId(),
-				infoDisplayObjectProvider.getClassNameId(),
-				infoDisplayObjectProvider.getClassPK(),
-				portletPreferences.getPortletId(),
+				article.getGroupId(), article.getClassNameId(),
+				article.getResourcePrimKey(), portletPreferences.getPortletId(),
 				_portal.getClassNameId(Portlet.class),
 				portletPreferences.getPlid(), serviceContext);
 		}
@@ -196,7 +186,7 @@ public class JournalArticleLayoutClassedModelUsageRecorder
 	private AssetEntryLocalService _assetEntryLocalService;
 
 	@Reference
-	private InfoDisplayContributorTracker _infoDisplayContributorTracker;
+	private InfoItemServiceTracker _infoItemServiceTracker;
 
 	@Reference
 	private JournalContentSearchLocalService _journalContentSearchLocalService;
