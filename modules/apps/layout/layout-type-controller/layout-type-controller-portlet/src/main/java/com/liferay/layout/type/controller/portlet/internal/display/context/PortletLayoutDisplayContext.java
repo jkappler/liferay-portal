@@ -128,45 +128,6 @@ public class PortletLayoutDisplayContext {
 			defaultLayoutListRetrieverContext);
 	}
 
-	public List<Object> getCollection(
-		CollectionLayoutStructureItem collectionLayoutStructureItem,
-		long[] segmentsExperienceIds) {
-
-		JSONObject collectionJSONObject =
-			collectionLayoutStructureItem.getCollectionJSONObject();
-
-		if (collectionJSONObject.length() <= 0) {
-			return Collections.emptyList();
-		}
-
-		ListObjectReference listObjectReference = _getListObjectReference(
-			collectionJSONObject);
-
-		if (listObjectReference == null) {
-			return Collections.emptyList();
-		}
-
-		LayoutListRetriever<?, ListObjectReference> layoutListRetriever =
-			(LayoutListRetriever<?, ListObjectReference>)
-				_layoutListRetrieverTracker.getLayoutListRetriever(
-					collectionJSONObject.getString("type"));
-
-		if (layoutListRetriever == null) {
-			return Collections.emptyList();
-		}
-
-		DefaultLayoutListRetrieverContext defaultLayoutListRetrieverContext =
-			new DefaultLayoutListRetrieverContext();
-
-		defaultLayoutListRetrieverContext.setSegmentsExperienceIdsOptional(
-			segmentsExperienceIds);
-		defaultLayoutListRetrieverContext.setPagination(
-			Pagination.of(collectionLayoutStructureItem.getNumberOfItems(), 0));
-
-		return layoutListRetriever.getList(
-			listObjectReference, defaultLayoutListRetrieverContext);
-	}
-
 	public String getContainerLinkHref(
 			ContainerLayoutStructureItem containerLayoutStructureItem,
 			Object displayObject)
@@ -565,29 +526,6 @@ public class PortletLayoutDisplayContext {
 		}
 
 		return null;
-	}
-
-	private ListObjectReference _getListObjectReference(
-		JSONObject collectionJSONObject) {
-
-		String type = collectionJSONObject.getString("type");
-
-		LayoutListRetriever<?, ?> layoutListRetriever =
-			_layoutListRetrieverTracker.getLayoutListRetriever(type);
-
-		if (layoutListRetriever == null) {
-			return null;
-		}
-
-		ListObjectReferenceFactory<?> listObjectReferenceFactory =
-			_listObjectReferenceFactoryTracker.getListObjectReference(type);
-
-		if (listObjectReferenceFactory == null) {
-			return null;
-		}
-
-		return listObjectReferenceFactory.getListObjectReference(
-			collectionJSONObject);
 	}
 
 	private String _getMappedCollectionValue(
