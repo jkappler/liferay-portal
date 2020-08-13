@@ -14,15 +14,15 @@
 
 package com.liferay.layout.type.controller.portlet.internal.display.context;
 
-import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
 import com.liferay.asset.info.display.contributor.util.ContentAccessor;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
-import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.info.field.InfoFieldValue;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.info.list.renderer.DefaultInfoListRendererContext;
 import com.liferay.info.list.renderer.InfoListRenderer;
 import com.liferay.info.list.renderer.InfoListRendererContext;
@@ -204,44 +204,6 @@ public class PortletLayoutDisplayContext {
 			return StringPool.BLANK;
 		}
 
-		String mappedField = linkJSONObject.getString("mappedField");
-
-		if (Validator.isNotNull(mappedField)) {
-			InfoDisplayObjectProvider<Object> infoDisplayObjectProvider =
-				(InfoDisplayObjectProvider<Object>)
-					_httpServletRequest.getAttribute(
-						AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
-
-			if ((_infoDisplayContributorTracker != null) &&
-				(infoDisplayObjectProvider != null)) {
-
-				InfoDisplayContributor<Object> infoDisplayContributor =
-					(InfoDisplayContributor<Object>)
-						_infoDisplayContributorTracker.
-							getInfoDisplayContributor(
-								PortalUtil.getClassName(
-									infoDisplayObjectProvider.
-										getClassNameId()));
-
-				if (infoDisplayContributor != null) {
-					Object object =
-						infoDisplayContributor.getInfoDisplayFieldValue(
-							infoDisplayObjectProvider.getDisplayObject(),
-							mappedField, LocaleUtil.getDefault());
-
-					if (object instanceof String) {
-						String fieldValue = (String)object;
-
-						if (Validator.isNotNull(fieldValue)) {
-							return fieldValue;
-						}
-
-						return StringPool.BLANK;
-					}
-				}
-			}
-		}
-
 		String fieldId = linkJSONObject.getString("fieldId");
 
 		if (Validator.isNotNull(fieldId)) {
@@ -249,33 +211,28 @@ public class PortletLayoutDisplayContext {
 			long classPK = linkJSONObject.getLong("classPK");
 
 			if ((classNameId != 0L) && (classPK != 0L)) {
-				InfoDisplayContributor<Object> infoDisplayContributor =
-					(InfoDisplayContributor<Object>)
-						_infoDisplayContributorTracker.
-							getInfoDisplayContributor(
-								PortalUtil.getClassName(classNameId));
+				String className = PortalUtil.getClassName(classNameId);
 
-				if (infoDisplayContributor != null) {
-					InfoDisplayObjectProvider<Object>
-						infoDisplayObjectProvider =
-							infoDisplayContributor.getInfoDisplayObjectProvider(
-								classPK);
+				InfoItemFieldValuesProvider<Object>
+					infoItemFieldValuesProvider =
+						_infoItemServiceTracker.getFirstInfoItemService(
+							InfoItemFieldValuesProvider.class, className);
 
-					if (infoDisplayObjectProvider != null) {
-						Object object =
-							infoDisplayContributor.getInfoDisplayFieldValue(
-								infoDisplayObjectProvider.getDisplayObject(),
-								fieldId, LocaleUtil.getDefault());
+				InfoItemObjectProvider<Object> infoItemObjectProvider =
+					_infoItemServiceTracker.getFirstInfoItemService(
+						InfoItemObjectProvider.class, className);
 
-						if (object instanceof String) {
-							String fieldValue = (String)object;
+				if ((infoItemFieldValuesProvider != null) &&
+					(infoItemObjectProvider != null)) {
 
-							if (Validator.isNotNull(fieldValue)) {
-								return fieldValue;
-							}
+					String fieldValue = _getInfoItemFieldValue(
+						fieldId,
+						infoItemObjectProvider.getInfoItem(
+							new ClassPKInfoItemIdentifier(classPK)),
+						infoItemFieldValuesProvider);
 
-							return StringPool.BLANK;
-						}
+					if (fieldValue != null) {
+						return fieldValue;
 					}
 				}
 			}
@@ -538,24 +495,30 @@ public class PortletLayoutDisplayContext {
 			long classPK = rowConfigJSONObject.getLong("classPK");
 
 			if ((classNameId != 0L) && (classPK != 0L)) {
-				InfoDisplayContributor<Object> infoDisplayContributor =
-					(InfoDisplayContributor<Object>)
-						_infoDisplayContributorTracker.
-							getInfoDisplayContributor(
-								PortalUtil.getClassName(classNameId));
+				String className = PortalUtil.getClassName(classNameId);
 
-				if (infoDisplayContributor != null) {
-					InfoDisplayObjectProvider<Object>
-						infoDisplayObjectProvider =
-							(InfoDisplayObjectProvider<Object>)
-								infoDisplayContributor.
-									getInfoDisplayObjectProvider(classPK);
+				InfoItemFieldValuesProvider<Object>
+					infoItemFieldValuesProvider =
+						_infoItemServiceTracker.getFirstInfoItemService(
+							InfoItemFieldValuesProvider.class, className);
 
-					if (infoDisplayObjectProvider != null) {
-						Object object =
-							infoDisplayContributor.getInfoDisplayFieldValue(
-								infoDisplayObjectProvider.getDisplayObject(),
-								fieldId, LocaleUtil.getDefault());
+				InfoItemObjectProvider<Object> infoItemObjectProvider =
+					_infoItemServiceTracker.getFirstInfoItemService(
+						InfoItemObjectProvider.class, className);
+
+				if ((infoItemFieldValuesProvider != null) &&
+					(infoItemObjectProvider != null)) {
+
+					Object infoItem = infoItemObjectProvider.getInfoItem(
+						new ClassPKInfoItemIdentifier(classPK));
+
+					InfoFieldValue<Object> infoItemFieldValue =
+						infoItemFieldValuesProvider.getInfoItemFieldValue(
+							infoItem, fieldId);
+
+					if (infoItemFieldValue != null) {
+						Object object = infoItemFieldValue.getValue(
+							LocaleUtil.getDefault());
 
 						if (object instanceof JSONObject) {
 							JSONObject fieldValueJSONObject =
@@ -596,6 +559,37 @@ public class PortletLayoutDisplayContext {
 			rootLayoutStructureItem.getItemId(), 0);
 
 		return layoutStructure;
+	}
+
+	private String _getInfoItemFieldValue(
+		String fieldId, Object infoItem,
+		InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider) {
+
+		if (infoItem == null) {
+			return null;
+		}
+
+		InfoFieldValue<Object> infoItemFieldValue =
+			infoItemFieldValuesProvider.getInfoItemFieldValue(
+				infoItem, fieldId);
+
+		if (infoItemFieldValue == null) {
+			return null;
+		}
+
+		Object object = infoItemFieldValue.getValue(LocaleUtil.getDefault());
+
+		if (object instanceof String) {
+			String fieldValue = (String)object;
+
+			if (Validator.isNotNull(fieldValue)) {
+				return fieldValue;
+			}
+
+			return StringPool.BLANK;
+		}
+
+		return null;
 	}
 
 	private ListObjectReference _getListObjectReference(
