@@ -27,8 +27,10 @@ import com.liferay.asset.kernel.service.AssetVocabularyLocalServiceUtil;
 import com.liferay.asset.test.util.AssetTestUtil;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldSet;
 import com.liferay.info.field.InfoFieldSetEntry;
+import com.liferay.info.field.InfoFieldValue;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
@@ -45,6 +47,8 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
+
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -180,6 +184,51 @@ public class AssetEntryInfoItemFieldSetProviderTest {
 			vocabulary.getName());
 
 		Assert.assertEquals(vocabulary.getName(), infoFieldSetEntry.getName());
+	}
+
+	@Test
+	public void testGetInfoFieldValuePublicVocabularyWithCategory()
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		AssetVocabulary vocabulary =
+			AssetVocabularyLocalServiceUtil.addVocabulary(
+				TestPropsValues.getUserId(), serviceContext.getScopeGroupId(),
+				RandomTestUtil.randomString(), serviceContext);
+
+		AssetCategory category = AssetCategoryLocalServiceUtil.addCategory(
+			TestPropsValues.getUserId(), serviceContext.getScopeGroupId(),
+			RandomTestUtil.randomString(), vocabulary.getVocabularyId(),
+			serviceContext);
+
+		AssetEntry assetEntry = AssetTestUtil.addAssetEntry(
+			_group.getGroupId());
+
+		_assetEntryLocalService.addAssetCategoryAssetEntry(
+			category.getCategoryId(), assetEntry);
+
+		InfoFieldSet infoFieldSet =
+			_assetEntryInfoItemFieldSetProvider.getInfoFieldSet(assetEntry);
+
+		InfoFieldSetEntry infoFieldSetEntry = infoFieldSet.getInfoFieldSetEntry(
+			vocabulary.getName());
+
+		Assert.assertEquals(vocabulary.getName(), infoFieldSetEntry.getName());
+
+		List<InfoFieldValue<Object>> infoFieldValues =
+			_assetEntryInfoItemFieldSetProvider.getInfoFieldValues(assetEntry);
+
+		InfoFieldValue<Object> infoFieldValue = infoFieldValues.get(0);
+
+		InfoField infoField = infoFieldValue.getInfoField();
+
+		Assert.assertEquals(vocabulary.getName(), infoField.getName());
+
+		Assert.assertEquals(
+			category.getName(),
+			infoFieldValue.getValue(LocaleUtil.getSiteDefault()));
 	}
 
 	@Inject
