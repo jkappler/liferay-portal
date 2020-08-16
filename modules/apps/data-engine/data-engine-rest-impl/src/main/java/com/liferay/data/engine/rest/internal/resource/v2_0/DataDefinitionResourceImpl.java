@@ -14,6 +14,8 @@
 
 package com.liferay.data.engine.rest.internal.resource.v2_0;
 
+import com.google.gson.Gson;
+
 import com.liferay.data.engine.constants.DataActionKeys;
 import com.liferay.data.engine.content.type.DataDefinitionContentType;
 import com.liferay.data.engine.field.type.util.LocalizedValueUtil;
@@ -631,8 +633,29 @@ public class DataDefinitionResourceImpl
 
 				customProperties.put("rows", jsonArray.toString());
 
+				DataDefinitionField[] nestedDataDefinitionFields =
+					new DataDefinitionField[0];
+
+				for (DataDefinitionField dataDefinitionField1 :
+						dataDefinition.getDataDefinitionFields()) {
+
+					Gson gson = new Gson();
+
+					nestedDataDefinitionFields = ArrayUtil.append(
+						nestedDataDefinitionFields,
+						gson.fromJson(
+							JSONFactoryUtil.looseSerializeDeep(
+								dataDefinitionField1),
+							DataDefinitionField.class));
+				}
+
+				_normalize(
+					existingDataDefinition.getAvailableLanguageIds(),
+					nestedDataDefinitionFields,
+					dataDefinition.getDefaultLanguageId());
+
 				dataDefinitionField.setNestedDataDefinitionFields(
-					dataDefinition.getDataDefinitionFields());
+					nestedDataDefinitionFields);
 			}
 
 			putDataDefinition(
@@ -1074,6 +1097,66 @@ public class DataDefinitionResourceImpl
 			ResourceBundleUtil.getBundle(
 				"content.Language", locale, ddmFormFieldType.getClass()),
 			_portal.getResourceBundle(locale));
+	}
+
+	private void _normalize(
+		String[] availableLanguageIds,
+		DataDefinitionField[] dataDefinitionFields, String defaultLanguageId) {
+
+		for (DataDefinitionField dataDefinitionField : dataDefinitionFields) {
+			Map<String, Object> customProperties =
+				dataDefinitionField.getCustomProperties();
+
+			if (MapUtil.isNotEmpty(customProperties)) {
+				_normalize(
+					availableLanguageIds, defaultLanguageId,
+					(Map)customProperties.get("options"));
+				_normalize(
+					availableLanguageIds, defaultLanguageId,
+					(Map)customProperties.get("placeholder"));
+				_normalize(
+					availableLanguageIds, defaultLanguageId,
+					(Map)customProperties.get("tooltip"));
+			}
+
+			_normalize(
+				availableLanguageIds, defaultLanguageId,
+				dataDefinitionField.getDefaultValue());
+			_normalize(
+				availableLanguageIds, defaultLanguageId,
+				dataDefinitionField.getLabel());
+
+			if (ArrayUtil.isNotEmpty(
+					dataDefinitionField.getNestedDataDefinitionFields())) {
+
+				_normalize(
+					availableLanguageIds,
+					dataDefinitionField.getNestedDataDefinitionFields(),
+					defaultLanguageId);
+			}
+
+			_normalize(
+				availableLanguageIds, defaultLanguageId,
+				dataDefinitionField.getTip());
+		}
+	}
+
+	private void _normalize(
+		String[] availableLanguageIds, String defaultLanguageId,
+		Map<String, Object> map) {
+
+		if (MapUtil.isEmpty(map)) {
+			return;
+		}
+
+		for (String languageId : availableLanguageIds) {
+			map.putIfAbsent(languageId, map.get(defaultLanguageId));
+		}
+
+		Set<Map.Entry<String, Object>> entries = map.entrySet();
+
+		entries.removeIf(
+			entry -> !ArrayUtil.contains(availableLanguageIds, entry.getKey()));
 	}
 
 	private void _removeFieldsFromDataLayout(

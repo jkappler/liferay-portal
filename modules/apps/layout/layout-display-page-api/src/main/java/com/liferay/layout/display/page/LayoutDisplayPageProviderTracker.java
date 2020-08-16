@@ -12,23 +12,21 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.web.internal.settings.definition;
+package com.liferay.layout.display.page;
 
-import com.liferay.dynamic.data.mapping.web.internal.configuration.DDMWebConfiguration;
-import com.liferay.portal.kernel.settings.definition.ConfigurationBeanDeclaration;
-
-import org.osgi.service.component.annotations.Component;
+import java.util.List;
 
 /**
- * @author Marcela Cunha
+ * @author Jorge Ferrer
  */
-@Component(service = ConfigurationBeanDeclaration.class)
-public class DDMWebConfigurationBeanDeclaration
-	implements ConfigurationBeanDeclaration {
+public interface LayoutDisplayPageProviderTracker {
 
-	@Override
-	public Class<?> getConfigurationBeanClass() {
-		return DDMWebConfiguration.class;
-	}
+	public LayoutDisplayPageProvider<?> getLayoutDisplayPageProvider(
+		String className);
+
+	public LayoutDisplayPageProvider<?>
+		getLayoutDisplayPageProviderByURLSeparator(String urlSeparator);
+
+	public List<LayoutDisplayPageProvider<?>> getLayoutDisplayPageProviders();
 
 }
