@@ -20,6 +20,7 @@ import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFileVersion;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.document.library.web.internal.info.item.FileEntryInfoItemFields;
+import com.liferay.dynamic.data.mapping.info.item.provider.DDMFormValuesInfoFieldValuesProvider;
 import com.liferay.expando.info.item.provider.ExpandoInfoItemFieldSetProvider;
 import com.liferay.info.exception.NoSuchInfoItemException;
 import com.liferay.info.field.InfoFieldValue;
@@ -37,6 +38,7 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portlet.documentlibrary.asset.DLFileEntryDDMFormValuesReader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,13 +98,21 @@ public class FileEntryInfoItemFieldValuesProvider
 	private List<InfoFieldValue<Object>> _getDDMStructureInfoFieldValues(
 		FileEntry fileEntry) {
 
-		if (fileEntry.getModel() instanceof DLFileEntry) {
-			//TODO
-
+		if (!(fileEntry.getModel() instanceof DLFileEntry)) {
 			return Collections.emptyList();
 		}
 
-		return Collections.emptyList();
+		try {
+			DLFileEntryDDMFormValuesReader dlFileEntryDDMFormValuesReader =
+				new DLFileEntryDDMFormValuesReader(
+					fileEntry, fileEntry.getFileVersion());
+
+			return _ddmFormValuesInfoFieldValuesProvider.getInfoFieldValues(
+				fileEntry, dlFileEntryDDMFormValuesReader.getDDMFormValues());
+		}
+		catch (PortalException portalException) {
+			throw new RuntimeException(portalException);
+		}
 	}
 
 	private List<InfoFieldValue<Object>> _getExpandoInfoFieldValues(
@@ -236,6 +246,10 @@ public class FileEntryInfoItemFieldValuesProvider
 	@Reference
 	private AssetEntryInfoItemFieldSetProvider
 		_assetEntryInfoItemFieldSetProvider;
+
+	@Reference
+	private DDMFormValuesInfoFieldValuesProvider
+		_ddmFormValuesInfoFieldValuesProvider;
 
 	@Reference
 	private DLURLHelper _dlURLHelper;
