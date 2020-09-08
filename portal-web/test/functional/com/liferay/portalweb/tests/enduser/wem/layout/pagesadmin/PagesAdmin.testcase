@@ -431,10 +431,6 @@ definition {
 			key_pageName = "Content Collection Page Name",
 			locator1 = "SitePages#LIST_GROUP_ITEM_ROW_ENTRY_TITLE_LINK");
 
-		Navigator.openSiteURL(
-			pageName = "Content Collection Page Name",
-			siteName = "Test Site Name");
-
 		PagesFinder.goToFindAPage();
 
 		for (var i : list "1,2,3") {
@@ -455,7 +451,11 @@ definition {
 				locator1 = "Fragment#FRAGMENT_SECTION_CONTENT",
 				pageName = "Content Collection Page Name");
 
-			Navigator.gotoBack();
+			Click(locator1 = "Icon#ANGLE_LEFT_BACK");
+
+			AssertVisible(
+				key_pageName = "Content Collection Page Name",
+				locator1 = "SitePages#LIST_GROUP_ITEM_ROW_ENTRY_TITLE_LINK");
 		}
 	}
 
@@ -499,7 +499,7 @@ definition {
 
 		AssertVisible(locator1 = "WCEditWebContent#SIDEBAR");
 
-		Click(locator1 = "Icon#ANGLE_LEFT_BACK");
+		Navigator.gotoBack();
 
 		SitePages.gotoPageMenuItem(
 			menuItem = "View Collection Items",
@@ -516,7 +516,7 @@ definition {
 			locator1 = "TextArea#ANY",
 			value1 = "Blogs Entry Title");
 
-		Click(locator1 = "Icon#ANGLE_LEFT_BACK");
+		Navigator.gotoBack();
 
 		SitePages.gotoPageMenuItem(
 			menuItem = "View Collection Items",
@@ -532,15 +532,11 @@ definition {
 			locator1 = "TextInput#TITLE",
 			value1 = "Document Title");
 
-		Click(locator1 = "Icon#ANGLE_LEFT_BACK");
+		Navigator.gotoBack();
 
 		AssertVisible(
 			key_pageName = "Content Collection Page Name",
 			locator1 = "SitePages#LIST_GROUP_ITEM_ROW_ENTRY_TITLE_LINK");
-
-		Navigator.openSiteURL(
-			pageName = "Content Collection Page Name",
-			siteName = "Test Site Name");
 
 		PagesFinder.goToFindAPage();
 
@@ -560,6 +556,10 @@ definition {
 
 		Click(locator1 = "Icon#ANGLE_LEFT_BACK");
 
+		AssertVisible(
+			key_pageName = "Content Collection Page Name",
+			locator1 = "SitePages#LIST_GROUP_ITEM_ROW_ENTRY_TITLE_LINK");
+
 		WaitForLiferayEvent.initializeLiferayEventLog();
 
 		PagesFinder.gotoPageEllipsisItem(
@@ -579,6 +579,10 @@ definition {
 
 		Click(locator1 = "Icon#ANGLE_LEFT_BACK");
 
+		AssertVisible(
+			key_pageName = "Content Collection Page Name",
+			locator1 = "SitePages#LIST_GROUP_ITEM_ROW_ENTRY_TITLE_LINK");
+
 		WaitForLiferayEvent.initializeLiferayEventLog();
 
 		PagesFinder.gotoPageEllipsisItem(
@@ -596,6 +600,10 @@ definition {
 			value1 = "Document Title");
 
 		Click(locator1 = "Icon#ANGLE_LEFT_BACK");
+
+		AssertVisible(
+			key_pageName = "Content Collection Page Name",
+			locator1 = "SitePages#LIST_GROUP_ITEM_ROW_ENTRY_TITLE_LINK");
 
 		PagesFinder.viewPageNameInPagesFinder(pageName = "Content Collection Page Name");
 	}
