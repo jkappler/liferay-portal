@@ -532,7 +532,7 @@ public class ContentPageEditorDisplayContext {
 			HashMapBuilder.<String, Object>put(
 				"collections", _getFragmentCollections(true, false)
 			).put(
-				"fragmentEntryLinks", _getFragmentEntryLinks()
+				"fragmentEntryLinks", _getFragmentEntryLinksJSONObject()
 			).put(
 				"fragments", _getFragmentCollections(false, true)
 			).put(
@@ -831,7 +831,7 @@ public class ContentPageEditorDisplayContext {
 		return infoListSelectorURL.toString();
 	}
 
-	private Map<String, Object> _getContributedFragmentEntry(
+	private JSONObject _getContributedFragmentEntryJSONObject(
 		String rendererKey) {
 
 		Map<String, FragmentEntry> fragmentEntries =
@@ -841,14 +841,14 @@ public class ContentPageEditorDisplayContext {
 		FragmentEntry fragmentEntry = fragmentEntries.get(rendererKey);
 
 		if (fragmentEntry != null) {
-			return HashMapBuilder.<String, Object>put(
+			return JSONUtil.<String, Object>put(
 				"fragmentEntryId", 0
 			).put(
 				"name", fragmentEntry.getName()
-			).build();
+			);
 		}
 
-		return Collections.emptyMap();
+		return JSONFactoryUtil.createJSONObject();
 	}
 
 	private Map<String, Object> _getDefaultConfigurations() {
@@ -1210,28 +1210,28 @@ public class ContentPageEditorDisplayContext {
 		return filteredFragmentEntries;
 	}
 
-	private Map<String, Object> _getFragmentEntry(
+	private JSONObject _getFragmentEntryJSONObject(
 		FragmentEntryLink fragmentEntryLink, FragmentEntry fragmentEntry,
 		String content) {
 
 		if (fragmentEntry != null) {
-			return HashMapBuilder.<String, Object>put(
+			return JSONUtil.put(
 				"fragmentEntryId", fragmentEntry.getFragmentEntryId()
 			).put(
 				"fragmentEntryKey", fragmentEntry.getFragmentEntryKey()
 			).put(
 				"name", fragmentEntry.getName()
-			).build();
+			);
 		}
 
 		String rendererKey = fragmentEntryLink.getRendererKey();
 
 		if (Validator.isNotNull(rendererKey)) {
-			Map<String, Object> contributedFragmentEntries =
-				_getContributedFragmentEntry(rendererKey);
+			JSONObject contributedFragmentEntryJSONObject =
+				_getContributedFragmentEntryJSONObject(rendererKey);
 
-			if (!contributedFragmentEntries.isEmpty()) {
-				return contributedFragmentEntries;
+			if (contributedFragmentEntryJSONObject.length() > 0) {
+				return contributedFragmentEntryJSONObject;
 			}
 
 			FragmentRenderer fragmentRenderer =
@@ -1239,13 +1239,13 @@ public class ContentPageEditorDisplayContext {
 					fragmentEntryLink.getRendererKey());
 
 			if (fragmentRenderer != null) {
-				return HashMapBuilder.<String, Object>put(
+				return JSONUtil.put(
 					"fragmentEntryId", 0
 				).put(
 					"fragmentEntryKey", fragmentRenderer.getKey()
 				).put(
 					"name", fragmentRenderer.getLabel(themeDisplay.getLocale())
-				).build();
+				);
 			}
 		}
 
@@ -1254,21 +1254,21 @@ public class ContentPageEditorDisplayContext {
 		PortletConfig portletConfig = PortletConfigFactoryUtil.get(portletId);
 
 		if (portletConfig == null) {
-			return HashMapBuilder.<String, Object>put(
+			return JSONUtil.put(
 				"fragmentEntryId", 0
 			).put(
 				"name", StringPool.BLANK
-			).build();
+			);
 		}
 
-		return HashMapBuilder.<String, Object>put(
+		return JSONUtil.put(
 			"fragmentEntryId", 0
 		).put(
 			"name",
 			PortalUtil.getPortletTitle(portletId, themeDisplay.getLocale())
 		).put(
 			"portletId", portletId
-		).build();
+		);
 	}
 
 	private List<String> _getFragmentEntryKeys() {
@@ -1344,12 +1344,13 @@ public class ContentPageEditorDisplayContext {
 		return jsonArray;
 	}
 
-	private Map<String, Object> _getFragmentEntryLinks() throws Exception {
-		if (_fragmentEntryLinks != null) {
-			return _fragmentEntryLinks;
+	private JSONObject _getFragmentEntryLinksJSONObject() throws Exception {
+		if (_fragmentEntryLinksJSONObject != null) {
+			return _fragmentEntryLinksJSONObject;
 		}
 
-		Map<String, Object> fragmentEntryLinksMap = new HashMap<>();
+		JSONObject fragmentEntryLinksJSONObject =
+			JSONFactoryUtil.createJSONObject();
 
 		List<FragmentEntryLink> fragmentEntryLinks = new ArrayList<>(
 			FragmentEntryLinkLocalServiceUtil.getFragmentEntryLinksByPlid(
@@ -1417,8 +1418,8 @@ public class ContentPageEditorDisplayContext {
 						fragmentEntryLink.getRendererKey());
 				}
 
-				Map<String, Object> fragmentEntryLinkMap =
-					HashMapBuilder.<String, Object>put(
+				JSONObject fragmentEntryLinkJSONObject =
+					JSONUtil.<String, Object>put(
 						"comments",
 						_getFragmentEntryLinkCommentsJSONArray(
 							fragmentEntryLink)
@@ -1440,20 +1441,6 @@ public class ContentPageEditorDisplayContext {
 						JSONFactoryUtil.createJSONObject(
 							fragmentEntryLink.getEditableValues())
 					).put(
-						"error",
-						() -> {
-							if (SessionErrors.contains(
-									httpServletRequest,
-									"fragmentEntryContentInvalid")) {
-
-								SessionErrors.clear(httpServletRequest);
-
-								return true;
-							}
-
-							return false;
-						}
-					).put(
 						"fragmentEntryLinkId",
 						String.valueOf(
 							fragmentEntryLink.getFragmentEntryLinkId())
@@ -1461,27 +1448,39 @@ public class ContentPageEditorDisplayContext {
 						"masterLayout",
 						layout.getMasterLayoutPlid() ==
 							fragmentEntryLink.getPlid()
-					).putAll(
-						_getFragmentEntry(
-							fragmentEntryLink, fragmentEntry, content)
-					).build();
+					);
 
-				if (fragmentEntry != null) {
-					fragmentEntryLinkMap.put("icon", fragmentEntry.getIcon());
+				if (SessionErrors.contains(
+						httpServletRequest, "fragmentEntryContentInvalid")) {
+
+					SessionErrors.clear(httpServletRequest);
+
+					fragmentEntryLinkJSONObject.put("error", true);
 				}
 
-				fragmentEntryLinksMap.put(
+				JSONObject jsonObject = _getFragmentEntryJSONObject(
+					fragmentEntryLink, fragmentEntry, content);
+
+				fragmentEntryLinkJSONObject = JSONUtil.merge(
+					fragmentEntryLinkJSONObject, jsonObject);
+
+				if (fragmentEntry != null) {
+					fragmentEntryLinkJSONObject.put(
+						"icon", fragmentEntry.getIcon());
+				}
+
+				fragmentEntryLinksJSONObject.put(
 					String.valueOf(fragmentEntryLink.getFragmentEntryLinkId()),
-					fragmentEntryLinkMap);
+					fragmentEntryLinkJSONObject);
 			}
 		}
 		finally {
 			themeDisplay.setIsolated(isolated);
 		}
 
-		_fragmentEntryLinks = fragmentEntryLinksMap;
+		_fragmentEntryLinksJSONObject = fragmentEntryLinksJSONObject;
 
-		return _fragmentEntryLinks;
+		return _fragmentEntryLinksJSONObject;
 	}
 
 	private ItemSelectorCriterion _getImageItemSelectorCriterion() {
@@ -2200,7 +2199,7 @@ public class ContentPageEditorDisplayContext {
 	private final FragmentEntryConfigurationParser
 		_fragmentEntryConfigurationParser;
 	private List<String> _fragmentEntryKeys;
-	private Map<String, Object> _fragmentEntryLinks;
+	private JSONObject _fragmentEntryLinksJSONObject;
 	private final FragmentRendererController _fragmentRendererController;
 	private final FragmentRendererTracker _fragmentRendererTracker;
 	private final FrontendTokenDefinitionRegistry
