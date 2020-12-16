@@ -95,6 +95,7 @@ public class WidgetInstanceDTOConverter {
 			_portletConfigurationExporterTracker.
 				getPortletConfigurationExporter(portletName);
 
+
 		if (portletConfigurationExporter != null) {
 			return portletConfigurationExporter.getPortletConfiguration(
 				plid, portletId);

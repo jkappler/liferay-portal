@@ -93,6 +93,7 @@ public class ContentPageDTOConverter
 					dtoConverterContext.isAcceptAllLanguages(),
 					layout.getFriendlyURLMap());
 				id = layout.getPlid();
+				id = layout.getLayoutId();
 				keywords = ListUtil.toArray(
 					_assetTagLocalService.getTags(
 						Layout.class.getName(), layout.getPlid()),
@@ -100,7 +101,7 @@ public class ContentPageDTOConverter
 				pageDefinition = _pageDefinitionDTOConverter.toDTO(layout);
 				pageSettings = PageSettingsUtil.getPageSettings(
 					_dlAppService, _dlURLHelper, dtoConverterContext,
-					_layoutSEOEntryLocalService, layout, storageEngineManager);
+					_layoutSEOEntryLocalService, layout, _storageEngineManager);
 				privatePage = layout.isPrivateLayout();
 				siteId = layout.getGroupId();
 				taxonomyCategoryBriefs = TransformUtil.transformToArray(
@@ -118,9 +119,6 @@ public class ContentPageDTOConverter
 			}
 		};
 	}
-
-	@Reference
-	protected StorageEngineManager storageEngineManager;
 
 	@Reference
 	private AssetCategoryLocalService _assetCategoryLocalService;
@@ -149,6 +147,9 @@ public class ContentPageDTOConverter
 
 	@Reference
 	private RatingsStatsLocalService _ratingsStatsLocalService;
+
+	@Reference
+	private StorageEngineManager _storageEngineManager;
 
 	@Reference
 	private UserLocalService _userLocalService;
