@@ -14,45 +14,10 @@
 
 package com.liferay.layout.page.template.exporter;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-
 /**
  * @author Jürgen Kappler
  */
-@Component(service = PortletConfigurationExporterTracker.class)
-public class PortletConfigurationExporterTracker {
-
-	public PortletConfigurationExporter getPortletConfigurationExporter(
-		String portletName) {
-
-		return _portletConfigurationExporters.get(portletName);
-	}
-
-	@Reference(
-		cardinality = ReferenceCardinality.MULTIPLE,
-		policy = ReferencePolicy.DYNAMIC
-	)
-	protected void setPortletConfigurationExporter(
-		PortletConfigurationExporter portletConfigurationExporter) {
-
-		_portletConfigurationExporters.put(
-			portletConfigurationExporter.getPortletName(),
-			portletConfigurationExporter);
-	}
-
-	protected void unsetPortletConfigurationExporter(
-		PortletConfigurationExporter portletConfigurationExporter) {
-
-		_portletConfigurationExporters.remove(portletConfigurationExporter);
-	}
-
-	private final Map<String, PortletConfigurationExporter>
-		_portletConfigurationExporters = new ConcurrentHashMap<>();
-
+public interface PortletConfigurationExporterTracker {
+	PortletConfigurationExporter getPortletConfigurationExporter(
+		String portletName);
 }
