@@ -7704,6 +7704,74 @@ paths:
                     description:
                         ""
             tags: ["ContentPage"]
+    "/sites/{siteId}/content-pages/private/{friendlyUrlPath}":
+        get:
+            # @review
+            description:
+                Retrieves a specific private content page of a site
+            operationId: getSitePrivateContentPage
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: friendlyUrlPath
+                  required: true
+                  schema:
+                      type: string
+                - in: header
+                  name: Accept-Language
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ContentPage"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ContentPage"
+                    description:
+                        ""
+            tags: ["ContentPage"]
+    "/sites/{siteId}/content-pages/public/{friendlyUrlPath}":
+        get:
+            # @review
+            description:
+                Retrieves a specific public content page of a site
+            operationId: getSitePublicContentPage
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: friendlyUrlPath
+                  required: true
+                  schema:
+                      type: string
+                - in: header
+                  name: Accept-Language
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ContentPage"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ContentPage"
+                    description:
+                        ""
+            tags: ["ContentPage"]
     "/sites/{siteId}/content-sets/by-key/{key}/content-set-elements":
         get:
             description:
