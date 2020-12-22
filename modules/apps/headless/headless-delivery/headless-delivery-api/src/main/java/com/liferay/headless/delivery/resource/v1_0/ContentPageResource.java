@@ -56,6 +56,14 @@ public interface ContentPageResource {
 			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception;
 
+	public ContentPage getSitePrivateContentPage(
+			Long siteId, String friendlyUrlPath)
+		throws Exception;
+
+	public ContentPage getSitePublicContentPage(
+			Long siteId, String friendlyUrlPath)
+		throws Exception;
+
 	public default void setContextAcceptLanguage(
 		AcceptLanguage contextAcceptLanguage) {
 	}

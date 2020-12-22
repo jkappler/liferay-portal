@@ -526,6 +526,162 @@ public abstract class BaseContentPageResourceTestCase {
 					contentPagesJSONObject.getString("items"))));
 	}
 
+	@Test
+	public void testGetSitePrivateContentPage() throws Exception {
+		ContentPage postContentPage =
+			testGetSitePrivateContentPage_addContentPage();
+
+		ContentPage getContentPage =
+			contentPageResource.getSitePrivateContentPage(
+				postContentPage.getSiteId(),
+				postContentPage.getFriendlyUrlPath());
+
+		assertEquals(postContentPage, getContentPage);
+		assertValid(getContentPage);
+	}
+
+	protected ContentPage testGetSitePrivateContentPage_addContentPage()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGraphQLGetSitePrivateContentPage() throws Exception {
+		ContentPage contentPage = testGraphQLContentPage_addContentPage();
+
+		Assert.assertTrue(
+			equals(
+				contentPage,
+				ContentPageSerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"privateContentPage",
+								new HashMap<String, Object>() {
+									{
+										put(
+											"siteKey",
+											"\"" + contentPage.getSiteId() +
+												"\"");
+										put(
+											"friendlyUrlPath",
+											"\"" +
+												contentPage.
+													getFriendlyUrlPath() +
+														"\"");
+									}
+								},
+								getGraphQLFields())),
+						"JSONObject/data", "Object/privateContentPage"))));
+	}
+
+	@Test
+	public void testGraphQLGetSitePrivateContentPageNotFound()
+		throws Exception {
+
+		String irrelevantFriendlyUrlPath =
+			"\"" + RandomTestUtil.randomString() + "\"";
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"privateContentPage",
+						new HashMap<String, Object>() {
+							{
+								put(
+									"siteKey",
+									"\"" + irrelevantGroup.getGroupId() + "\"");
+								put(
+									"friendlyUrlPath",
+									irrelevantFriendlyUrlPath);
+							}
+						},
+						getGraphQLFields())),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+	}
+
+	@Test
+	public void testGetSitePublicContentPage() throws Exception {
+		ContentPage postContentPage =
+			testGetSitePublicContentPage_addContentPage();
+
+		ContentPage getContentPage =
+			contentPageResource.getSitePublicContentPage(
+				postContentPage.getSiteId(),
+				postContentPage.getFriendlyUrlPath());
+
+		assertEquals(postContentPage, getContentPage);
+		assertValid(getContentPage);
+	}
+
+	protected ContentPage testGetSitePublicContentPage_addContentPage()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGraphQLGetSitePublicContentPage() throws Exception {
+		ContentPage contentPage = testGraphQLContentPage_addContentPage();
+
+		Assert.assertTrue(
+			equals(
+				contentPage,
+				ContentPageSerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"publicContentPage",
+								new HashMap<String, Object>() {
+									{
+										put(
+											"siteKey",
+											"\"" + contentPage.getSiteId() +
+												"\"");
+										put(
+											"friendlyUrlPath",
+											"\"" +
+												contentPage.
+													getFriendlyUrlPath() +
+														"\"");
+									}
+								},
+								getGraphQLFields())),
+						"JSONObject/data", "Object/publicContentPage"))));
+	}
+
+	@Test
+	public void testGraphQLGetSitePublicContentPageNotFound() throws Exception {
+		String irrelevantFriendlyUrlPath =
+			"\"" + RandomTestUtil.randomString() + "\"";
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"publicContentPage",
+						new HashMap<String, Object>() {
+							{
+								put(
+									"siteKey",
+									"\"" + irrelevantGroup.getGroupId() + "\"");
+								put(
+									"friendlyUrlPath",
+									irrelevantFriendlyUrlPath);
+							}
+						},
+						getGraphQLFields())),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+	}
+
 	@Rule
 	public SearchTestRule searchTestRule = new SearchTestRule();
 
