@@ -56,6 +56,10 @@ public class PageDefinitionDTOConverter {
 				fetchLayoutPageTemplateStructure(
 					layout.getGroupId(), layout.getPlid());
 
+		if (layoutPageTemplateStructure == null) {
+			return null;
+		}
+
 		LayoutStructure layoutStructure = LayoutStructure.of(
 			layoutPageTemplateStructure.getData(0L));
 
