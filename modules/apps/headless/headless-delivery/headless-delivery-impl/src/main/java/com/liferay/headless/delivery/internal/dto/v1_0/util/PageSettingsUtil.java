@@ -36,8 +36,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * @author Javier de Arcos
  * @author Jürgen Kappler
+ * @author Javier de Arcos
  */
 public class PageSettingsUtil {
 

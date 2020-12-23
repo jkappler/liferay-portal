@@ -25,8 +25,8 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 /**
- * @author Javier de Arcos
  * @author Jürgen Kappler
+ * @author Javier de Arcos
  */
 public class OpenGraphSettingsUtil {
 

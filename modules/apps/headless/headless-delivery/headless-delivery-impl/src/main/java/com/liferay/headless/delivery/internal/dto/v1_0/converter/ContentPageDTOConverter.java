@@ -30,7 +30,10 @@ import com.liferay.headless.delivery.internal.dto.v1_0.util.RenderedPageUtil;
 import com.liferay.headless.delivery.internal.dto.v1_0.util.TaxonomyCategoryBriefUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.seo.service.LayoutSEOEntryLocalService;
+import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -98,7 +101,6 @@ public class ContentPageDTOConverter
 					_assetTagLocalService.getTags(
 						Layout.class.getName(), layout.getPlid()),
 					AssetTag.NAME_ACCESSOR);
-				pageDefinition = _pageDefinitionDTOConverter.toDTO(layout);
 				pageSettings = PageSettingsUtil.getPageSettings(
 					_dlAppService, _dlURLHelper, dtoConverterContext,
 					_layoutSEOEntryLocalService, layout, _storageEngineManager);
@@ -116,6 +118,23 @@ public class ContentPageDTOConverter
 					dtoConverterContext.isAcceptAllLanguages(),
 					layout.getNameMap());
 				uuid = layout.getUuid();
+
+				setPageDefinition(
+					() -> {
+						dtoConverterContext.setAttribute("layout", layout);
+
+						LayoutPageTemplateStructure
+							layoutPageTemplateStructure =
+								_layoutPageTemplateStructureLocalService.
+									fetchLayoutPageTemplateStructure(
+										layout.getGroupId(), layout.getPlid());
+
+						LayoutStructure layoutStructure = LayoutStructure.of(
+							layoutPageTemplateStructure.getData(0L));
+
+						return _pageDefinitionDTOConverter.toDTO(
+							dtoConverterContext, layoutStructure);
+					});
 			}
 		};
 	}
@@ -135,6 +154,10 @@ public class ContentPageDTOConverter
 	@Reference
 	private LayoutPageTemplateEntryLocalService
 		_layoutPageTemplateEntryLocalService;
+
+	@Reference
+	private LayoutPageTemplateStructureLocalService
+		_layoutPageTemplateStructureLocalService;
 
 	@Reference
 	private LayoutSEOEntryLocalService _layoutSEOEntryLocalService;
