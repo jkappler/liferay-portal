@@ -40,6 +40,7 @@ public class PrincipalExceptionMapper
 
 		String method = _httpServletRequest.getMethod();
 
+
 		if (method.equals(HttpMethods.GET)) {
 			status = Response.Status.NOT_FOUND;
 		}
