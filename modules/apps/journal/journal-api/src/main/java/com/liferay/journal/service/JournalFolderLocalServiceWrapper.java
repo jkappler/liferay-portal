@@ -454,6 +454,25 @@ public class JournalFolderLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<Object> getFoldersAndArticlesWithDisplayPageTemplate(
+		long groupId, long folderId, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<?> orderByComparator) {
+
+		return _journalFolderLocalService.
+			getFoldersAndArticlesWithDisplayPageTemplate(
+				groupId, folderId, status, start, end, orderByComparator);
+	}
+
+	@Override
+	public int getFoldersAndArticlesWithDisplayPageTemplateCount(
+		long groupId, long folderId, int status) {
+
+		return _journalFolderLocalService.
+			getFoldersAndArticlesWithDisplayPageTemplateCount(
+				groupId, folderId, status);
+	}
+
+	@Override
 	public int getFoldersCount(long groupId, long parentFolderId) {
 		return _journalFolderLocalService.getFoldersCount(
 			groupId, parentFolderId);
