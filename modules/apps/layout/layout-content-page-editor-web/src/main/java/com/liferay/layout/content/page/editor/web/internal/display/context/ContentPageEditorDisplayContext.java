@@ -449,6 +449,8 @@ public class ContentPageEditorDisplayContext {
 			).put(
 				"imageSelectorURL", _getItemSelectorURL()
 			).put(
+				"infoItemSelectorDisplayPageURL", _getInfoItemSelectorURL(false)
+			).put(
 				"infoItemSelectorURL", _getInfoItemSelectorURL()
 			).put(
 				"infoListSelectorURL", _getInfoListSelectorURL()
@@ -1638,11 +1640,19 @@ public class ContentPageEditorDisplayContext {
 	}
 
 	private String _getInfoItemSelectorURL() {
+		return _getInfoItemSelectorURL(true);
+	}
+
+	private String _getInfoItemSelectorURL(
+		boolean includeUnavailableDisplayPageTemplate) {
+
 		InfoItemItemSelectorCriterion itemSelectorCriterion =
 			new InfoItemItemSelectorCriterion();
 
 		itemSelectorCriterion.setDesiredItemSelectorReturnTypes(
 			new InfoItemItemSelectorReturnType());
+		itemSelectorCriterion.setIncludeUnavailableDisplayPageTemplate(
+			includeUnavailableDisplayPageTemplate);
 
 		PortletURL infoItemSelectorURL = _itemSelector.getItemSelectorURL(
 			RequestBackedPortletURLFactoryUtil.create(httpServletRequest),
