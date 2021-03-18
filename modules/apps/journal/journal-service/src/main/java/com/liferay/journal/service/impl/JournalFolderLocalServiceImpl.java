@@ -14,7 +14,10 @@
 
 package com.liferay.journal.service.impl;
 
+import com.liferay.asset.display.page.constants.AssetDisplayPageConstants;
+import com.liferay.asset.display.page.model.AssetDisplayPageEntryTable;
 import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetEntryTable;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
@@ -26,14 +29,29 @@ import com.liferay.journal.exception.NoSuchFolderException;
 import com.liferay.journal.internal.util.JournalTreePathUtil;
 import com.liferay.journal.internal.validation.JournalFolderModelValidator;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.model.JournalArticleTable;
 import com.liferay.journal.model.JournalFolder;
+import com.liferay.journal.model.JournalFolderTable;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.base.JournalFolderLocalServiceBaseImpl;
+import com.liferay.journal.service.persistence.JournalArticleUtil;
+import com.liferay.journal.service.persistence.JournalFolderUtil;
 import com.liferay.journal.util.JournalValidator;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntryTable;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
+import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.petra.sql.dsl.query.FromStep;
+import com.liferay.petra.sql.dsl.query.GroupByStep;
+import com.liferay.petra.sql.dsl.spi.expression.Scalar;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
+import com.liferay.portal.kernel.dao.orm.SQLQuery;
+import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
@@ -52,6 +70,7 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -70,9 +89,12 @@ import com.liferay.trash.model.TrashVersion;
 import com.liferay.trash.service.TrashEntryLocalService;
 import com.liferay.trash.service.TrashVersionLocalService;
 
+import java.math.BigInteger;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -476,6 +498,129 @@ public class JournalFolderLocalServiceImpl
 
 		return journalFolderFinder.countF_A_ByG_F(
 			groupId, folderId, queryDefinition);
+	}
+
+	@Override
+	public List<Object> getFoldersAndArticlesWithDisplayPageTemplate(
+		long groupId, long folderId, int status, int start, int end,
+		OrderByComparator<?> orderByComparator) {
+
+		Scalar<Boolean> isJournalFolderFalseScalar = new Scalar<>(false);
+
+		FromStep journalArticleFromStep = DSLQueryFactoryUtil.select(
+			isJournalFolderFalseScalar.as("isJournalFolder"),
+			JournalArticleTable.INSTANCE.folderId.as("journalFolderId"),
+			JournalArticleTable.INSTANCE.id.as("journalArticleId"));
+
+		GroupByStep groupByStep = _getGroupByStep(
+			groupId, folderId, journalArticleFromStep);
+
+		DSLQuery dslQuery = groupByStep.limit(start, end);
+
+		Session session = null;
+
+		try {
+			session = journalFolderPersistence.openSession();
+
+			Scalar<Boolean> isJournalFolderTrueScalar = new Scalar<>(true);
+
+			Scalar<Integer> defaultJournalArticleIdScalar = new Scalar<>(0);
+
+			FromStep journalFolderFromStep = DSLQueryFactoryUtil.selectDistinct(
+				isJournalFolderTrueScalar.as("isJournalFolder"),
+				JournalFolderTable.INSTANCE.folderId.as("journalFolderId"),
+				defaultJournalArticleIdScalar.as("journalArticleId"));
+
+			DSLQuery unionDSLQuery = _getUnionDSLQuery(
+				groupId, folderId, status, dslQuery, journalFolderFromStep);
+
+			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
+				unionDSLQuery);
+
+			sqlQuery.addScalar("isJournalFolder", Type.BOOLEAN);
+			sqlQuery.addScalar("journalFolderId", Type.LONG);
+			sqlQuery.addScalar("journalArticleId", Type.LONG);
+
+			List<Object> objects = new ArrayList<>();
+
+			Iterator<Object[]> iterator = sqlQuery.iterate();
+
+			while (iterator.hasNext()) {
+				Object[] array = iterator.next();
+
+				Boolean isJournalFolder = (Boolean)array[0];
+
+				if (isJournalFolder) {
+					Long journalFolderId = (Long)array[1];
+
+					JournalFolder journalFolder =
+						JournalFolderUtil.findByPrimaryKey(journalFolderId);
+
+					objects.add(journalFolder);
+				}
+				else {
+					Long journalArticleId = (Long)array[2];
+
+					JournalArticle journalArticle =
+						JournalArticleUtil.findByPrimaryKey(journalArticleId);
+
+					objects.add(journalArticle);
+				}
+			}
+
+			return objects;
+		}
+		catch (Exception exception) {
+			throw new SystemException(exception);
+		}
+		finally {
+			journalFolderPersistence.closeSession(session);
+		}
+	}
+
+	@Override
+	public int getFoldersAndArticlesWithDisplayPageTemplateCount(
+		long groupId, long folderId, int status) {
+
+		Session session = null;
+
+		try {
+			session = journalFolderPersistence.openSession();
+
+			GroupByStep groupByStep = _getGroupByStep(
+				groupId, folderId, DSLQueryFactoryUtil.count());
+
+			FromStep journalFolderCountFromStep =
+				DSLQueryFactoryUtil.countDistinct(
+					JournalFolderTable.INSTANCE.folderId);
+
+			DSLQuery unionDSLQuery = _getUnionDSLQuery(
+				groupId, folderId, status, groupByStep,
+				journalFolderCountFromStep);
+
+			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
+				unionDSLQuery);
+
+			int count = 0;
+
+			Iterator<BigInteger> iterator = sqlQuery.iterate();
+
+			while (iterator.hasNext()) {
+				BigInteger bigInteger = iterator.next();
+
+				if (bigInteger != null) {
+					count += bigInteger.intValue();
+				}
+			}
+
+			return count;
+		}
+		catch (Exception exception) {
+			throw new SystemException(exception);
+		}
+		finally {
+			journalFolderPersistence.closeSession(session);
+		}
 	}
 
 	@Override
@@ -1506,6 +1651,102 @@ public class JournalFolderLocalServiceImpl
 			folder, parentFolderId);
 	}
 
+	private GroupByStep _getGroupByStep(
+		long groupId, long folderId, FromStep fromStep) {
+
+		JournalArticleTable tempJournalArticleTable =
+			JournalArticleTable.INSTANCE.as("tempJournalArticleTable");
+
+		long classNameId = _portal.getClassNameId(JournalArticle.class);
+
+		return fromStep.from(
+			JournalArticleTable.INSTANCE
+		).leftJoinOn(
+			tempJournalArticleTable,
+			JournalArticleTable.INSTANCE.groupId.eq(
+				tempJournalArticleTable.getColumn("groupId", Long.class)
+			).and(
+				JournalArticleTable.INSTANCE.articleId.eq(
+					tempJournalArticleTable.getColumn(
+						"articleId", String.class))
+			).and(
+				JournalArticleTable.INSTANCE.version.lt(
+					tempJournalArticleTable.getColumn("version", Double.class))
+			)
+		).innerJoinON(
+			AssetEntryTable.INSTANCE,
+			AssetEntryTable.INSTANCE.classPK.eq(
+				JournalArticleTable.INSTANCE.resourcePrimKey)
+		).where(
+			tempJournalArticleTable.getColumn(
+				"id_"
+			).isNull(
+			).and(
+				JournalArticleTable.INSTANCE.groupId.eq(groupId)
+			).and(
+				AssetEntryTable.INSTANCE.classNameId.eq(classNameId)
+			).and(
+				JournalArticleTable.INSTANCE.folderId.eq(folderId)
+			).and(
+				JournalArticleTable.INSTANCE.resourcePrimKey.in(
+					DSLQueryFactoryUtil.select(
+						AssetDisplayPageEntryTable.INSTANCE.classPK
+					).from(
+						AssetDisplayPageEntryTable.INSTANCE
+					).where(
+						AssetDisplayPageEntryTable.INSTANCE.classNameId.eq(
+							classNameId
+						).and(
+							AssetDisplayPageEntryTable.INSTANCE.type.eq(
+								AssetDisplayPageConstants.TYPE_SPECIFIC)
+						)
+					)
+				).or(
+					JournalArticleTable.INSTANCE.resourcePrimKey.notIn(
+						DSLQueryFactoryUtil.select(
+							AssetDisplayPageEntryTable.INSTANCE.classPK
+						).from(
+							AssetDisplayPageEntryTable.INSTANCE
+						).where(
+							AssetDisplayPageEntryTable.INSTANCE.classNameId.eq(
+								classNameId
+							).and(
+								AssetDisplayPageEntryTable.INSTANCE.type.eq(
+									AssetDisplayPageConstants.TYPE_NONE
+								).or(
+									AssetDisplayPageEntryTable.INSTANCE.type.eq(
+										AssetDisplayPageConstants.TYPE_SPECIFIC)
+								).withParentheses()
+							)
+						)
+					).and(
+						AssetEntryTable.INSTANCE.classTypeId.in(
+							DSLQueryFactoryUtil.select(
+								LayoutPageTemplateEntryTable.INSTANCE.
+									classTypeId
+							).from(
+								LayoutPageTemplateEntryTable.INSTANCE
+							).where(
+								LayoutPageTemplateEntryTable.INSTANCE.
+									classNameId.eq(
+										classNameId
+									).and(
+										LayoutPageTemplateEntryTable.INSTANCE.
+											type.eq(
+												LayoutPageTemplateEntryTypeConstants.TYPE_DISPLAY_PAGE
+											).and(
+												LayoutPageTemplateEntryTable.
+													INSTANCE.defaultTemplate.eq(
+														true)
+											)
+									)
+							))
+					)
+				).withParentheses()
+			)
+		);
+	}
+
 	private JournalFolderModelValidator _getJournalFolderModelValidator() {
 		ModelValidator<JournalFolder> modelValidator =
 			ModelValidatorRegistryUtil.getModelValidator(JournalFolder.class);
@@ -1530,6 +1771,24 @@ public class JournalFolderLocalServiceImpl
 		return _getRestrictedAncestorFolder(folder.getParentFolder());
 	}
 
+	private DSLQuery _getUnionDSLQuery(
+		long groupId, long folderId, int status, DSLQuery dslQuery,
+		FromStep fromStep) {
+
+		return dslQuery.union(
+			fromStep.from(
+				JournalFolderTable.INSTANCE
+			).where(
+				JournalFolderTable.INSTANCE.groupId.eq(
+					groupId
+				).and(
+					JournalFolderTable.INSTANCE.parentFolderId.eq(folderId)
+				).and(
+					JournalFolderTable.INSTANCE.status.eq(status)
+				)
+			));
+	}
+
 	@Reference
 	private ClassNameLocalService _classNameLocalService;
 
@@ -1544,6 +1803,9 @@ public class JournalFolderLocalServiceImpl
 
 	@Reference
 	private JournalValidator _journalValidator;
+
+	@Reference
+	private Portal _portal;
 
 	@Reference
 	private SubscriptionLocalService _subscriptionLocalService;
