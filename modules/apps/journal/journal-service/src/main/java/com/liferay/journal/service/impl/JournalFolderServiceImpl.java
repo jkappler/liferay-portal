@@ -277,6 +277,25 @@ public class JournalFolderServiceImpl extends JournalFolderServiceBaseImpl {
 	}
 
 	@Override
+	public List<Object> getFoldersAndArticlesWithDisplayPageTemplate(
+		long groupId, long folderId, int status, int start, int end,
+		OrderByComparator<?> orderByComparator) {
+
+		return journalFolderLocalService.
+			getFoldersAndArticlesWithDisplayPageTemplate(
+				groupId, folderId, status, start, end, orderByComparator);
+	}
+
+	@Override
+	public int getFoldersAndArticlesWithDisplayPageTemplateCount(
+		long groupId, long folderId, int status) {
+
+		return journalFolderLocalService.
+			getFoldersAndArticlesWithDisplayPageTemplateCount(
+				groupId, folderId, status);
+	}
+
+	@Override
 	public int getFoldersCount(long groupId, long parentFolderId) {
 		return getFoldersCount(
 			groupId, parentFolderId, WorkflowConstants.STATUS_APPROVED);
