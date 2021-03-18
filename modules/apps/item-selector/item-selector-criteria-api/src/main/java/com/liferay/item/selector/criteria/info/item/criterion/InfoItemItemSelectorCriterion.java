@@ -22,6 +22,10 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
  */
 public class InfoItemItemSelectorCriterion extends BaseItemSelectorCriterion {
 
+	public InfoItemItemSelectorCriterion() {
+		_includeUnavailableDisplayPageTemplate = true;
+	}
+
 	public String getItemSubtype() {
 		return _itemSubtype;
 	}
@@ -36,6 +40,17 @@ public class InfoItemItemSelectorCriterion extends BaseItemSelectorCriterion {
 
 	public int getStatus() {
 		return _status;
+	}
+
+	public boolean isIncludeUnavailableDisplayPageTemplate() {
+		return _includeUnavailableDisplayPageTemplate;
+	}
+
+	public void setIncludeUnavailableDisplayPageTemplate(
+		boolean includeUnavailableDisplayPageTemplate) {
+
+		_includeUnavailableDisplayPageTemplate =
+			includeUnavailableDisplayPageTemplate;
 	}
 
 	public void setItemSubtype(String itemSubtype) {
@@ -54,6 +69,7 @@ public class InfoItemItemSelectorCriterion extends BaseItemSelectorCriterion {
 		_status = status;
 	}
 
+	private boolean _includeUnavailableDisplayPageTemplate;
 	private String _itemSubtype;
 	private String _itemType;
 	private String[] _mimeTypes;
