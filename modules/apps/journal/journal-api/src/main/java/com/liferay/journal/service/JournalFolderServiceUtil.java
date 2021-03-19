@@ -186,6 +186,21 @@ public class JournalFolderServiceUtil {
 			groupId, userId, folderId, status);
 	}
 
+	public static List<Object> getFoldersAndArticlesWithDisplayPageTemplate(
+		long groupId, long folderId, int status, int start, int end,
+		OrderByComparator<?> orderByComparator) {
+
+		return getService().getFoldersAndArticlesWithDisplayPageTemplate(
+			groupId, folderId, status, start, end, orderByComparator);
+	}
+
+	public static int getFoldersAndArticlesWithDisplayPageTemplateCount(
+		long groupId, long folderId, int status) {
+
+		return getService().getFoldersAndArticlesWithDisplayPageTemplateCount(
+			groupId, folderId, status);
+	}
+
 	public static int getFoldersCount(long groupId, long parentFolderId) {
 		return getService().getFoldersCount(groupId, parentFolderId);
 	}
