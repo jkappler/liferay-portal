@@ -219,6 +219,7 @@ export default function LinkField({field, onValueSelect, value}) {
 
 			{source === SOURCE_OPTIONS.fromItemDisplayPage.value && (
 				<ItemSelector
+					itemSelectorURL={config.infoItemSelectorDisplayPageURL}
 					label={Liferay.Language.get('item')}
 					onItemSelect={(item) =>
 						handleChange({
