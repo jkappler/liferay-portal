@@ -352,6 +352,25 @@ public class JournalFolderServiceSoap {
 		}
 	}
 
+	public static int getFoldersAndArticlesWithDisplayPageTemplateCount(
+			long groupId, long folderId, int status)
+		throws RemoteException {
+
+		try {
+			int returnValue =
+				JournalFolderServiceUtil.
+					getFoldersAndArticlesWithDisplayPageTemplateCount(
+						groupId, folderId, status);
+
+			return returnValue;
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
 	public static int getFoldersAndArticlesCount(
 			long groupId, long userId, long folderId, int status)
 		throws RemoteException {
