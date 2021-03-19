@@ -366,9 +366,22 @@ public class JournalArticleItemSelectorViewDisplayContext {
 			articleAndFolderSearchContainer.setResults(results);
 		}
 		else {
-			int total = JournalFolderServiceUtil.getFoldersAndArticlesCount(
-				_getGroupId(), 0, _getFolderId(),
-				_infoItemItemSelectorCriterion.getStatus());
+			int total = 0;
+
+			if (_infoItemItemSelectorCriterion.
+					isIncludeUnavailableDisplayPageTemplate()) {
+
+				total = JournalFolderServiceUtil.getFoldersAndArticlesCount(
+					_getGroupId(), _getFolderId(),
+					_infoItemItemSelectorCriterion.getStatus());
+			}
+			else {
+				total =
+					JournalFolderServiceUtil.
+						getFoldersAndArticlesWithDisplayPageTemplateCount(
+							_getGroupId(), _getFolderId(),
+							_infoItemItemSelectorCriterion.getStatus());
+			}
 
 			articleAndFolderSearchContainer.setTotal(total);
 
@@ -393,14 +406,28 @@ public class JournalArticleItemSelectorViewDisplayContext {
 					orderByAsc);
 			}
 
-			List<Object> results =
-				JournalFolderServiceUtil.getFoldersAndArticles(
-					_getGroupId(), 0, _getFolderId(),
+			List<Object> results = null;
+
+			if (_infoItemItemSelectorCriterion.
+					isIncludeUnavailableDisplayPageTemplate()) {
+
+				results = JournalFolderServiceUtil.getFoldersAndArticles(
+					_getGroupId(), _getFolderId(),
 					_infoItemItemSelectorCriterion.getStatus(),
-					_themeDisplay.getLocale(),
 					articleAndFolderSearchContainer.getStart(),
 					articleAndFolderSearchContainer.getEnd(),
 					folderOrderByComparator);
+			}
+			else {
+				results =
+					JournalFolderServiceUtil.
+						getFoldersAndArticlesWithDisplayPageTemplate(
+							_getGroupId(), _getFolderId(),
+							_infoItemItemSelectorCriterion.getStatus(),
+							articleAndFolderSearchContainer.getStart(),
+							articleAndFolderSearchContainer.getEnd(),
+							folderOrderByComparator);
+			}
 
 			articleAndFolderSearchContainer.setResults(results);
 		}
