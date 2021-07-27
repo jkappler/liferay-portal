@@ -50,7 +50,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(
-	enabled = false, immediate = true, service = InfoCollectionProvider.class
+	immediate = true, service = InfoCollectionProvider.class
 )
 public class BasicWebContentSingleFormVariationInfoCollectionProvider
 	implements SingleFormVariationInfoCollectionProvider<JournalArticle> {
