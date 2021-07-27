@@ -19,6 +19,10 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.info.collection.provider.CollectionQuery;
 import com.liferay.info.collection.provider.InfoCollectionProvider;
 import com.liferay.info.collection.provider.SingleFormVariationInfoCollectionProvider;
+import com.liferay.info.exception.NoSuchFormVariationException;
+import com.liferay.info.form.InfoForm;
+import com.liferay.info.item.InfoItemServiceTracker;
+import com.liferay.info.item.provider.InfoItemFormProvider;
 import com.liferay.info.pagination.InfoPage;
 import com.liferay.info.pagination.Pagination;
 import com.liferay.info.sort.Sort;
@@ -26,6 +30,8 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleService;
 import com.liferay.journal.web.internal.util.JournalPortletUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoader;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -87,6 +93,29 @@ public class BasicWebContentSingleFormVariationInfoCollectionProvider
 	}
 
 	@Override
+	public InfoForm getConfigurationInfoForm() {
+		InfoItemFormProvider<JournalArticle> infoItemFormProvider =
+			(InfoItemFormProvider<JournalArticle>)
+				_infoItemServiceTracker.getFirstInfoItemService(
+					InfoItemFormProvider.class, JournalArticle.class.getName());
+
+		if (infoItemFormProvider != null) {
+			try {
+				return infoItemFormProvider.getInfoForm(getFormVariationKey());
+			}
+			catch (NoSuchFormVariationException noSuchFormVariationException) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						noSuchFormVariationException,
+						noSuchFormVariationException);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	@Override
 	public String getFormVariationKey() {
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
@@ -107,8 +136,14 @@ public class BasicWebContentSingleFormVariationInfoCollectionProvider
 		return LanguageUtil.get(resourceBundle, "basic-web-content");
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		BasicWebContentSingleFormVariationInfoCollectionProvider.class);
+
 	@Reference
 	private DDMStructureLocalService _ddmStructureLocalService;
+
+	@Reference
+	private InfoItemServiceTracker _infoItemServiceTracker;
 
 	@Reference
 	private JournalArticleService _journalArticleService;
