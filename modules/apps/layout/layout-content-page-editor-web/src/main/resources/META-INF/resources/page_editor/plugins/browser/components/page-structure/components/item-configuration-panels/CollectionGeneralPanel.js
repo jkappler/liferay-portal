@@ -60,9 +60,6 @@ const DEFAULT_LIST_STYLE = {
 };
 
 export const CollectionGeneralPanel = ({item}) => {
-	const [collectionConfiguration, setCollectionConfiguration] = useState(
-		null
-	);
 	const collectionLayoutId = useId();
 	const collectionListItemStyleId = useId();
 	const collectionNumberOfItemsId = useId();
@@ -70,7 +67,6 @@ export const CollectionGeneralPanel = ({item}) => {
 	const collectionPaginationTypeId = useId();
 	const dispatch = useDispatch();
 	const isMounted = useIsMounted();
-	const languageId = useSelector(selectLanguageId);
 	const listStyleId = useId();
 	const segmentsExperienceId = useSelector(selectSegmentsExperienceId);
 
@@ -95,28 +91,6 @@ export const CollectionGeneralPanel = ({item}) => {
 				segmentsExperienceId,
 			})
 		);
-	};
-
-	const handleFieldValueSelect = (fieldSet, name, value) => {
-		const field = fieldSet.fields.find((field) => field.name === name);
-		let nextConfig;
-
-		if (field.localizable) {
-			nextConfig = setIn(
-				item.config,
-				['collection', 'config', name, languageId],
-				value
-			);
-		}
-		else {
-			nextConfig = setIn(
-				item.config,
-				['collection', 'config', name],
-				value
-			);
-		}
-
-		handleConfigurationChanged(nextConfig);
 	};
 
 	const [availableListItemStyles, setAvailableListItemStyles] = useState([]);
@@ -185,17 +159,6 @@ export const CollectionGeneralPanel = ({item}) => {
 				});
 		}
 	}, [item.config.collection, item.config.listStyle]);
-
-	useEffect(() => {
-		if (item.config.collection?.key) {
-			CollectionService.getCollectionConfiguration(
-				item.config.collection
-			).then(setCollectionConfiguration);
-		}
-		else {
-			setCollectionConfiguration(null);
-		}
-	}, [item.config.collection]);
 
 	return (
 		<>
@@ -483,30 +446,70 @@ export const CollectionGeneralPanel = ({item}) => {
 				</>
 			)}
 
-			{collectionConfiguration
-				? collectionConfiguration.fieldSets
-						.filter(
-							(fieldSet) =>
-								fieldSet.configurationRole &&
-								fieldSet.fields.length
-						)
-						.map((fieldSet) => (
-							<FieldSet
-								fields={fieldSet.fields}
-								key={fieldSet.configurationRole}
-								label={fieldSet.configurationRole}
-								languageId={languageId}
-								onValueSelect={(name, value) =>
-									handleFieldValueSelect(
-										fieldSet,
-										name,
-										value
-									)
-								}
-								values={item.config.collection?.config || {}}
-							/>
-						))
-				: null}
+			<CollectionFilterConfiguration
+				handleConfigurationChanged={handleConfigurationChanged}
+				item={item}
+			/>
 		</>
 	);
 };
+
+function CollectionFilterConfiguration({handleConfigurationChanged, item}) {
+	const [collectionConfiguration, setCollectionConfiguration] = useState(
+		null
+	);
+	const languageId = useSelector(selectLanguageId);
+
+	const handleFieldValueSelect = (fieldSet, name, value) => {
+		const field = fieldSet.fields.find((field) => field.name === name);
+		let nextConfig;
+
+		if (field.localizable) {
+			nextConfig = setIn(
+				item.config,
+				['collection', 'config', name, languageId],
+				value
+			);
+		}
+		else {
+			nextConfig = setIn(
+				item.config,
+				['collection', 'config', name],
+				value
+			);
+		}
+
+		handleConfigurationChanged(nextConfig);
+	};
+
+	useEffect(() => {
+		if (item.config.collection?.key) {
+			CollectionService.getCollectionConfiguration(
+				item.config.collection
+			).then(setCollectionConfiguration);
+		}
+		else {
+			setCollectionConfiguration(null);
+		}
+	}, [item.config.collection]);
+
+	return collectionConfiguration
+		? collectionConfiguration.fieldSets
+				.filter(
+					(fieldSet) =>
+						fieldSet.configurationRole && fieldSet.fields.length
+				)
+				.map((fieldSet) => (
+					<FieldSet
+						fields={fieldSet.fields}
+						key={fieldSet.configurationRole}
+						label={fieldSet.configurationRole}
+						languageId={languageId}
+						onValueSelect={(name, value) =>
+							handleFieldValueSelect(fieldSet, name, value)
+						}
+						values={item.config.collection?.config || {}}
+					/>
+				))
+		: null;
+}
