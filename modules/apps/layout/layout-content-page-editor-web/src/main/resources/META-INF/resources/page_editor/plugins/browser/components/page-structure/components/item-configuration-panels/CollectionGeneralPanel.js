@@ -12,15 +12,18 @@
  * details.
  */
 
+import ClayButton from '@clayui/button';
 import ClayForm, {
 	ClayCheckbox,
 	ClayInput,
 	ClaySelect,
 	ClaySelectWithOption,
 } from '@clayui/form';
+import ClayLoadingIndicator from '@clayui/loading-indicator';
+import ClayModal, {useModal} from '@clayui/modal';
 import {useIsMounted} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 import {config} from '../../../../../../app/config/index';
 import {
@@ -69,6 +72,26 @@ export const CollectionGeneralPanel = ({item}) => {
 	const isMounted = useIsMounted();
 	const listStyleId = useId();
 	const segmentsExperienceId = useSelector(selectSegmentsExperienceId);
+
+	const {
+		observer: filterConfigurationObserver,
+		onClose: onFilterConfigurationClose,
+	} = useModal({onClose: () => setFilterConfigurationVisible(false)});
+
+	const [
+		filterConfigurationVisible,
+		setFilterConfigurationVisible,
+	] = useState(false);
+
+	const optionsMenuItems = useMemo(
+		() => [
+			{
+				label: Liferay.Language.get('filter-collection'),
+				onClick: () => setFilterConfigurationVisible(true),
+			},
+		],
+		[setFilterConfigurationVisible]
+	);
 
 	const [numberOfItemsNextValue, setNumberOfItemsNextValue] = useState(
 		item.config.numberOfItems
@@ -178,6 +201,7 @@ export const CollectionGeneralPanel = ({item}) => {
 						templateKey: null,
 					});
 				}}
+				optionsMenuItems={optionsMenuItems}
 			/>
 			{item.config.collection && (
 				<>
@@ -446,19 +470,31 @@ export const CollectionGeneralPanel = ({item}) => {
 				</>
 			)}
 
-			<CollectionFilterConfiguration
-				handleConfigurationChanged={handleConfigurationChanged}
-				item={item}
-			/>
+			{filterConfigurationVisible ? (
+				<CollectionFilterConfigurationModal
+					handleConfigurationChanged={handleConfigurationChanged}
+					item={item}
+					observer={filterConfigurationObserver}
+					onClose={onFilterConfigurationClose}
+					visible={filterConfigurationVisible}
+				/>
+			) : null}
 		</>
 	);
 };
 
-function CollectionFilterConfiguration({handleConfigurationChanged, item}) {
+function CollectionFilterConfigurationModal({
+	handleConfigurationChanged,
+	item,
+	observer,
+	onClose,
+	visible,
+}) {
 	const [collectionConfiguration, setCollectionConfiguration] = useState(
 		null
 	);
 	const languageId = useSelector(selectLanguageId);
+	const [itemConfig, setItemConfig] = useState(item.config);
 
 	const handleFieldValueSelect = (fieldSet, name, value) => {
 		const field = fieldSet.fields.find((field) => field.name === name);
@@ -466,24 +502,38 @@ function CollectionFilterConfiguration({handleConfigurationChanged, item}) {
 
 		if (field.localizable) {
 			nextConfig = setIn(
-				item.config,
+				itemConfig,
 				['collection', 'config', name, languageId],
 				value
 			);
 		}
 		else {
 			nextConfig = setIn(
-				item.config,
+				itemConfig,
 				['collection', 'config', name],
 				value
 			);
 		}
 
-		handleConfigurationChanged(nextConfig);
+		setItemConfig((previousItemConfig) => ({
+			...previousItemConfig,
+			...nextConfig,
+		}));
+	};
+
+	const handleSaveButtonClick = () => {
+		handleConfigurationChanged(itemConfig);
+		onClose();
 	};
 
 	useEffect(() => {
-		if (item.config.collection?.key) {
+		if (visible && item.config) {
+			setItemConfig(item.config);
+		}
+	}, [item.config, visible]);
+
+	useEffect(() => {
+		if (visible && item.config.collection?.key) {
 			CollectionService.getCollectionConfiguration(
 				item.config.collection
 			).then(setCollectionConfiguration);
@@ -491,25 +541,53 @@ function CollectionFilterConfiguration({handleConfigurationChanged, item}) {
 		else {
 			setCollectionConfiguration(null);
 		}
-	}, [item.config.collection]);
+	}, [item.config.collection, visible]);
 
-	return collectionConfiguration
-		? collectionConfiguration.fieldSets
-				.filter(
-					(fieldSet) =>
-						fieldSet.configurationRole && fieldSet.fields.length
-				)
-				.map((fieldSet) => (
-					<FieldSet
-						fields={fieldSet.fields}
-						key={fieldSet.configurationRole}
-						label={fieldSet.configurationRole}
-						languageId={languageId}
-						onValueSelect={(name, value) =>
-							handleFieldValueSelect(fieldSet, name, value)
-						}
-						values={item.config.collection?.config || {}}
-					/>
-				))
-		: null;
+	return (
+		<ClayModal observer={observer}>
+			<ClayModal.Header>
+				{Liferay.Language.get('collection-filter-configuration')}
+			</ClayModal.Header>
+			<ClayModal.Body>
+				{collectionConfiguration ? (
+					collectionConfiguration.fieldSets
+						.filter(
+							(fieldSet) =>
+								fieldSet.configurationRole &&
+								fieldSet.fields.length
+						)
+						.map((fieldSet) => (
+							<FieldSet
+								fields={fieldSet.fields}
+								key={fieldSet.configurationRole}
+								label={fieldSet.configurationRole}
+								languageId={languageId}
+								onValueSelect={(name, value) =>
+									handleFieldValueSelect(
+										fieldSet,
+										name,
+										value
+									)
+								}
+								values={item.config.collection?.config || {}}
+							/>
+						))
+				) : (
+					<ClayLoadingIndicator />
+				)}
+			</ClayModal.Body>
+			<ClayModal.Footer
+				last={
+					<>
+						<ClayButton displayType="secondary" onClick={onClose}>
+							{Liferay.Language.get('cancel')}
+						</ClayButton>
+						<ClayButton onClick={handleSaveButtonClick}>
+							{Liferay.Language.get('save')}
+						</ClayButton>
+					</>
+				}
+			/>
+		</ClayModal>
+	);
 }
