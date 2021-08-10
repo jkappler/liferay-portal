@@ -105,6 +105,7 @@
 				"defaultValue": {
 					"title": "The DefaultValue Schema",
 					"type": [
+						"array",
 						"boolean",
 						"object",
 						"string"
@@ -300,6 +301,10 @@
 				"typeOptions": {
 					"additionalProperties": false,
 					"properties": {
+						"multiSelect": {
+							"title": "The multiSelect Schema",
+							"type": "boolean"
+						},
 						"validValues": {
 							"items": {
 								"additionalProperties": false,
