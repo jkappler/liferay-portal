@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalServiceUtil;
+import com.liferay.style.book.web.internal.configuration.FFStyleBookConfiguration;
 
 import java.util.Map;
 
@@ -54,9 +55,11 @@ import javax.servlet.http.HttpServletRequest;
 public class EditStyleBookEntryDisplayContext {
 
 	public EditStyleBookEntryDisplayContext(
+        FFStyleBookConfiguration ffStyleBookConfiguration,
 		HttpServletRequest httpServletRequest, RenderRequest renderRequest,
 		RenderResponse renderResponse) {
 
+        _ffStyleBookConfiguration = ffStyleBookConfiguration;
 		_httpServletRequest = httpServletRequest;
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
@@ -102,6 +105,8 @@ public class EditStyleBookEntryDisplayContext {
 			"saveDraftURL", _getActionURL("/style_book/edit_style_book_entry")
 		).put(
 			"styleBookEntryId", _getStyleBookEntryId()
+		).put(
+			"templatesPreviewEnabled", _ffStyleBookConfiguration.templatesPreviewEnabled()
 		).put(
 			"themeName", _getThemeName()
 		).build();
@@ -229,6 +234,7 @@ public class EditStyleBookEntryDisplayContext {
 		_renderResponse.setTitle(_getStyleBookEntryTitle());
 	}
 
+    private final FFStyleBookConfiguration _ffStyleBookConfiguration;
 	private final FrontendTokenDefinitionRegistry
 		_frontendTokenDefinitionRegistry;
 	private final HttpServletRequest _httpServletRequest;
