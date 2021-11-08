@@ -52,6 +52,7 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -296,7 +297,11 @@ public class DefaultAssetDisplayPageFriendlyURLResolver
 				_classNameLocalService.getClassNameId(JournalArticle.class),
 				urlTitle);
 
-		if (friendlyURLEntryLocalization != null) {
+		String[] languageId = params.get("languageId");
+
+		if ((friendlyURLEntryLocalization != null) &&
+			ArrayUtil.isEmpty(languageId)) {
+
 			locale = LocaleUtil.fromLanguageId(
 				friendlyURLEntryLocalization.getLanguageId());
 
