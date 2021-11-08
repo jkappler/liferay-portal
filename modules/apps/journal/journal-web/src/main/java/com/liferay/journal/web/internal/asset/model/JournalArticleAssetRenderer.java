@@ -60,6 +60,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -68,6 +69,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -428,9 +430,25 @@ public class JournalArticleAssetRenderer
 				_article.getGroupId(), layout.isPrivateLayout()),
 			themeDisplay, false, false);
 
+		String urlTitle = _article.getUrlTitle();
+
+		Map<Locale, String> friendlyURLMap = _article.getFriendlyURLMap();
+
+		String localizedURLTitle = friendlyURLMap.get(themeDisplay.getLocale());
+
+		if (Validator.isNotNull(localizedURLTitle)) {
+			urlTitle = localizedURLTitle;
+		}
+
 		String friendlyURL = StringBundler.concat(
 			groupFriendlyURL, JournalArticleConstants.CANONICAL_URL_SEPARATOR,
-			_article.getUrlTitle(themeDisplay.getLocale()));
+			urlTitle);
+
+		if (Validator.isNull(localizedURLTitle)) {
+			friendlyURL = HttpUtil.addParameter(
+				friendlyURL, "languageId",
+				LocaleUtil.toLanguageId(themeDisplay.getLocale()));
+		}
 
 		if (!_article.isApproved()) {
 			friendlyURL = HttpUtil.addParameter(
