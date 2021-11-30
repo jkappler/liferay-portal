@@ -19,12 +19,15 @@ import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.model.FragmentEntryLinkTable;
 import com.liferay.fragment.processor.DefaultFragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.base.FragmentEntryLinkLocalServiceBaseImpl;
 import com.liferay.fragment.service.persistence.FragmentCollectionPersistence;
 import com.liferay.fragment.service.persistence.FragmentEntryPersistence;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
+import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -281,6 +284,37 @@ public class FragmentEntryLinkLocalServiceImpl
 
 		return fragmentEntryLinkPersistence.countByG_C_C(
 			groupId, classNameId, classPK);
+	}
+
+	@Override
+	public FragmentEntryLink getFragmentEntryLink(
+		long groupId, long originalFragmentEntryLinkId, long plid) {
+
+		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
+			FragmentEntryLinkTable.INSTANCE
+		).from(
+			FragmentEntryLinkTable.INSTANCE
+		).where(
+			FragmentEntryLinkTable.INSTANCE.groupId.eq(
+				groupId
+			).and(
+				FragmentEntryLinkTable.INSTANCE.originalFragmentEntryLinkId.eq(
+					originalFragmentEntryLinkId)
+			).and(
+				FragmentEntryLinkTable.INSTANCE.plid.eq(plid)
+			)
+		).limit(
+			0, 1
+		);
+
+		List<FragmentEntryLink> fragmentEntryLinks =
+			fragmentEntryLinkPersistence.dslQuery(dslQuery);
+
+		if (ListUtil.isEmpty(fragmentEntryLinks)) {
+			return null;
+		}
+
+		return fragmentEntryLinks.get(0);
 	}
 
 	@Override
