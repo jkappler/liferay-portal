@@ -70,6 +70,35 @@ public class ZipWriterImplTest {
 	}
 
 	@Test
+	public void testAddEntriesWithPathFromInputStream() throws Exception {
+		ZipWriter zipWriter = new ZipWriterImpl(new File(_tempZipFilePath));
+
+		String parentPath = "/parent/";
+
+		zipWriter.addEntry(
+			parentPath,
+			DependenciesTestUtil.getDependencyAsInputStream(
+				getClass(), parentPath));
+
+		zipWriter.addEntry(
+			parentPath + _ENTRY_FILE_PATH,
+			DependenciesTestUtil.getDependencyAsInputStream(
+				getClass(), _ENTRY_FILE_PATH));
+
+		File file = zipWriter.getFile();
+
+		ZipReader zipReader = new ZipReaderImpl(file);
+
+		Assert.assertEquals(
+			_expectedEntryContent,
+			zipReader.getEntryAsString(parentPath + _ENTRY_FILE_PATH));
+
+		zipReader.close();
+
+		file.delete();
+	}
+
+	@Test
 	public void testAddEntryFromBytes() throws Exception {
 		ZipWriter zipWriter = new ZipWriterImpl(new File(_tempZipFilePath));
 
