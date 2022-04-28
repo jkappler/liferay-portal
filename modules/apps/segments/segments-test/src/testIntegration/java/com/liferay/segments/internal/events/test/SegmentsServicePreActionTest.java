@@ -93,7 +93,7 @@ public class SegmentsServicePreActionTest {
 			TestPropsValues.getUserId(), _group.getGroupId(), false,
 			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 0, nameMap, nameMap,
 			Collections.emptyMap(), Collections.emptyMap(),
-			Collections.emptyMap(), LayoutConstants.TYPE_COLLECTION,
+			Collections.emptyMap(), LayoutConstants.TYPE_CONTENT,
 			UnicodePropertiesBuilder.put(
 				"published", "true"
 			).buildString(),
