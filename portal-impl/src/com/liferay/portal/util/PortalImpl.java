@@ -7198,7 +7198,6 @@ public class PortalImpl implements Portal {
 				groupId, privateLayout,
 				new String[] {
 					LayoutConstants.TYPE_CONTENT,
-					LayoutConstants.TYPE_COLLECTION,
 					LayoutConstants.TYPE_FULL_PAGE_APPLICATION,
 					LayoutConstants.TYPE_PANEL, LayoutConstants.TYPE_PORTLET
 				});
