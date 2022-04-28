@@ -102,7 +102,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
@@ -169,8 +168,19 @@ public class LayoutsAdminDisplayContext {
 	}
 
 	public String getAddLayoutURL() {
-		PortletURL portletURL = PortletURLBuilder.createActionURL(
+		return PortletURLBuilder.createActionURL(
 			_liferayPortletResponse
+		).setActionName(
+			() -> {
+				long layoutPageTemplateEntryId = ParamUtil.getLong(
+					httpServletRequest, "layoutPageTemplateEntryId");
+
+				if (layoutPageTemplateEntryId > 0) {
+					return "/layout_admin/add_content_layout";
+				}
+
+				return "/layout_admin/add_simple_layout";
+			}
 		).setMVCPath(
 			"/select_layout_page_template_entry.jsp"
 		).setBackURL(
@@ -184,42 +194,31 @@ public class LayoutsAdminDisplayContext {
 		).setParameter(
 			"liveGroupId", getLiveGroupId()
 		).setParameter(
+			"masterLayoutPlid",
+			() -> {
+				long masterLayoutPlid = ParamUtil.getLong(
+					httpServletRequest, "masterLayoutPlid");
+
+				return String.valueOf(masterLayoutPlid);
+			}
+		).setParameter(
 			"parentLayoutId", getParentLayoutId()
 		).setParameter(
 			"privateLayout", isPrivateLayout()
 		).setParameter(
 			"stagingGroupId", getStagingGroupId()
-		).buildPortletURL();
+		).setParameter(
+			"type",
+			() -> {
+				String type = ParamUtil.getString(httpServletRequest, "type");
 
-		String type = ParamUtil.getString(httpServletRequest, "type");
+				if (Validator.isNotNull(type)) {
+					return type;
+				}
 
-		if (Validator.isNotNull(type)) {
-			portletURL.setParameter("type", type);
-		}
-
-		long layoutPageTemplateEntryId = ParamUtil.getLong(
-			httpServletRequest, "layoutPageTemplateEntryId");
-
-		if (layoutPageTemplateEntryId > 0) {
-			portletURL.setParameter(
-				ActionRequest.ACTION_NAME, "/layout_admin/add_content_layout");
-		}
-		else {
-			portletURL.setParameter(
-				ActionRequest.ACTION_NAME, "/layout_admin/add_simple_layout");
-		}
-
-		portletURL.setParameter(
-			"layoutPageTemplateEntryId",
-			String.valueOf(layoutPageTemplateEntryId));
-
-		long masterLayoutPlid = ParamUtil.getLong(
-			httpServletRequest, "masterLayoutPlid");
-
-		portletURL.setParameter(
-			"masterLayoutPlid", String.valueOf(masterLayoutPlid));
-
-		return portletURL.toString();
+				return null;
+			}
+		).buildString();
 	}
 
 	public List<SiteNavigationMenu> getAutoSiteNavigationMenus() {
