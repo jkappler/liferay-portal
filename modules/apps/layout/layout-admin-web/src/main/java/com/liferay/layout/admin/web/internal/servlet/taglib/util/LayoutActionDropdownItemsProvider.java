@@ -157,22 +157,6 @@ public class LayoutActionDropdownItemsProvider {
 								dropdownItem.setDisabled(true);
 							}
 						}
-					).add(
-						() ->
-							_layoutsAdminDisplayContext.
-								isShowViewCollectionItemsAction(layout),
-						dropdownItem -> {
-							dropdownItem.putData(
-								"action", "viewCollectionItems");
-							dropdownItem.putData(
-								"viewCollectionItemsURL",
-								_layoutsAdminDisplayContext.
-									getViewCollectionItemsURL(layout));
-							dropdownItem.setLabel(
-								LanguageUtil.get(
-									_httpServletRequest,
-									"view-collection-items"));
-						}
 					).build());
 				dropdownGroupItem.setSeparator(true);
 			}

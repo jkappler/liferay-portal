@@ -281,23 +281,6 @@ public class MillerColumnsDisplayContext {
 		);
 	}
 
-	private JSONObject _getAddLayoutCollectionActionJSONObject(
-		long plid, boolean privateLayout) {
-
-		return JSONUtil.put(
-			"id", "addCollectionPage"
-		).put(
-			"label",
-			LanguageUtil.get(_httpServletRequest, "add-collection-page")
-		).put(
-			"layoutAction", true
-		).put(
-			"url",
-			_layoutsAdminDisplayContext.getSelectLayoutCollectionURL(
-				plid, null, privateLayout)
-		);
-	}
-
 	private JSONObject _getAddRootLayoutActionJSONObject(
 			boolean privatePages, String actionType)
 		throws Exception {
@@ -423,11 +406,8 @@ public class MillerColumnsDisplayContext {
 
 		if (_layoutsAdminDisplayContext.isShowAddRootLayoutButton()) {
 			jsonArray.put(
-				_getAddRootLayoutActionJSONObject(privatePages, "layoutAction")
-			).put(
-				_getAddLayoutCollectionActionJSONObject(
-					LayoutConstants.DEFAULT_PLID, privatePages)
-			);
+				_getAddRootLayoutActionJSONObject(
+					privatePages, "layoutAction"));
 		}
 
 		if (_layoutsAdminDisplayContext.isShowFirstColumnConfigureAction()) {
@@ -555,11 +535,7 @@ public class MillerColumnsDisplayContext {
 
 		if (_layoutsAdminDisplayContext.isShowAddChildPageAction(layout)) {
 			jsonArray.put(
-				_getAddChildPageActionJSONObject(layout, "layoutAction")
-			).put(
-				_getAddLayoutCollectionActionJSONObject(
-					layout.getPlid(), layout.isPrivateLayout())
-			);
+				_getAddChildPageActionJSONObject(layout, "layoutAction"));
 		}
 
 		return jsonArray;

@@ -175,20 +175,6 @@ public class LayoutsAdminManagementToolbarDisplayContext
 			}
 		).addPrimaryDropdownItem(
 			() ->
-				_layoutsAdminDisplayContext.isShowPublicLayouts() &&
-				_layoutsAdminDisplayContext.isShowAddChildPageAction(
-					selLayout) &&
-				(!_layoutsAdminDisplayContext.isPrivateLayout() ||
-				 _layoutsAdminDisplayContext.isFirstColumn() ||
-				 !_layoutsAdminDisplayContext.hasLayouts()),
-			dropdownItem -> {
-				dropdownItem.setHref(
-					_layoutsAdminDisplayContext.getSelectLayoutCollectionURL(
-						selPlid, null, false));
-				dropdownItem.setLabel(_getCollectionLayoutLabel(false));
-			}
-		).addPrimaryDropdownItem(
-			() ->
 				_layoutsAdminDisplayContext.isShowUserPrivateLayouts() &&
 				((_layoutsAdminDisplayContext.isShowAddChildPageAction(
 					selLayout) &&
@@ -202,18 +188,6 @@ public class LayoutsAdminManagementToolbarDisplayContext
 							firstLayoutPageTemplateCollectionId, selPlid,
 							true));
 				dropdownItem.setLabel(_getLabel(true));
-			}
-		).addPrimaryDropdownItem(
-			() ->
-				_layoutsAdminDisplayContext.isShowUserPrivateLayouts() &&
-				(_layoutsAdminDisplayContext.isPrivateLayout() ||
-				 _layoutsAdminDisplayContext.isFirstColumn() ||
-				 !_layoutsAdminDisplayContext.hasLayouts()),
-			dropdownItem -> {
-				dropdownItem.setHref(
-					_layoutsAdminDisplayContext.getSelectLayoutCollectionURL(
-						selPlid, null, true));
-				dropdownItem.setLabel(_getCollectionLayoutLabel(true));
 			}
 		).build();
 	}
@@ -304,33 +278,6 @@ public class LayoutsAdminManagementToolbarDisplayContext
 		}
 
 		return null;
-	}
-
-	private String _getCollectionLayoutLabel(boolean privateLayout) {
-		Layout layout = _layoutsAdminDisplayContext.getSelLayout();
-
-		if (layout != null) {
-			return LanguageUtil.format(
-				httpServletRequest, "add-child-collection-page-of-x",
-				HtmlUtil.escape(layout.getName(_themeDisplay.getLocale())));
-		}
-
-		if (_isSiteTemplate()) {
-			return LanguageUtil.get(
-				httpServletRequest, "add-site-template-collection-page");
-		}
-
-		if (privateLayout) {
-			return LanguageUtil.get(
-				httpServletRequest, "private-collection-page");
-		}
-
-		if (_layoutsAdminDisplayContext.isPrivateLayoutsEnabled()) {
-			return LanguageUtil.get(
-				httpServletRequest, "public-collection-page");
-		}
-
-		return LanguageUtil.get(httpServletRequest, "collection-page");
 	}
 
 	private String _getLabel(boolean privateLayout) {
