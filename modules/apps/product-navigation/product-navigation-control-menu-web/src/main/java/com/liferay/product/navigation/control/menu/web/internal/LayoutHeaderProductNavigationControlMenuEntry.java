@@ -83,7 +83,7 @@ public class LayoutHeaderProductNavigationControlMenuEntry
 		StringBundler sb = new StringBundler(17);
 
 		sb.append("<li class=\"");
-		sb.append(_getCssClass(httpServletRequest));
+		sb.append("control-menu-nav-item control-menu-nav-item-content");
 		sb.append("\"><span class=\"align-items-center ");
 		sb.append("control-menu-level-1-heading d-flex mr-1\" ");
 		sb.append("data-qa-id=\"headerTitle\"><span class=\"");
@@ -142,22 +142,6 @@ public class LayoutHeaderProductNavigationControlMenuEntry
 		}
 
 		return super.isShow(httpServletRequest);
-	}
-
-	private String _getCssClass(HttpServletRequest httpServletRequest) {
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		Layout layout = themeDisplay.getLayout();
-
-		if (!Objects.equals(
-				layout.getType(), LayoutConstants.TYPE_COLLECTION)) {
-
-			return "control-menu-nav-item control-menu-nav-item-content";
-		}
-
-		return "control-menu-nav-item";
 	}
 
 	private String _getHeaderTitle(HttpServletRequest httpServletRequest) {
