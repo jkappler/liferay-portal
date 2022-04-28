@@ -24,7 +24,6 @@ import com.liferay.layout.admin.web.internal.configuration.FFBulkTranslationConf
 import com.liferay.layout.admin.web.internal.constants.LayoutAdminWebKeys;
 import com.liferay.layout.admin.web.internal.display.context.LayoutsAdminDisplayContext;
 import com.liferay.layout.admin.web.internal.display.context.MillerColumnsDisplayContext;
-import com.liferay.layout.admin.web.internal.display.context.SelectLayoutCollectionDisplayContext;
 import com.liferay.layout.admin.web.internal.servlet.taglib.util.LayoutActionDropdownItemsProvider;
 import com.liferay.layout.page.template.exception.DuplicateLayoutPageTemplateCollectionException;
 import com.liferay.layout.page.template.exception.LayoutPageTemplateCollectionNameException;
@@ -222,12 +221,6 @@ public class GroupPagesPortlet extends MVCPortlet {
 					_portal.getLiferayPortletRequest(renderRequest),
 					_portal.getLiferayPortletResponse(renderResponse),
 					_translationInfoItemFieldValuesExporterTracker));
-			renderRequest.setAttribute(
-				LayoutAdminWebKeys.SELECT_LAYOUT_COLLECTION_DISPLAY_CONTEXT,
-				new SelectLayoutCollectionDisplayContext(
-					_infoItemServiceTracker,
-					_portal.getLiferayPortletRequest(renderRequest),
-					_portal.getLiferayPortletResponse(renderResponse)));
 			renderRequest.setAttribute(
 				TranslationURLProvider.class.getName(),
 				_translationURLProvider);
