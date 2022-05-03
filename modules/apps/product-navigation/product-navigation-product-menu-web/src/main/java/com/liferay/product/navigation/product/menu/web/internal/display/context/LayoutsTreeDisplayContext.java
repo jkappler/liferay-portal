@@ -104,18 +104,6 @@ public class LayoutsTreeDisplayContext {
 			WebKeys.THEME_DISPLAY);
 	}
 
-	public String getAddChildCollectionURLTemplate() throws Exception {
-		PortletURL addChildCollectionURL = getAddCollectionLayoutURL();
-
-		if (addChildCollectionURL == null) {
-			return StringPool.BLANK;
-		}
-
-		return StringBundler.concat(
-			addChildCollectionURL, StringPool.AMPERSAND,
-			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE, "selPlid={plid}");
-	}
-
 	public String getAddChildURLTemplate() throws Exception {
 		PortletURL addLayoutURL = getAddLayoutURL();
 
@@ -126,30 +114,6 @@ public class LayoutsTreeDisplayContext {
 		return StringBundler.concat(
 			addLayoutURL, StringPool.AMPERSAND,
 			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE, "selPlid={plid}");
-	}
-
-	public PortletURL getAddCollectionLayoutURL() throws Exception {
-		Group scopeGroup = _themeDisplay.getScopeGroup();
-
-		if (scopeGroup.isStaged() && !scopeGroup.isStagingGroup()) {
-			return null;
-		}
-
-		return PortletURLBuilder.create(
-			PortalUtil.getControlPanelPortletURL(
-				_liferayPortletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
-				PortletRequest.RENDER_PHASE)
-		).setMVCPath(
-			"/select_layout_collections.jsp"
-		).setRedirect(
-			_getRedirect()
-		).setBackURL(
-			_getBackURL()
-		).setParameter(
-			"groupId", _themeDisplay.getSiteGroupId()
-		).setParameter(
-			"privateLayout", isPrivateLayout()
-		).buildPortletURL();
 	}
 
 	public PortletURL getAddLayoutURL() throws Exception {
@@ -299,8 +263,6 @@ public class LayoutsTreeDisplayContext {
 
 	public Map<String, Object> getPageTypeSelectorData() throws Exception {
 		return HashMapBuilder.<String, Object>put(
-			"addCollectionLayoutURL", _setSelPlid(getAddCollectionLayoutURL())
-		).put(
 			"addLayoutURL", _setSelPlid(getAddLayoutURL())
 		).put(
 			"configureLayoutSetURL",

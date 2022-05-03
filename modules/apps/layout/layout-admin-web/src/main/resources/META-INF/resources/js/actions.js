@@ -56,13 +56,6 @@ const ACTIONS = {
 			url: permissionLayoutURL,
 		});
 	},
-
-	viewCollectionItems: ({viewCollectionItemsURL}) => {
-		openModal({
-			title: Liferay.Language.get('collection-items'),
-			url: viewCollectionItemsURL,
-		});
-	},
 };
 
 export default ACTIONS;
