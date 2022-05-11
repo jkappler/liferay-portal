@@ -37,9 +37,12 @@ if (selLayout != null) {
 </aui:field-wrapper>
 
 <aui:script use="liferay-form">
-	Liferay.componentReady('<portlet:namespace />editLayoutFm').then(() => {
+	Liferay.once('<portlet:namespace />formReady', (event) => {
+		console.log('formReady', event);
+
 		const form = Liferay.Form.get('<portlet:namespace />editLayoutFm');
 
 		form.addRule('<portlet:namespace />url', 'required');
 	});
+
 </aui:script>
