@@ -301,10 +301,10 @@ AUI.add(
 						if (fieldWrapper && formTabs) {
 							var tabs = formTabs.all('.nav-item');
 							var tabsNamespace =
-								formTabs.dataset['tabs-namespace'];
+								formTabs.getAttribute('data-tabs-namespace');
 
 							var tabNames = AArray.map(tabs._nodes, (tab) => {
-								return tab.dataset['tab-name'];
+								return tab.getAttribute('data-tab-name');
 							});
 
 							var fieldWrapperId = fieldWrapper
@@ -319,11 +319,15 @@ AUI.add(
 								);
 							});
 
-							Liferay.Portal.Tabs.show(
-								tabsNamespace,
-								tabNames,
-								fieldTabId.dataset['tab-name']
-							);
+							if (tabsNamespace) {
+								Liferay.Portal.Tabs.show(
+                                								tabsNamespace,
+                                								tabNames,
+                                								fieldTabId.getAttribute('data-tab-name')
+                                							);
+							}
+
+
 						}
 					}
 				},
