@@ -495,7 +495,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	@Override
 	public boolean isActive(long companyId) {
-		return true;
+		Dictionary<String, String> headers = _bundle.getHeaders(
+			StringPool.BLANK);
+
+		return GetterUtil.getBoolean(headers.get("Active"), true);
 	}
 
 	protected void setCommerceSiteInitializer(
