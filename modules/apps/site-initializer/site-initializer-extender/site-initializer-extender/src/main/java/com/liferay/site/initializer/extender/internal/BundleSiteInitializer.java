@@ -3446,6 +3446,28 @@ public class BundleSiteInitializer implements SiteInitializer {
 		JSONObject metadataJSONObject = JSONFactoryUtil.createJSONObject(
 			(metadataJSON == null) ? "{}" : metadataJSON);
 
+		boolean updateLayoutSet = false;
+
+		String colorSchemeId = metadataJSONObject.getString("colorSchemeId");
+
+		if (Validator.isNotNull(colorSchemeId)) {
+			layoutSet.setColorSchemeId(colorSchemeId);
+
+			updateLayoutSet = true;
+		}
+
+		String themeId = metadataJSONObject.getString("themeId");
+
+		if (Validator.isNotNull(themeId)) {
+			layoutSet.setThemeId(themeId);
+
+			updateLayoutSet = true;
+		}
+
+		if (updateLayoutSet) {
+			layoutSet = _layoutSetLocalService.updateLayoutSet(layoutSet);
+		}
+
 		String css = StringUtil.replace(
 			SiteInitializerUtil.read(
 				resourcePath + "/css.css", _servletContext),
