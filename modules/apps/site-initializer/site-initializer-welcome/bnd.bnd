@@ -1,3 +1,4 @@
+Active: false
 Bundle-Name: Liferay Site Initializer Welcome
 Bundle-SymbolicName: com.liferay.site.initializer.welcome
 Bundle-Version: 1.0.0
