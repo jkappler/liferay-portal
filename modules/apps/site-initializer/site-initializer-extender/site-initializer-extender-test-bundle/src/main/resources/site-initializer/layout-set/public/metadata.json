@@ -1,7 +1,9 @@
 {
+	"colorSchemeId": "[$PORTAL_PROPERTY:default.guest.public.layout.regular.color.scheme.id$]",
 	"settings": {
 		"lfr-theme:regular:show-footer": false,
 		"lfr-theme:regular:show-header": true
 	},
+	"themeId": "[$PORTAL_PROPERTY:default.guest.public.layout.regular.theme.id$]",
 	"themeName": "Dialect"
 }
