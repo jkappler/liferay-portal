@@ -96,7 +96,13 @@ public class SearchUtil {
 		Hits hits = null;
 		long totalCount = 0;
 
+		System.out.println("-------Indexer Class Name " + indexerClassName);
+
 		Indexer<?> indexer = IndexerRegistryUtil.getIndexer(indexerClassName);
+
+		System.out.println("-------Indexer " + indexer);
+
+		System.out.println("-------Indexers " + IndexerRegistryUtil.getIndexers());
 
 		if (sorts == null) {
 			sorts = new Sort[] {
