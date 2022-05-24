@@ -71,7 +71,7 @@ public class DatabaseHealthCheckService implements HealthCheckService {
 				DatabaseHealthCheckService.class.getName()
 			).down(
 			).withData(
-				"database connection failed", exception.getMessage()
+				"Database connection failed", exception.getMessage()
 			).build();
 		}
 		finally {

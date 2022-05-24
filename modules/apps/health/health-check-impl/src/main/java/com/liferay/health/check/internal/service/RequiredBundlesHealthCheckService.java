@@ -19,6 +19,7 @@ import com.liferay.health.check.configuration.HealthCheckReadinessConfiguration;
 import com.liferay.health.check.model.HealthCheckResponse;
 import com.liferay.health.check.service.HealthCheckService;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,10 +49,10 @@ public class RequiredBundlesHealthCheckService implements HealthCheckService {
 
 	@Override
 	public HealthCheckResponse isLive() {
-		String[] symbolicNamesForLiveness =
+		String[] bundleSymbolicNames =
 			_healthCheckLivenessConfiguration.bundleSymbolicNames();
 
-		if (symbolicNamesForLiveness.length == 0) {
+		if (ArrayUtil.isEmpty(bundleSymbolicNames)) {
 			return HealthCheckResponse.builder(
 			).name(
 				RequiredBundlesHealthCheckService.class.getName()
@@ -59,16 +60,15 @@ public class RequiredBundlesHealthCheckService implements HealthCheckService {
 			).build();
 		}
 
-		return _verifyRequiredBundles(symbolicNamesForLiveness);
+		return _verifyRequiredBundles(bundleSymbolicNames);
 	}
 
 	@Override
 	public HealthCheckResponse isReady() {
-		String[] symbolicNamesForReadiness =
-			_healthCheckReadinessConfiguration.
-				bundleSymbolicNames();
+		String[] bundleSymbolicNames =
+			_healthCheckReadinessConfiguration.bundleSymbolicNames();
 
-		if (symbolicNamesForReadiness.length == 0) {
+		if (ArrayUtil.isEmpty(bundleSymbolicNames)) {
 			return HealthCheckResponse.builder(
 			).name(
 				RequiredBundlesHealthCheckService.class.getName()
@@ -76,7 +76,7 @@ public class RequiredBundlesHealthCheckService implements HealthCheckService {
 			).build();
 		}
 
-		return _verifyRequiredBundles(symbolicNamesForReadiness);
+		return _verifyRequiredBundles(bundleSymbolicNames);
 	}
 
 	@Activate

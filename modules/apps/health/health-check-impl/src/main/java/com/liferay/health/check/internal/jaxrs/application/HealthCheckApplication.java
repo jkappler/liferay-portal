@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -82,7 +83,8 @@ public class HealthCheckApplication extends Application {
 		GlobalHealthCheckResponse globalHealthCheckResponse =
 			_aggregateHealthChecks(HealthCheckProbeType.LIVENESS);
 
-		if (HealthCheckStatus.DOWN.equals(
+		if (Objects.equals(
+				HealthCheckStatus.DOWN,
 				globalHealthCheckResponse.getStatus())) {
 
 			return Response.serverError(
@@ -107,7 +109,8 @@ public class HealthCheckApplication extends Application {
 		GlobalHealthCheckResponse globalHealthCheckResponse =
 			_aggregateHealthChecks(HealthCheckProbeType.READINESS);
 
-		if (HealthCheckStatus.DOWN.equals(
+		if (Objects.equals(
+				HealthCheckStatus.DOWN,
 				globalHealthCheckResponse.getStatus())) {
 
 			return Response.serverError(
@@ -150,17 +153,18 @@ public class HealthCheckApplication extends Application {
 	 * their own definition of the readiness and liveness
 	 * which is independent of the bundle state itself.
 	 *
-	 * @param probeType type of probe we're looking for (e.g. readiness or liveness)
+	 * @param healthCheckProbeType type of probe we're looking for (e.g. readiness or liveness)
 	 * @return a response entity to be sent in the HTTP response body as JSON
 	 * @see HealthCheckService
 	 * @see HealthCheckProbeType
 	 * @see GlobalHealthCheckResponse
 	 */
 	private GlobalHealthCheckResponse _aggregateHealthChecks(
-		HealthCheckProbeType probeType) {
+		HealthCheckProbeType healthCheckProbeType) {
 
-		List<HealthCheckResponse> ups = new ArrayList<>();
-		List<HealthCheckResponse> downs = new ArrayList<>();
+		List<HealthCheckResponse> healthCheckResponseDownList =
+			new ArrayList<>();
+		List<HealthCheckResponse> healthCheckResponseUpList = new ArrayList<>();
 
 		Stream<ServiceReference<HealthCheckService>> serviceReferenceStream =
 			Arrays.stream(_healthCheckServiceTracker.getServiceReferences());
@@ -175,12 +179,13 @@ public class HealthCheckApplication extends Application {
 
 				HealthCheckResponse healthCheckResponse =
 					_getHealthCheckServiceResponse(
-						probeType, healthCheckService);
+						healthCheckProbeType, healthCheckService);
 
-				if (HealthCheckStatus.DOWN.equals(
+				if (Objects.equals(
+						HealthCheckStatus.DOWN,
 						healthCheckResponse.getStatus())) {
 
-					downs.add(healthCheckResponse);
+					healthCheckResponseDownList.add(healthCheckResponse);
 
 					if (_log.isWarnEnabled()) {
 						_log.warn(
@@ -197,7 +202,7 @@ public class HealthCheckApplication extends Application {
 					}
 				}
 				else {
-					ups.add(healthCheckResponse);
+					healthCheckResponseUpList.add(healthCheckResponse);
 
 					if (_log.isInfoEnabled()) {
 						_log.info(
@@ -207,27 +212,28 @@ public class HealthCheckApplication extends Application {
 				}
 			});
 
-		if (downs.isEmpty()) {
+		if (healthCheckResponseDownList.isEmpty()) {
 			return GlobalHealthCheckResponse.builder(
 			).up(
 			).withChecks(
-				ups
+				healthCheckResponseUpList
 			).build();
 		}
 
 		return GlobalHealthCheckResponse.builder(
 		).down(
 		).withChecks(
-			ups
+			healthCheckResponseUpList
 		).withChecks(
-			downs
+			healthCheckResponseDownList
 		).build();
 	}
 
 	private HealthCheckResponse _getHealthCheckServiceResponse(
-		HealthCheckProbeType probeType, HealthCheckService healthCheckService) {
+		HealthCheckProbeType healthCheckProbeType,
+		HealthCheckService healthCheckService) {
 
-		if (HealthCheckProbeType.READINESS.equals(probeType)) {
+		if (HealthCheckProbeType.READINESS.equals(healthCheckProbeType)) {
 			return healthCheckService.isReady();
 		}
 
