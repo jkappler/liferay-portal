@@ -19,6 +19,7 @@ import com.liferay.health.check.configuration.HealthCheckReadinessConfiguration;
 import com.liferay.health.check.model.HealthCheckResponse;
 import com.liferay.health.check.service.HealthCheckService;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -95,40 +96,40 @@ public class ComponentsStatesHealthCheckService implements HealthCheckService {
 		List<ComponentDeclaration> unregisteredComponents =
 			graph.getAllComponents();
 
-		if (!unregisteredComponents.isEmpty()) {
-			Map<String, String> data = new HashMap<>();
-
-			for (ComponentDeclaration componentDeclaration :
-					unregisteredComponents) {
-
-				BundleContext bundleContext =
-					componentDeclaration.getBundleContext();
-
-				if (bundleContext != null) {
-					Bundle bundle = bundleContext.getBundle();
-
-					if (bundle != null) {
-						data.put(
-							bundle.getSymbolicName(),
-							"Unregistered component " +
-								componentDeclaration.getName());
-					}
-				}
-			}
-
+		if (ListUtil.isEmpty(unregisteredComponents)) {
 			return HealthCheckResponse.builder(
 			).name(
 				ComponentsStatesHealthCheckService.class.getName()
-			).down(
-			).withData(
-				data
+			).up(
 			).build();
+		}
+
+		Map<String, String> data = new HashMap<>();
+
+		for (ComponentDeclaration componentDeclaration :
+				unregisteredComponents) {
+
+			BundleContext bundleContext =
+				componentDeclaration.getBundleContext();
+
+			if (bundleContext != null) {
+				Bundle bundle = bundleContext.getBundle();
+
+				if (bundle != null) {
+					data.put(
+						bundle.getSymbolicName(),
+						"Unregistered component " +
+							componentDeclaration.getName());
+				}
+			}
 		}
 
 		return HealthCheckResponse.builder(
 		).name(
 			ComponentsStatesHealthCheckService.class.getName()
-		).up(
+		).down(
+		).withData(
+			data
 		).build();
 	}
 
