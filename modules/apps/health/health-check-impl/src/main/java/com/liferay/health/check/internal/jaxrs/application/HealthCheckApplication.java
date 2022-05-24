@@ -29,13 +29,11 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -166,51 +164,51 @@ public class HealthCheckApplication extends Application {
 			new ArrayList<>();
 		List<HealthCheckResponse> healthCheckResponseUpList = new ArrayList<>();
 
-		Stream<ServiceReference<HealthCheckService>> serviceReferenceStream =
-			Arrays.stream(_healthCheckServiceTracker.getServiceReferences());
+		ServiceReference<HealthCheckService>[] serviceReferences =
+			_healthCheckServiceTracker.getServiceReferences();
 
-		serviceReferenceStream.forEach(
-			serviceReference -> {
-				HealthCheckService healthCheckService =
-					_healthCheckServiceTracker.getService(serviceReference);
+		for (ServiceReference<HealthCheckService> serviceReference :
+				serviceReferences) {
 
-				String serviceName = GetterUtil.getString(
-					serviceReference.getProperty("component.name"));
+			HealthCheckService healthCheckService =
+				_healthCheckServiceTracker.getService(serviceReference);
 
-				HealthCheckResponse healthCheckResponse =
-					_getHealthCheckServiceResponse(
-						healthCheckProbeType, healthCheckService);
+			String serviceName = GetterUtil.getString(
+				serviceReference.getProperty("component.name"));
 
-				if (Objects.equals(
-						HealthCheckStatus.DOWN,
-						healthCheckResponse.getStatus())) {
+			HealthCheckResponse healthCheckResponse =
+				_getHealthCheckServiceResponse(
+					healthCheckProbeType, healthCheckService);
 
-					healthCheckResponseDownList.add(healthCheckResponse);
+			if (Objects.equals(
+					HealthCheckStatus.DOWN, healthCheckResponse.getStatus())) {
 
-					if (_log.isWarnEnabled()) {
-						_log.warn(
-							StringBundler.concat(
-								"Service [", serviceName,
-								"] is DOWN with the following data:"));
+				healthCheckResponseDownList.add(healthCheckResponse);
 
-						Map<String, String> healthCheckResponseData =
-							healthCheckResponse.getData();
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						StringBundler.concat(
+							"Service [", serviceName,
+							"] is DOWN with the following data:"));
 
-						healthCheckResponseData.forEach(
-							(key, value) -> _log.warn(
-								StringBundler.concat("[", key, "]: ", value)));
-					}
+					Map<String, String> healthCheckResponseData =
+						healthCheckResponse.getData();
+
+					healthCheckResponseData.forEach(
+						(key, value) -> _log.warn(
+							StringBundler.concat("[", key, "]: ", value)));
 				}
-				else {
-					healthCheckResponseUpList.add(healthCheckResponse);
+			}
+			else {
+				healthCheckResponseUpList.add(healthCheckResponse);
 
-					if (_log.isInfoEnabled()) {
-						_log.info(
-							StringBundler.concat(
-								"Service [", serviceName, "] is UP"));
-					}
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						StringBundler.concat(
+							"Service [", serviceName, "] is UP"));
 				}
-			});
+			}
+		}
 
 		if (healthCheckResponseDownList.isEmpty()) {
 			return GlobalHealthCheckResponse.builder(

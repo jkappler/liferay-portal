@@ -20,14 +20,14 @@ import com.liferay.health.check.model.HealthCheckResponse;
 import com.liferay.health.check.service.HealthCheckService;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.Validator;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -105,46 +105,42 @@ public class RequiredBundlesHealthCheckService implements HealthCheckService {
 	private HealthCheckResponse _verifyRequiredBundles(
 		String[] requiredBundleSymbolicNames) {
 
-		Stream<String> requiredBundleSymbolicNameStream = Arrays.stream(
-			requiredBundleSymbolicNames);
+		Set<String> requiredBundleSymbolicNamesSet = new HashSet<>();
 
-		Set<String> requiredBundleSymbolicNameSet =
-			requiredBundleSymbolicNameStream.filter(
-				symbolicName -> !symbolicName.trim(
-				).isEmpty()
-			).collect(
-				Collectors.toSet()
-			);
+		for (String requiredBundleSymbolicName : requiredBundleSymbolicNames) {
+			if (Validator.isNotNull(requiredBundleSymbolicName)) {
+				requiredBundleSymbolicNamesSet.add(requiredBundleSymbolicName);
+			}
+		}
 
-		Stream<Bundle> bundleStream = Arrays.stream(
-			_bundleContext.getBundles());
+		Set<Bundle> bundlesFound = new HashSet<>();
 
-		Set<Bundle> bundlesFound = bundleStream.filter(
-			bundle -> requiredBundleSymbolicNameSet.contains(
-				bundle.getSymbolicName())
-		).collect(
-			Collectors.toSet()
-		);
+		for (Bundle bundle : _bundleContext.getBundles()) {
+			if (requiredBundleSymbolicNamesSet.contains(
+					bundle.getSymbolicName())) {
 
-		if (bundlesFound.size() != requiredBundleSymbolicNameSet.size()) {
-			Stream<Bundle> bundlesFoundStream = bundlesFound.stream();
+				bundlesFound.add(bundle);
+			}
+		}
 
-			Set<String> bundleFoundSymbolicNames = bundlesFoundStream.map(
-				Bundle::getSymbolicName
-			).collect(
-				Collectors.toSet()
-			);
+		if (bundlesFound.size() != requiredBundleSymbolicNamesSet.size()) {
+			Set<String> bundleFoundSymbolicNames = new HashSet<>();
 
-			requiredBundleSymbolicNameStream = Arrays.stream(
-				requiredBundleSymbolicNames);
+			for (Bundle bundleFound : bundlesFound) {
+				bundleFoundSymbolicNames.add(bundleFound.getSymbolicName());
+			}
 
-			List<String> bundlesNotFound =
-				requiredBundleSymbolicNameStream.filter(
-					symbolicName -> !bundleFoundSymbolicNames.contains(
-						symbolicName)
-				).collect(
-					Collectors.toList()
-				);
+			List<String> bundlesNotFound = new ArrayList<>();
+
+			for (String requiredBundleSymbolicName :
+					requiredBundleSymbolicNames) {
+
+				if (!bundleFoundSymbolicNames.contains(
+						requiredBundleSymbolicName)) {
+
+					bundlesNotFound.add(requiredBundleSymbolicName);
+				}
+			}
 
 			Map<String, String> data = new HashMap<>();
 
