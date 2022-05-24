@@ -47,7 +47,7 @@ public class ComponentsStatesHealthCheckService implements HealthCheckService {
 
 	@Override
 	public HealthCheckResponse isLive() {
-		if (_healthCheckLivenessConfiguration.ignoreOSGiStatesForLiveness()) {
+		if (_healthCheckLivenessConfiguration.ignoreOSGiStates()) {
 			return HealthCheckResponse.builder(
 			).name(
 				ComponentsStatesHealthCheckService.class.getName()
@@ -60,7 +60,7 @@ public class ComponentsStatesHealthCheckService implements HealthCheckService {
 
 	@Override
 	public HealthCheckResponse isReady() {
-		if (_healthCheckReadinessConfiguration.ignoreOSGiStatesForReadiness()) {
+		if (_healthCheckReadinessConfiguration.ignoreOSGiStates()) {
 			return HealthCheckResponse.builder(
 			).name(
 				ComponentsStatesHealthCheckService.class.getName()

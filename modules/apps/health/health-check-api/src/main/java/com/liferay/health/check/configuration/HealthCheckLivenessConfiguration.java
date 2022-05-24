@@ -42,13 +42,13 @@ public interface HealthCheckLivenessConfiguration {
 		description = "health-check-liveness-ignore-osgi-states-description",
 		name = "health-check-liveness-ignore-osgi-states", required = false
 	)
-	public boolean ignoreOSGiStatesForLiveness();
+	public boolean ignoreOSGiStates();
 
 	@Meta.AD(
 		deflt = "",
 		description = "health-check-liveness-bundle-symbolic-names-description",
 		name = "health-check-liveness-bundle-symbolic-names", required = false
 	)
-	public String[] bundleSymbolicNamesForLiveness();
+	public String[] bundleSymbolicNames();
 
 }

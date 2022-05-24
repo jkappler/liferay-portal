@@ -49,7 +49,7 @@ public class RequiredBundlesHealthCheckService implements HealthCheckService {
 	@Override
 	public HealthCheckResponse isLive() {
 		String[] symbolicNamesForLiveness =
-			_healthCheckLivenessConfiguration.bundleSymbolicNamesForLiveness();
+			_healthCheckLivenessConfiguration.bundleSymbolicNames();
 
 		if (symbolicNamesForLiveness.length == 0) {
 			return HealthCheckResponse.builder(
@@ -66,7 +66,7 @@ public class RequiredBundlesHealthCheckService implements HealthCheckService {
 	public HealthCheckResponse isReady() {
 		String[] symbolicNamesForReadiness =
 			_healthCheckReadinessConfiguration.
-				bundleSymbolicNamesForReadiness();
+				bundleSymbolicNames();
 
 		if (symbolicNamesForReadiness.length == 0) {
 			return HealthCheckResponse.builder(

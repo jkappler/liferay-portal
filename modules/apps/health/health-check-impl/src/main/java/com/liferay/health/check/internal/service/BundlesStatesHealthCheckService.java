@@ -53,7 +53,7 @@ public class BundlesStatesHealthCheckService implements HealthCheckService {
 
 	@Override
 	public HealthCheckResponse isLive() {
-		if (_healthCheckLivenessConfiguration.ignoreOSGiStatesForLiveness()) {
+		if (_healthCheckLivenessConfiguration.ignoreOSGiStates()) {
 			return HealthCheckResponse.builder(
 			).name(
 				BundlesStatesHealthCheckService.class.getName()
@@ -82,7 +82,7 @@ public class BundlesStatesHealthCheckService implements HealthCheckService {
 
 	@Override
 	public HealthCheckResponse isReady() {
-		if (_healthCheckReadinessConfiguration.ignoreOSGiStatesForReadiness()) {
+		if (_healthCheckReadinessConfiguration.ignoreOSGiStates()) {
 			return HealthCheckResponse.builder(
 			).name(
 				BundlesStatesHealthCheckService.class.getName()

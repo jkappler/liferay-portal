@@ -42,13 +42,13 @@ public interface HealthCheckReadinessConfiguration {
 		description = "health-check-readiness-ignore-osgi-states-description",
 		name = "health-check-readiness-ignore-osgi-states", required = false
 	)
-	public boolean ignoreOSGiStatesForReadiness();
+	public boolean ignoreOSGiStates();
 
 	@Meta.AD(
 		deflt = "",
 		description = "health-check-readiness-bundle-symbolic-names-description",
 		name = "health-check-readiness-bundle-symbolic-names", required = false
 	)
-	public String[] bundleSymbolicNamesForReadiness();
+	public String[] bundleSymbolicNames();
 
 }
