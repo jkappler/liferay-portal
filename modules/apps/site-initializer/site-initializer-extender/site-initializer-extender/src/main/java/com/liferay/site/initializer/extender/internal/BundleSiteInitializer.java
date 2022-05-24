@@ -86,6 +86,7 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.UnsafeSupplier;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -100,6 +101,7 @@ import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
@@ -134,6 +136,7 @@ import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.NaturalOrderStringComparator;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -177,6 +180,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 
@@ -1460,9 +1465,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-			SiteInitializerUtil.read(
-				parentResourcePath + "page.json", _servletContext));
+		String json = SiteInitializerUtil.read(
+			parentResourcePath + "page.json", _servletContext);
+
+		Map<String, String> portalPropertiesReplaceValues =
+			_getPortalPropertiesReplaceValues(json);
+
+		json = StringUtil.replace(
+			json, "[$", "$]", portalPropertiesReplaceValues);
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
 
 		String type = StringUtil.toLowerCase(jsonObject.getString("type"));
 
@@ -1483,9 +1495,24 @@ public class BundleSiteInitializer implements SiteInitializer {
 			SiteInitializerUtil.toMap(jsonObject.getString("friendlyURL_i18n")),
 			serviceContext);
 
+		if (jsonObject.has("priority")) {
+			layout = _layoutLocalService.updatePriority(
+				layout.getPlid(), jsonObject.getInt("priority"));
+		}
+
 		Map<String, Layout> layouts = HashMapBuilder.put(
 			parentResourcePath, layout
 		).build();
+
+		String layoutTemplateId = StringUtil.toLowerCase(
+			jsonObject.getString("layoutTemplateId"));
+
+		if (Validator.isNotNull(layoutTemplateId)) {
+			LayoutTypePortlet layoutTypePortlet =
+				(LayoutTypePortlet)layout.getLayoutType();
+
+			layoutTypePortlet.setLayoutTemplateId(0, layoutTemplateId, false);
+		}
 
 		Set<String> resourcePaths = _servletContext.getResourcePaths(
 			parentResourcePath);
@@ -1515,8 +1542,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addLayoutContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> clientExtensionEntryIdsStringUtilReplaceValues,
-			Map<String, String> documentsStringUtilReplaceValues, Layout layout,
-			String resourcePath, ServiceContext serviceContext,
+			Map<String, String> documentsStringUtilReplaceValues,
+			Map<String, String> releaseInfoStringUtilReplaceValues,
+			Layout layout, String resourcePath, ServiceContext serviceContext,
 			Map<String, String> taxonomyCategoryIdsStringUtilReplaceValues)
 		throws Exception {
 
@@ -1539,6 +1567,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				clientExtensionEntryIdsStringUtilReplaceValues
 			).putAll(
 				documentsStringUtilReplaceValues
+			).putAll(
+				releaseInfoStringUtilReplaceValues
 			).putAll(
 				taxonomyCategoryIdsStringUtilReplaceValues
 			).build());
@@ -1763,11 +1793,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, String> taxonomyCategoryIdsStringUtilReplaceValues)
 		throws Exception {
 
+		Map<String, String> releaseInfoStringUtilReplaceValues =
+			_getReleaseInfoStringUtilReplaceValues();
+
 		for (Map.Entry<String, Layout> entry : layouts.entrySet()) {
 			_addLayoutContent(
 				assetListEntryIdsStringUtilReplaceValues,
 				clientExtensionEntryIdsStringUtilReplaceValues,
-				documentsStringUtilReplaceValues, entry.getValue(),
+				documentsStringUtilReplaceValues,
+				releaseInfoStringUtilReplaceValues, entry.getValue(),
 				entry.getKey(), serviceContext,
 				taxonomyCategoryIdsStringUtilReplaceValues);
 		}
@@ -3297,6 +3331,65 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return ArrayUtil.toLongArray(assetCategoryIds);
 	}
 
+	private Map<String, String> _getPortalPropertiesReplaceValues(
+		String content) {
+
+		Map<String, String> portalPropertiesReplaceValues = new HashMap<>();
+
+		Matcher matcher = _portalPropertyPattern.matcher(content);
+
+		while (matcher.find()) {
+			String portalProperty = matcher.group();
+
+			portalProperty = portalProperty.substring(
+				2, portalProperty.length() - 2);
+
+			String[] portalPropertyParts = StringUtil.split(
+				portalProperty, CharPool.COLON);
+
+			String value = PropsUtil.get(portalPropertyParts[1]);
+
+			if (value == null) {
+				value = StringPool.BLANK;
+			}
+
+			portalPropertiesReplaceValues.put(portalProperty, value);
+		}
+
+		return portalPropertiesReplaceValues;
+	}
+
+	private Map<String, String> _getReleaseInfoStringUtilReplaceValues() {
+		return HashMapBuilder.put(
+			"RELEASE_INFO:BUILD_DATE",
+			String.valueOf(ReleaseInfo.getBuildDate())
+		).put(
+			"RELEASE_INFO:BUILD_NUMBER",
+			String.valueOf(ReleaseInfo.getBuildNumber())
+		).put(
+			"RELEASE_INFO:CODE_NAME", ReleaseInfo.getCodeName()
+		).put(
+			"RELEASE_INFO:NAME", ReleaseInfo.getName()
+		).put(
+			"RELEASE_INFO:PARENT_BUILD_NUMBER",
+			String.valueOf(ReleaseInfo.getParentBuildNumber())
+		).put(
+			"RELEASE_INFO:RELEASE_INFO",
+			StringUtil.replace(
+				ReleaseInfo.getReleaseInfo(), CharPool.OPEN_PARENTHESIS,
+				"<br>(")
+		).put(
+			"RELEASE_INFO:SERVER_INFO", ReleaseInfo.getServerInfo()
+		).put(
+			"RELEASE_INFO:VENDOR", ReleaseInfo.getVendor()
+		).put(
+			"RELEASE_INFO:VERSION", ReleaseInfo.getVersion()
+		).put(
+			"RELEASE_INFO:VERSION_DISPLAY_NAME",
+			ReleaseInfo.getVersionDisplayName()
+		).build();
+	}
+
 	private String _getThemeId(
 		long companyId, String defaultThemeId, String themeName) {
 
@@ -3432,6 +3525,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 		String metadataJSON = SiteInitializerUtil.read(
 			resourcePath + "/metadata.json", _servletContext);
 
+		if (metadataJSON != null) {
+			Map<String, String> portalPropertiesReplaceValues =
+				_getPortalPropertiesReplaceValues(metadataJSON);
+
+			metadataJSON = StringUtil.replace(
+				metadataJSON, "[$", "$]", portalPropertiesReplaceValues);
+		}
+
 		JSONObject metadataJSONObject = JSONFactoryUtil.createJSONObject(
 			(metadataJSON == null) ? "{}" : metadataJSON);
 
@@ -3495,6 +3596,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		BundleSiteInitializer.class);
 
 	private static final ObjectMapper _objectMapper = new ObjectMapper();
+	private static final Pattern _portalPropertyPattern = Pattern.compile(
+		"\\[\\$PORTAL_PROPERTY:((?!\\.)(?!.*\\.\\.)[a-zA-Z0-9_.]+)\\$\\]");
 
 	private final AccountResource.Factory _accountResourceFactory;
 	private final AccountRoleLocalService _accountRoleLocalService;
