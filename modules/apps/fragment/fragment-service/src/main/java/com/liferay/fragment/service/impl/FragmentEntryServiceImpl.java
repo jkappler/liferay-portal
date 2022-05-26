@@ -427,6 +427,10 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 			fragmentEntryId, previewFileEntryId);
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #updateFragmentEntry(long, long, String, String, String, String, boolean, String, String, long, int)} ()}
+	 */
+	@Deprecated
 	@Override
 	public FragmentEntry updateFragmentEntry(
 			long fragmentEntryId, long fragmentCollectionId, String name,
@@ -443,7 +447,8 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 
 		return fragmentEntryLocalService.updateFragmentEntry(
 			getUserId(), fragmentEntryId, fragmentCollectionId, name, css, html,
-			js, cacheable, configuration, previewFileEntryId, status);
+			js, cacheable, configuration, fragmentEntry.getIcon(),
+			previewFileEntryId, status);
 	}
 
 	@Override
@@ -463,7 +468,29 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 
 		return fragmentEntryLocalService.updateFragmentEntry(
 			getUserId(), fragmentEntryId, fragmentCollectionId, name, css, html,
-			js, cacheable, configuration, icon, previewFileEntryId, status);
+			js, cacheable, configuration, icon, previewFileEntryId,
+			fragmentEntry.getProperties(), status);
+	}
+
+	@Override
+	public FragmentEntry updateFragmentEntry(
+			long fragmentEntryId, long fragmentCollectionId, String name,
+			String css, String html, String js, boolean cacheable,
+			String configuration, String icon, long previewFileEntryId,
+			String properties, int status)
+		throws PortalException {
+
+		FragmentEntry fragmentEntry =
+			fragmentEntryLocalService.getFragmentEntry(fragmentEntryId);
+
+		_portletResourcePermission.check(
+			getPermissionChecker(), fragmentEntry.getGroupId(),
+			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
+
+		return fragmentEntryLocalService.updateFragmentEntry(
+			getUserId(), fragmentEntryId, fragmentCollectionId, name, css, html,
+			js, cacheable, configuration, icon, previewFileEntryId, properties,
+			status);
 	}
 
 	@Override
@@ -481,6 +508,10 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 			fragmentEntryId, name);
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #updateFragmentEntry(long, long, String, String, String, String, boolean, String, String, long, int)} ()}
+	 */
+	@Deprecated
 	@Override
 	public FragmentEntry updateFragmentEntry(
 			long fragmentEntryId, String name, String css, String html,
@@ -497,10 +528,14 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 		return fragmentEntryLocalService.updateFragmentEntry(
 			getUserId(), fragmentEntryId,
 			fragmentEntry.getFragmentCollectionId(), name, css, html, js,
-			cacheable, configuration, fragmentEntry.getPreviewFileEntryId(),
-			status);
+			cacheable, configuration, fragmentEntry.getIcon(),
+			fragmentEntry.getPreviewFileEntryId(), status);
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #updateFragmentEntry(long, long, String, String, String, String, boolean, String, String, long, int)} ()}
+	 */
+	@Deprecated
 	@Override
 	public FragmentEntry updateFragmentEntry(
 			long fragmentEntryId, String name, String css, String html,
@@ -518,9 +553,14 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 		return fragmentEntryLocalService.updateFragmentEntry(
 			getUserId(), fragmentEntryId,
 			fragmentEntry.getFragmentCollectionId(), name, css, html, js,
-			cacheable, configuration, previewFileEntryId, status);
+			cacheable, configuration, fragmentEntry.getIcon(),
+			previewFileEntryId, status);
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #updateFragmentEntry(long, long, String, String, String, String, boolean, String, String, long, int)} ()}
+	 */
+	@Deprecated
 	@Override
 	public FragmentEntry updateFragmentEntry(
 			long fragmentEntryId, String name, String css, String html,
@@ -535,10 +575,16 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
 
 		return fragmentEntryLocalService.updateFragmentEntry(
-			getUserId(), fragmentEntryId, name, css, html, js, configuration,
-			status);
+			getUserId(), fragmentEntryId,
+			fragmentEntry.getFragmentCollectionId(), name, css, html, js,
+			fragmentEntry.isCacheable(), configuration, fragmentEntry.getIcon(),
+			fragmentEntry.getPreviewFileEntryId(), status);
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link #updateFragmentEntry(long, long, String, String, String, String, boolean, String, String, long, int)} ()}
+	 */
+	@Deprecated
 	@Override
 	public FragmentEntry updateFragmentEntry(
 			long fragmentEntryId, String name, String css, String html,
@@ -554,7 +600,9 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
 
 		return fragmentEntryLocalService.updateFragmentEntry(
-			getUserId(), fragmentEntryId, name, css, html, js, configuration,
+			getUserId(), fragmentEntryId,
+			fragmentEntry.getFragmentCollectionId(), name, css, html, js,
+			fragmentEntry.isCacheable(), configuration, fragmentEntry.getIcon(),
 			previewFileEntryId, status);
 	}
 
