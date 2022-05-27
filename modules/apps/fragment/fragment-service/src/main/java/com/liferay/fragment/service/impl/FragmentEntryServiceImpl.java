@@ -468,7 +468,29 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 
 		return fragmentEntryLocalService.updateFragmentEntry(
 			getUserId(), fragmentEntryId, fragmentCollectionId, name, css, html,
-			js, cacheable, configuration, icon, previewFileEntryId, status);
+			js, cacheable, configuration, icon, previewFileEntryId,
+			fragmentEntry.getProperties(), status);
+	}
+
+	@Override
+	public FragmentEntry updateFragmentEntry(
+			long fragmentEntryId, long fragmentCollectionId, String name,
+			String css, String html, String js, boolean cacheable,
+			String configuration, String icon, long previewFileEntryId,
+			String properties, int status)
+		throws PortalException {
+
+		FragmentEntry fragmentEntry =
+			fragmentEntryLocalService.getFragmentEntry(fragmentEntryId);
+
+		_portletResourcePermission.check(
+			getPermissionChecker(), fragmentEntry.getGroupId(),
+			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
+
+		return fragmentEntryLocalService.updateFragmentEntry(
+			getUserId(), fragmentEntryId, fragmentCollectionId, name, css, html,
+			js, cacheable, configuration, icon, previewFileEntryId, properties,
+			status);
 	}
 
 	@Override
