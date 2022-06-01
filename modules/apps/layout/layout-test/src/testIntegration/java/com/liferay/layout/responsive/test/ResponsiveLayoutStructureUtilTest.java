@@ -105,7 +105,7 @@ public class ResponsiveLayoutStructureUtilTest {
 				StringUtil.randomString(), StringUtil.randomString(),
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 				RandomTestUtil.randomString(), false, "{fieldSets: []}", null,
-				0, FragmentConstants.TYPE_COMPONENT,
+				0, null, FragmentConstants.TYPE_COMPONENT,
 				WorkflowConstants.STATUS_APPROVED, serviceContext);
 
 		_defaultSegmentsExperienceId =
