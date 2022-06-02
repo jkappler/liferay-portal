@@ -116,6 +116,14 @@ public class EditFragmentEntryMVCActionCommand
 					fieldTypes.split(StringPool.COMMA));
 			}
 
+			/*
+			String[] fieldTypes = ParamUtil.getStringValues(
+				actionRequest, "fieldTypes");
+
+			JSONArray fieldTypesJSONArray = JSONFactoryUtil.createJSONArray(
+				fieldTypes);
+			*/
+
 			JSONObject typeOptionsJSONObject = JSONFactoryUtil.createJSONObject(
 				draftFragmentEntry.getTypeOptions());
 
