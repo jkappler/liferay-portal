@@ -30,6 +30,7 @@ export function MultiStepModal({
 	title,
 }) {
 	const [currentStepIndex, setCurrentStepIndex] = useState(0);
+	const [currentStepElement, setCurrentStepElement] = useState(null);
 
 	const maxSteps = React.Children.count(children);
 
@@ -41,13 +42,19 @@ export function MultiStepModal({
 	};
 
 	const handleNextStepButtonClick = () => {
-		setCurrentStepIndex((previousIndex) => previousIndex + 1);
+		const isValid = Array.from(
+			currentStepElement.querySelectorAll('*')
+		).every((child) => !child.reportValidity || child.reportValidity());
+
+		if (isValid) {
+			setCurrentStepIndex((previousIndex) => previousIndex + 1);
+		}
 	};
 
 	const handleFormSubmit = (event) => {
-		const formData = new FormData(event.target);
-
 		event.preventDefault();
+
+		const formData = new FormData(event.target);
 
 		fetch(submitURL, {
 			body: formData,
@@ -69,17 +76,22 @@ export function MultiStepModal({
 			});
 	};
 
+	const mapChild = (child, index) => {
+		const isActive = index === currentStepIndex;
+
+		return React.cloneElement(child, {
+			isActive,
+			ref: isActive ? setCurrentStepElement : () => {},
+		});
+	};
+
 	return (
 		<ClayModal className={className} observer={observer} size={size}>
 			<ClayForm action={submitURL} onSubmit={handleFormSubmit}>
 				{title && <ClayModal.Header>{title}</ClayModal.Header>}
 
 				<ClayModal.Body>
-					{React.Children.map(children, (child, index) =>
-						React.cloneElement(child, {
-							isActive: index === currentStepIndex,
-						})
-					)}
+					{React.Children.map(children, mapChild)}
 				</ClayModal.Body>
 
 				<ClayModal.Footer
@@ -129,13 +141,17 @@ MultiStepModal.propTypes = {
 	title: PropTypes.string,
 };
 
-export function MultiStepModalStep({children, isActive}) {
+const MultiStepModalStep = React.forwardRef(({children, isActive}, ref) => {
 	return (
-		<div aria-hidden={!isActive} style={{display: isActive ? '' : 'none'}}>
+		<div
+			aria-hidden={!isActive}
+			ref={ref}
+			style={{display: isActive ? '' : 'none'}}
+		>
 			{children}
 		</div>
 	);
-}
+});
 
 MultiStepModalStep.propTypes = {
 	isActive: PropTypes.bool,
