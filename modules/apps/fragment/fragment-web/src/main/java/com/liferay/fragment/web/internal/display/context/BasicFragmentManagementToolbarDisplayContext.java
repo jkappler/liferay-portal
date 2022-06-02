@@ -27,8 +27,19 @@ import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.info.field.type.BooleanInfoFieldType;
+import com.liferay.info.field.type.DateInfoFieldType;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.info.field.type.InfoFieldType;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.info.field.type.NumberInfoFieldType;
+import com.liferay.info.field.type.SelectInfoFieldType;
+import com.liferay.info.field.type.TextInfoFieldType;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.List;
@@ -133,6 +144,16 @@ public class BasicFragmentManagementToolbarDisplayContext
 				WebKeys.THEME_DISPLAY);
 
 		return HashMapBuilder.<String, Object>put(
+			"addFragmentEntryURL",
+           () -> PortletURLBuilder.createActionURL(
+                liferayPortletResponse
+            ).setActionName(
+                "/fragment/add_fragment_entry"
+            ).setParameter(
+                "fragmentCollectionId",
+                fragmentDisplayContext.getFragmentCollectionId()
+            ).buildString()
+        ).put(
 			"copyFragmentEntryURL",
 			() -> PortletURLBuilder.createActionURL(
 				liferayPortletResponse
@@ -164,9 +185,15 @@ public class BasicFragmentManagementToolbarDisplayContext
 					toString();
 			}
 		).put(
+			"featureFlagLps152938",
+			GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-152938"))
+		).put(
 			"fragmentCollectionId",
 			ParamUtil.getLong(liferayPortletRequest, "fragmentCollectionId")
 		).put(
+            "fieldTypes",
+            _getFieldTypesJSONArray()
+        ).put(
 			"moveFragmentCompositionsAndFragmentEntriesURL",
 			() -> PortletURLBuilder.createActionURL(
 				liferayPortletResponse
@@ -202,8 +229,6 @@ public class BasicFragmentManagementToolbarDisplayContext
 					).setParameter(
 						"fragmentCollectionId",
 						fragmentDisplayContext.getFragmentCollectionId()
-					).setParameter(
-						"type", FragmentConstants.TYPE_COMPONENT
 					).buildString());
 
 				dropdownItem.putData(
@@ -231,5 +256,30 @@ public class BasicFragmentManagementToolbarDisplayContext
 
 		return false;
 	}
+
+	private JSONArray _getFieldTypesJSONArray() {
+        ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		for (InfoFieldType infoFieldType : _INFO_FIELD_TYPES) {
+			jsonArray.put(
+				JSONUtil.put(
+			"label", infoFieldType.getLabel(themeDisplay.getLocale())
+		).put(
+			"type", infoFieldType.getName()
+		));
+		}
+
+		return jsonArray;
+	}
+
+    private static final InfoFieldType[] _INFO_FIELD_TYPES = {
+		BooleanInfoFieldType.INSTANCE, DateInfoFieldType.INSTANCE,
+		NumberInfoFieldType.INSTANCE, SelectInfoFieldType.INSTANCE,
+		TextInfoFieldType.INSTANCE
+	};
 
 }
