@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.info.web.internal.helper;
+package com.liferay.info.internal.helper;
 
 import com.liferay.info.exception.NoSuchFormVariationException;
 import com.liferay.info.field.InfoField;

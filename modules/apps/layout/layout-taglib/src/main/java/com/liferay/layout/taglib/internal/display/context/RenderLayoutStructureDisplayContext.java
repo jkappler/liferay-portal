@@ -104,7 +104,8 @@ public class RenderLayoutStructureDisplayContext {
 
 		sb.append(PortalUtil.getPortalURL(_httpServletRequest));
 		sb.append(PortalUtil.getPathContext());
-		sb.append("/c/info/add_info_item");
+		sb.append("/o/info_item/add_info_item"); // Servlet
+//		sb.append("/c/info/add_info_item"); // Struts Action
 
 		return sb.toString();
 	}

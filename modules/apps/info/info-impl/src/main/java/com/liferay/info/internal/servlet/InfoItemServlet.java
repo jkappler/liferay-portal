@@ -12,46 +12,57 @@
  * details.
  */
 
-package com.liferay.info.web.internal.struts;
+package com.liferay.info.internal.servlet;
 
 import com.liferay.info.exception.InfoFormException;
 import com.liferay.info.exception.InfoFormValidationException;
 import com.liferay.info.form.InfoForm;
+import com.liferay.info.internal.helper.InfoRequestFieldValuesProviderHelper;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.creator.InfoItemCreator;
-import com.liferay.info.web.internal.helper.InfoRequestFieldValuesProviderHelper;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.SessionErrors;
-import com.liferay.portal.kernel.struts.StrutsAction;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.liferay.portal.kernel.util.WebKeys;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
  * @author Rubén Pulido
  */
 @Component(
-	immediate = true, property = "path=/info/add_info_item",
-	service = StrutsAction.class
+	immediate = true,
+	property = {
+		"osgi.http.whiteboard.context.path=/info_item",
+		"osgi.http.whiteboard.servlet.name=com.liferay.info.internal.servlet.InfoItemServlet",
+		"osgi.http.whiteboard.servlet.pattern=/info_item/*"
+	},
+	service = {InfoItemServlet.class, Servlet.class}
 )
-public class AddInfoItemStrutsAction implements StrutsAction {
+public class InfoItemServlet extends HttpServlet {
 
 	@Override
-	public String execute(
+	protected void doGet(
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse)
-		throws Exception {
+		throws IOException, ServletException {
 
 		HttpServletRequest originalHttpServletRequest =
 			_portal.getOriginalServletRequest(httpServletRequest);
@@ -98,9 +109,9 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 
 		httpServletResponse.sendRedirect(
 			httpServletRequest.getHeader(HttpHeaders.REFERER));
-
-		return null;
 	}
+
+	private static final long serialVersionUID = 1L;
 
 	@Activate
 	@Modified
@@ -110,7 +121,7 @@ public class AddInfoItemStrutsAction implements StrutsAction {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		AddInfoItemStrutsAction.class);
+		InfoItemServlet.class);
 
 	@Reference
 	private InfoItemServiceTracker _infoItemServiceTracker;

@@ -61,7 +61,7 @@ public class BlogsEntryInfoItemCreator implements InfoItemCreator<BlogsEntry> {
 				serviceContext.getScopeGroupId(), ActionKeys.ADD_ENTRY);
 		}
 		catch (PrincipalException principalException) {
-			throw new InfoFormException(principalException);
+			throw new InfoFormException();
 		}
 
 		InfoFieldValue<Object> contentInfoFieldValue =
@@ -126,7 +126,7 @@ public class BlogsEntryInfoItemCreator implements InfoItemCreator<BlogsEntry> {
 				_log.debug(portalException);
 			}
 
-			throw new InfoFormException(portalException);
+			throw new InfoFormException();
 		}
 	}
 
