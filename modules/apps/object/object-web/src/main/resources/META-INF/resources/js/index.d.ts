@@ -75,7 +75,7 @@ interface ObjectField {
 	objectFieldSettings?: ObjectFieldSetting[];
 	relationshipType?: unknown;
 	required: boolean;
-	state: boolean;
+	state?: boolean;
 	system?: boolean;
 }
 

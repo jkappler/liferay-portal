@@ -45,9 +45,12 @@ function ModalAddObjectField({
 	};
 
 	const onSubmit = async (field: ObjectField) => {
+		const newField = {...field}
+		delete newField.state;
+
 		const response = await fetch(apiURL, {
 			body: JSON.stringify({
-				...field,
+				...newField,
 				name:
 					field.name ||
 					toCamelCase(field.label[defaultLanguageId] as string),
