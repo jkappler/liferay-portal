@@ -852,5 +852,24 @@
 				]
 			}
 		]
+	},
+	{
+		"configurationRole": "advanced",
+		"styles": [
+			{
+				"cssTemplate": "content-visibility: {value} !important;",
+				"dataType": "string",
+				"label": "set-content-visibility-to-auto",
+				"name": "contentVisibility",
+				"responsive": false,
+				"type": "checkbox",
+				"typeOptions": {
+					"customValues": {
+						"checked": "auto",
+						"unchecked": "visible"
+					}
+				}
+			}
+		]
 	}
 ]

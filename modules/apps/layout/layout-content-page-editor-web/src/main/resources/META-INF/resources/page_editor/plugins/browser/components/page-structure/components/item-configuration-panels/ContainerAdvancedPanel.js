@@ -16,6 +16,7 @@ import React from 'react';
 
 import {HideFromSearchField} from '../../../../../../app/components/fragment-configuration-fields/HideFromSearchField';
 import {SelectField} from '../../../../../../app/components/fragment-configuration-fields/SelectField';
+import {COMMON_STYLES_ROLES} from '../../../../../../app/config/constants/commonStylesRoles';
 import {VIEWPORT_SIZES} from '../../../../../../app/config/constants/viewportSizes';
 import {
 	useDispatch,
@@ -25,6 +26,7 @@ import selectSegmentsExperienceId from '../../../../../../app/selectors/selectSe
 import updateItemConfig from '../../../../../../app/thunks/updateItemConfig';
 import {getLayoutDataItemPropTypes} from '../../../../../../prop-types/index';
 import CSSFieldSet from './CSSFieldSet';
+import {CommonStyles} from './CommonStyles';
 
 const HTML_TAGS = [
 	'div',
@@ -84,6 +86,12 @@ export default function ContainerAdvancedPanel({item}) {
 			)}
 
 			<HideFromSearchField item={item} />
+
+			<CommonStyles
+				commonStylesValues={item.config.styles}
+				item={item}
+				role={COMMON_STYLES_ROLES.advanced}
+			/>
 
 			<CSSFieldSet item={item} />
 		</>

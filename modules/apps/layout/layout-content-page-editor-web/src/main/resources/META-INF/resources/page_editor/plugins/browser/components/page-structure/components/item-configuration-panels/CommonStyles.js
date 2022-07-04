@@ -143,6 +143,18 @@ function filterCommonStyles({item, permissions, role, styles}) {
 			});
 	}
 
+	if (
+		item.type !== LAYOUT_DATA_ITEM_TYPES.container ||
+		!Liferay.FeatureFlags['LPS-147895']
+	) {
+		nextStyles = nextStyles.filter(
+			(fieldSet) =>
+				!fieldSet.styles.find(
+					(field) => field.name === 'contentVisibility'
+				)
+		);
+	}
+
 	// Filter styles based on permissions
 	// For UPDATE_LAYOUT_LIMTED and UPDATE_LAYOUT_BASIC we show the frame
 	// styles only in grid and container fragments.
