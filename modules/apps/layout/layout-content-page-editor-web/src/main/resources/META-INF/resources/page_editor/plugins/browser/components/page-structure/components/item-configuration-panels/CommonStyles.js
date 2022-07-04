@@ -123,9 +123,9 @@ CommonStyles.propTypes = {
 
 function filterCommonStyles({item, permissions, role, styles}) {
 	let nextStyles = styles.filter((fieldSet) =>
-		role === COMMON_STYLES_ROLES.general
-			? fieldSet.configurationRole === COMMON_STYLES_ROLES.general
-			: fieldSet.configurationRole !== COMMON_STYLES_ROLES.general
+		fieldSet.configurationRole
+			? fieldSet.configurationRole === role
+			: role === COMMON_STYLES_ROLES.styles
 	);
 
 	if (item.type === LAYOUT_DATA_ITEM_TYPES.collection) {

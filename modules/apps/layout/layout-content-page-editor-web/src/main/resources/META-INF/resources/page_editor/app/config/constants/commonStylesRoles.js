@@ -13,6 +13,7 @@
  */
 
 export const COMMON_STYLES_ROLES = {
+	advanced: 'advanced',
 	general: 'general',
 	styles: 'styles',
 };
