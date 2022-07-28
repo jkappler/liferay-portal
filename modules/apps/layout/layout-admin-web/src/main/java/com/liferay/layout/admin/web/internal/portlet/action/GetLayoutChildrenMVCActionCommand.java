@@ -14,6 +14,7 @@
 
 package com.liferay.layout.admin.web.internal.portlet.action;
 
+import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.admin.web.internal.display.context.LayoutsAdminDisplayContext;
@@ -60,7 +61,8 @@ public class GetLayoutChildrenMVCActionCommand extends BaseMVCActionCommand {
 
 		LayoutsAdminDisplayContext layoutsAdminDisplayContext =
 			new LayoutsAdminDisplayContext(
-				_itemSelector, _layoutConverterRegistry, _layoutCopyHelper,
+				_cetManager, _itemSelector, _layoutConverterRegistry,
+				_layoutCopyHelper,
 				_portal.getLiferayPortletRequest(actionRequest),
 				_portal.getLiferayPortletResponse(actionResponse),
 				_stagingGroupHelper);
@@ -89,6 +91,9 @@ public class GetLayoutChildrenMVCActionCommand extends BaseMVCActionCommand {
 						layout.getLayoutId(), layout.isPrivateLayout());
 				}));
 	}
+
+	@Reference
+	private CETManager _cetManager;
 
 	@Reference
 	private ItemSelector _itemSelector;
