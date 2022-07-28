@@ -17,8 +17,8 @@
 <%@ include file="/init.jsp" %>
 
 <%
-Group liveGroup = layoutsAdminDisplayContext.getLiveGroup();
-LayoutSet selLayoutSet = layoutsAdminDisplayContext.getSelLayoutSet();
+Group liveGroup = editLayoutSetDisplayContext.getLiveGroup();
+LayoutSet selLayoutSet = editLayoutSetDisplayContext.getSelLayoutSet();
 %>
 
 <liferay-ui:error-marker
@@ -38,12 +38,12 @@ LayoutSet selLayoutSet = layoutsAdminDisplayContext.getSelLayoutSet();
 <p class="text-muted">
 
 	<%
-	Group group = layoutsAdminDisplayContext.getGroup();
+	Group group = editLayoutSetDisplayContext.getGroup();
 	%>
 
 	<c:choose>
 		<c:when test="<%= group.isPrivateLayoutsEnabled() %>">
-			<liferay-ui:message key='<%= "upload-a-logo-for-the-" + (layoutsAdminDisplayContext.isPrivateLayout() ? "private" : "public") + "-pages-that-is-used-instead-of-the-default-enterprise-logo" %>' />
+			<liferay-ui:message key='<%= "upload-a-logo-for-the-" + (editLayoutSetDisplayContext.isPrivateLayout() ? "private" : "public") + "-pages-that-is-used-instead-of-the-default-enterprise-logo" %>' />
 		</c:when>
 		<c:otherwise>
 			<liferay-ui:message key="upload-a-logo-for-pages-that-is-used-instead-of-the-default-enterprise-logo" />
@@ -66,7 +66,7 @@ if (selLayoutSet.getLogoId() == 0) {
 	defaultLogo = true;
 }
 else {
-	LayoutSet guestGroupLayoutSet = layoutsAdminDisplayContext.getGuestGroupLayoutSet(company.getCompanyId());
+	LayoutSet guestGroupLayoutSet = editLayoutSetDisplayContext.getGuestGroupLayoutSet(company.getCompanyId());
 
 	if (selLayoutSet.getLogoId() == guestGroupLayoutSet.getLogoId()) {
 		defaultLogo = true;
@@ -79,7 +79,7 @@ else {
 	defaultLogo="<%= defaultLogo %>"
 	defaultLogoURL="<%= companyLogoURL %>"
 	logoDisplaySelector=".layoutset-logo"
-	showButtons="<%= GroupPermissionUtil.contains(permissionChecker, layoutsAdminDisplayContext.getSelGroup(), ActionKeys.MANAGE_LAYOUTS) && SitesUtil.isLayoutSetPrototypeUpdateable(selLayoutSet) %>"
+	showButtons="<%= GroupPermissionUtil.contains(permissionChecker, editLayoutSetDisplayContext.getSelGroup(), ActionKeys.MANAGE_LAYOUTS) && SitesUtil.isLayoutSetPrototypeUpdateable(selLayoutSet) %>"
 	tempImageFileName="<%= String.valueOf(selLayoutSet.getLayoutSetId()) %>"
 />
 

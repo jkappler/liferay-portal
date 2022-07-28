@@ -17,9 +17,9 @@
 <%@ include file="/init.jsp" %>
 
 <%
-Group group = layoutsAdminDisplayContext.getGroup();
+Group group = editLayoutDisplayContext.getGroup();
 
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+Layout selLayout = editLayoutDisplayContext.getSelLayout();
 
 LayoutType selLayoutType = selLayout.getLayoutType();
 
@@ -39,11 +39,11 @@ String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
 String friendlyURLBase = StringPool.BLANK;
 %>
 
-<c:if test="<%= !group.isLayoutPrototype() && selLayoutType.isURLFriendliable() && !layoutsAdminDisplayContext.isDraft() && !selLayout.isSystem() %>">
+<c:if test="<%= !group.isLayoutPrototype() && selLayoutType.isURLFriendliable() && !editLayoutDisplayContext.isDraft() && !selLayout.isSystem() %>">
 	<liferay-ui:error exception="<%= DuplicateFriendlyURLEntryException.class %>" message="the-friendly-url-is-already-in-use.-please-enter-a-unique-friendly-url" />
 
 	<%
-	friendlyURLBase = layoutsAdminDisplayContext.getFriendlyURLBase();
+	friendlyURLBase = editLayoutDisplayContext.getFriendlyURLBase();
 	%>
 
 	<liferay-ui:error exception="<%= LayoutFriendlyURLException.class %>" focusField="friendlyURL">
@@ -81,7 +81,7 @@ String friendlyURLBase = StringPool.BLANK;
 
 <c:choose>
 	<c:when test="<%= !group.isLayoutPrototype() %>">
-		<c:if test="<%= !layoutsAdminDisplayContext.isDraft() && !selLayout.isSystem() %>">
+		<c:if test="<%= !editLayoutDisplayContext.isDraft() && !selLayout.isSystem() %>">
 			<aui:input ignoreRequestValue="<%= SessionErrors.isEmpty(liferayPortletRequest) %>" name="name" />
 
 			<div class="form-group">
@@ -90,7 +90,7 @@ String friendlyURLBase = StringPool.BLANK;
 		</c:if>
 
 		<c:choose>
-			<c:when test="<%= selLayoutType.isURLFriendliable() && !layoutsAdminDisplayContext.isDraft() && !selLayout.isSystem() %>">
+			<c:when test="<%= selLayoutType.isURLFriendliable() && !editLayoutDisplayContext.isDraft() && !selLayout.isSystem() %>">
 				<liferay-friendly-url:input
 					className="<%= Layout.class.getName() %>"
 					classPK="<%= selLayout.getPlid() %>"

@@ -17,22 +17,22 @@
 <%@ include file="/init.jsp" %>
 
 <%
-LayoutSet selLayoutSet = layoutsAdminDisplayContext.getSelLayoutSet();
+LayoutSet selLayoutSet = editLayoutSetDisplayContext.getSelLayoutSet();
 %>
 
 <div class="form-group">
-	<img alt="<%= HtmlUtil.escape(layoutsAdminDisplayContext.getFaviconTitle()) %>" class="mb-2" height="16" id="<portlet:namespace />faviconImage" src="<%= layoutsAdminDisplayContext.getFaviconURL() %>" width="16" />
+	<img alt="<%= HtmlUtil.escape(editLayoutSetDisplayContext.getFaviconTitle()) %>" class="mb-2" height="16" id="<portlet:namespace />faviconImage" src="<%= editLayoutSetDisplayContext.getFaviconURL() %>" width="16" />
 
 	<p>
-		<b><liferay-ui:message key="favicon-name" />:</b> <span id="<portlet:namespace />faviconTitle"><%= layoutsAdminDisplayContext.getFaviconTitle() %></span>
+		<b><liferay-ui:message key="favicon-name" />:</b> <span id="<portlet:namespace />faviconTitle"><%= editLayoutSetDisplayContext.getFaviconTitle() %></span>
 	</p>
 
 	<aui:input name="faviconFileEntryId" type="hidden" value="<%= selLayoutSet.getFaviconFileEntryId() %>" />
-	<aui:input name="themeFaviconCETExternalReferenceCode" type="hidden" value="<%= layoutsAdminDisplayContext.getThemeFaviconCETExternalReferenceCode() %>" />
+	<aui:input name="themeFaviconCETExternalReferenceCode" type="hidden" value="<%= editLayoutSetDisplayContext.getThemeFaviconCETExternalReferenceCode() %>" />
 
 	<aui:button name="selectFaviconButton" value="change-favicon" />
 
-	<aui:button disabled="<%= !layoutsAdminDisplayContext.isClearFaviconButtonEnabled() %>" name="clearFaviconButton" value="clear" />
+	<aui:button disabled="<%= !editLayoutSetDisplayContext.isClearFaviconButtonEnabled() %>" name="clearFaviconButton" value="clear" />
 
 	<aui:script sandbox="<%= true %>">
 		const clearFaviconButton = document.getElementById(
@@ -93,9 +93,9 @@ LayoutSet selLayoutSet = layoutsAdminDisplayContext.getSelLayoutSet();
 					}
 				},
 				selectEventName:
-					'<%= layoutsAdminDisplayContext.getSelectFaviconEventName() %>',
+					'<%= editLayoutSetDisplayContext.getSelectFaviconEventName() %>',
 				title: '<liferay-ui:message key="change-favicon" />',
-				url: '<%= layoutsAdminDisplayContext.getFileEntryItemSelectorURL() %>',
+				url: '<%= editLayoutSetDisplayContext.getFileEntryItemSelectorURL() %>',
 			});
 		});
 

@@ -23,7 +23,7 @@ boolean prototypeGroup = false;
 String templateContent = null;
 String templateId = null;
 
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+Layout selLayout = editLayoutDisplayContext.getSelLayout();
 
 if (selLayout != null) {
 	LayoutTypePortlet selLayoutTypePortlet = (LayoutTypePortlet)selLayout.getLayoutType();

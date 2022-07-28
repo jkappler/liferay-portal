@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+Layout selLayout = editLayoutDisplayContext.getSelLayout();
 
 UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 %>
@@ -32,7 +32,7 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 <liferay-ui:error exception="<%= ImageTypeException.class %>" message="please-enter-a-file-with-a-valid-file-type" />
 
 <%
-Group group = layoutsAdminDisplayContext.getGroup();
+Group group = editLayoutDisplayContext.getGroup();
 %>
 
 <c:if test="<%= !group.isLayoutPrototype() %>">

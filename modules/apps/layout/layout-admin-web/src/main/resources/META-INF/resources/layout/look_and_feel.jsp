@@ -17,17 +17,17 @@
 <%@ include file="/init.jsp" %>
 
 <%
-Group group = layoutsAdminDisplayContext.getGroup();
+Group group = editLayoutDisplayContext.getGroup();
 
-LayoutSet layoutSet = layoutsAdminDisplayContext.getSelLayoutSet();
+LayoutSet layoutSet = editLayoutDisplayContext.getSelLayoutSet();
 
 Theme rootTheme = layoutSet.getTheme();
 
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+Layout selLayout = editLayoutDisplayContext.getSelLayout();
 
-String rootNodeName = layoutsAdminDisplayContext.getRootNodeName();
+String rootNodeName = editLayoutDisplayContext.getRootNodeName();
 
-PortletURL redirectURL = layoutsAdminDisplayContext.getRedirectURL();
+PortletURL redirectURL = editLayoutDisplayContext.getRedirectURL();
 %>
 
 <liferay-ui:error-marker
