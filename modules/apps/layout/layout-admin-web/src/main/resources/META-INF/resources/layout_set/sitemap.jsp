@@ -19,12 +19,12 @@
 <%
 String sitemapUrl = PortalUtil.getPortalURL(request) + themeDisplay.getPathContext() + "/sitemap.xml";
 
-LayoutSet layoutSet = layoutsAdminDisplayContext.getSelLayoutSet();
+LayoutSet layoutSet = editLayoutSetDisplayContext.getSelLayoutSet();
 
 TreeMap<String, String> virtualHostnames = layoutSet.getVirtualHostnames();
 
 if (!virtualHostnames.containsKey(PortalUtil.getHost(request))) {
-	sitemapUrl += "?groupId=" + layoutsAdminDisplayContext.getLiveGroupId() + "&privateLayout=" + layoutsAdminDisplayContext.isPrivateLayout();
+	sitemapUrl += "?groupId=" + editLayoutSetDisplayContext.getLiveGroupId() + "&privateLayout=" + editLayoutSetDisplayContext.isPrivateLayout();
 }
 %>
 

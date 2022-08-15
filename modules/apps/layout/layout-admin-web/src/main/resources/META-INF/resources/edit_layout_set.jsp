@@ -23,11 +23,11 @@ String backURL = ParamUtil.getString(request, "backURL", redirect);
 
 Group selGroup = (Group)request.getAttribute(WebKeys.GROUP);
 
-long liveGroupId = layoutsAdminDisplayContext.getLiveGroupId();
-boolean privateLayout = layoutsAdminDisplayContext.isPrivateLayout();
-LayoutSet selLayoutSet = layoutsAdminDisplayContext.getSelLayoutSet();
+long liveGroupId = editLayoutSetDisplayContext.getLiveGroupId();
+boolean privateLayout = editLayoutSetDisplayContext.isPrivateLayout();
+LayoutSet selLayoutSet = editLayoutSetDisplayContext.getSelLayoutSet();
 
-PortletURL redirectURL = layoutsAdminDisplayContext.getRedirectURL();
+PortletURL redirectURL = editLayoutSetDisplayContext.getRedirectURL();
 
 if (selGroup.isLayoutSetPrototype()) {
 	privateLayout = true;
@@ -54,8 +54,8 @@ renderResponse.setTitle(selGroup.getLayoutRootNodeName(privateLayout, locale));
 	<aui:input name="redirect" type="hidden" value="<%= redirectURL.toString() %>" />
 	<aui:input name="groupId" type="hidden" value="<%= selGroup.getGroupId() %>" />
 	<aui:input name="liveGroupId" type="hidden" value="<%= liveGroupId %>" />
-	<aui:input name="stagingGroupId" type="hidden" value="<%= layoutsAdminDisplayContext.getStagingGroupId() %>" />
-	<aui:input name="selPlid" type="hidden" value="<%= layoutsAdminDisplayContext.getSelPlid() %>" />
+	<aui:input name="stagingGroupId" type="hidden" value="<%= editLayoutSetDisplayContext.getStagingGroupId() %>" />
+	<aui:input name="selPlid" type="hidden" value="<%= editLayoutSetDisplayContext.getSelPlid() %>" />
 	<aui:input name="privateLayout" type="hidden" value="<%= privateLayout %>" />
 	<aui:input name="layoutSetId" type="hidden" value="<%= selLayoutSet.getLayoutSetId() %>" />
 	<aui:input name="<%= PortletDataHandlerKeys.SELECTED_LAYOUTS %>" type="hidden" />

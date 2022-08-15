@@ -19,7 +19,7 @@
 <%
 LayoutLookAndFeelDisplayContext layoutLookAndFeelDisplayContext = new LayoutLookAndFeelDisplayContext(request, layoutsAdminDisplayContext, liferayPortletResponse);
 
-LayoutSet selLayoutSet = layoutsAdminDisplayContext.getSelLayoutSet();
+LayoutSet selLayoutSet = editLayoutSetDisplayContext.getSelLayoutSet();
 %>
 
 <liferay-ui:error-marker

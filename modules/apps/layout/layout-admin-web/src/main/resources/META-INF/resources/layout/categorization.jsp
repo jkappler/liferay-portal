@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+Layout selLayout = editLayoutDisplayContext.getSelLayout();
 %>
 
 <liferay-ui:error-marker

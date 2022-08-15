@@ -40,6 +40,8 @@ page import="com.liferay.friendly.url.exception.DuplicateFriendlyURLEntryExcepti
 page import="com.liferay.frontend.taglib.form.navigator.constants.FormNavigatorConstants" %><%@
 page import="com.liferay.layout.admin.constants.LayoutScreenNavigationEntryConstants" %><%@
 page import="com.liferay.layout.admin.web.internal.constants.LayoutAdminWebKeys" %><%@
+page import="com.liferay.layout.admin.web.internal.display.context.EditLayoutDisplayContext" %><%@
+page import="com.liferay.layout.admin.web.internal.display.context.EditLayoutSetDisplayContext" %><%@
 page import="com.liferay.layout.admin.web.internal.display.context.LayoutLookAndFeelDisplayContext" %><%@
 page import="com.liferay.layout.admin.web.internal.display.context.LayoutsAdminDisplayContext" %><%@
 page import="com.liferay.layout.admin.web.internal.display.context.LayoutsAdminManagementToolbarDisplayContext" %><%@
@@ -169,6 +171,8 @@ page import="javax.portlet.PortletURL" %>
 
 <%
 LayoutsAdminDisplayContext layoutsAdminDisplayContext = (LayoutsAdminDisplayContext)request.getAttribute(LayoutAdminWebKeys.LAYOUT_PAGE_LAYOUT_ADMIN_DISPLAY_CONTEXT);
+EditLayoutDisplayContext editLayoutDisplayContext = (EditLayoutDisplayContext)request.getAttribute(LayoutAdminWebKeys.EDIT_LAYOUT_DISPLAY_CONTEXT);
+EditLayoutSetDisplayContext editLayoutSetDisplayContext = (EditLayoutSetDisplayContext)request.getAttribute(LayoutAdminWebKeys.EDIT_LAYOUT_SET_DISPLAY_CONTEXT);
 
 portletDisplay.setShowExportImportIcon(false);
 %>

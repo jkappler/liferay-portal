@@ -23,6 +23,8 @@ import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.admin.web.internal.constants.LayoutAdminWebKeys;
+import com.liferay.layout.admin.web.internal.display.context.EditLayoutDisplayContext;
+import com.liferay.layout.admin.web.internal.display.context.EditLayoutSetDisplayContext;
 import com.liferay.layout.admin.web.internal.display.context.LayoutsAdminDisplayContext;
 import com.liferay.layout.admin.web.internal.display.context.MillerColumnsDisplayContext;
 import com.liferay.layout.admin.web.internal.display.context.SelectLayoutCollectionDisplayContext;
@@ -182,7 +184,22 @@ public class GroupPagesPortlet extends MVCPortlet {
 
 			LayoutsAdminDisplayContext layoutsAdminDisplayContext =
 				new LayoutsAdminDisplayContext(
-					_itemSelector, _layoutConverterRegistry, _layoutCopyHelper,
+					_cetManager, _itemSelector, _layoutConverterRegistry,
+					_layoutCopyHelper,
+					_portal.getLiferayPortletRequest(renderRequest),
+					_portal.getLiferayPortletResponse(renderResponse),
+					_stagingGroupHelper);
+
+			EditLayoutDisplayContext editLayoutDisplayContext =
+				new EditLayoutDisplayContext(
+					_cetManager, _itemSelector,
+					_portal.getLiferayPortletRequest(renderRequest),
+					_portal.getLiferayPortletResponse(renderResponse),
+					_stagingGroupHelper);
+
+			EditLayoutSetDisplayContext editLayoutSetDisplayContext =
+				new EditLayoutSetDisplayContext(
+					_cetManager, _itemSelector,
 					_portal.getLiferayPortletRequest(renderRequest),
 					_portal.getLiferayPortletResponse(renderResponse),
 					_stagingGroupHelper);
@@ -198,6 +215,12 @@ public class GroupPagesPortlet extends MVCPortlet {
 				LayoutAdminWebKeys.LAYOUT_ACTION_DROPDOWN_ITEMS_PROVIDER,
 				layoutActionDropdownItemsProvider);
 
+			renderRequest.setAttribute(
+				LayoutAdminWebKeys.EDIT_LAYOUT_DISPLAY_CONTEXT,
+				editLayoutDisplayContext);
+			renderRequest.setAttribute(
+				LayoutAdminWebKeys.EDIT_LAYOUT_SET_DISPLAY_CONTEXT,
+				editLayoutSetDisplayContext);
 			renderRequest.setAttribute(
 				LayoutAdminWebKeys.LAYOUT_PAGE_LAYOUT_ADMIN_DISPLAY_CONTEXT,
 				layoutsAdminDisplayContext);

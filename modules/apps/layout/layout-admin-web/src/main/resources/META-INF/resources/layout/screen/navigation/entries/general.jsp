@@ -22,16 +22,16 @@ String redirect = ParamUtil.getString(request, "redirect");
 String backURL = ParamUtil.getString(request, "backURL", redirect);
 
 if (Validator.isNull(backURL)) {
-	backURL = PortalUtil.getLayoutFullURL(layoutsAdminDisplayContext.getSelLayout(), themeDisplay);
+	backURL = PortalUtil.getLayoutFullURL(editLayoutDisplayContext.getSelLayout(), themeDisplay);
 }
 
 String portletResource = ParamUtil.getString(request, "portletResource");
 
 Group selGroup = (Group)request.getAttribute(WebKeys.GROUP);
 
-Group group = layoutsAdminDisplayContext.getGroup();
+Group group = editLayoutDisplayContext.getGroup();
 
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+Layout selLayout = editLayoutDisplayContext.getSelLayout();
 
 LayoutRevision layoutRevision = LayoutStagingUtil.getLayoutRevision(selLayout);
 
@@ -62,7 +62,7 @@ if (Validator.isNotNull(backURL)) {
 	portletDisplay.setURLBack(backURL);
 }
 
-renderResponse.setTitle(layoutsAdminDisplayContext.getConfigurationTitle(selLayout, locale));
+renderResponse.setTitle(editLayoutDisplayContext.getConfigurationTitle(selLayout, locale));
 %>
 
 <c:choose>
@@ -99,7 +99,7 @@ renderResponse.setTitle(layoutsAdminDisplayContext.getConfigurationTitle(selLayo
 						deleteLayoutButton.addEventListener('click', (event) => {
 							<portlet:actionURL name="/layout_admin/delete_layout" var="deleteLayoutURL">
 								<portlet:param name="redirect" value="<%= currentURL %>" />
-								<portlet:param name="selPlid" value="<%= String.valueOf(layoutsAdminDisplayContext.getSelPlid()) %>" />
+								<portlet:param name="selPlid" value="<%= String.valueOf(editLayoutDisplayContext.getSelPlid()) %>" />
 								<portlet:param name="layoutSetBranchId" value="0" />
 							</portlet:actionURL>
 
@@ -119,16 +119,16 @@ renderResponse.setTitle(layoutsAdminDisplayContext.getConfigurationTitle(selLayo
 			<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 			<aui:input name="backURL" type="hidden" value="<%= backURL %>" />
 			<aui:input name="portletResource" type="hidden" value="<%= portletResource %>" />
-			<aui:input name="groupId" type="hidden" value="<%= layoutsAdminDisplayContext.getGroupId() %>" />
-			<aui:input name="liveGroupId" type="hidden" value="<%= layoutsAdminDisplayContext.getLiveGroupId() %>" />
-			<aui:input name="stagingGroupId" type="hidden" value="<%= layoutsAdminDisplayContext.getStagingGroupId() %>" />
-			<aui:input name="selPlid" type="hidden" value="<%= layoutsAdminDisplayContext.getSelPlid() %>" />
-			<aui:input name="privateLayout" type="hidden" value="<%= layoutsAdminDisplayContext.isPrivateLayout() %>" />
-			<aui:input name="layoutId" type="hidden" value="<%= layoutsAdminDisplayContext.getLayoutId() %>" />
+			<aui:input name="groupId" type="hidden" value="<%= editLayoutDisplayContext.getGroupId() %>" />
+			<aui:input name="liveGroupId" type="hidden" value="<%= editLayoutDisplayContext.getLiveGroupId() %>" />
+			<aui:input name="stagingGroupId" type="hidden" value="<%= editLayoutDisplayContext.getStagingGroupId() %>" />
+			<aui:input name="selPlid" type="hidden" value="<%= editLayoutDisplayContext.getSelPlid() %>" />
+			<aui:input name="privateLayout" type="hidden" value="<%= editLayoutDisplayContext.isPrivateLayout() %>" />
+			<aui:input name="layoutId" type="hidden" value="<%= editLayoutDisplayContext.getLayoutId() %>" />
 			<aui:input name="type" type="hidden" value="<%= selLayout.getType() %>" />
 			<aui:input name="<%= PortletDataHandlerKeys.SELECTED_LAYOUTS %>" type="hidden" />
 
-			<c:if test="<%= layoutsAdminDisplayContext.isLayoutPageTemplateEntry() || ((selLayout.isTypeAssetDisplay() || selLayout.isTypeContent()) && layoutsAdminDisplayContext.isDraft()) %>">
+			<c:if test="<%= editLayoutDisplayContext.isLayoutPageTemplateEntry() || ((selLayout.isTypeAssetDisplay() || selLayout.isTypeContent()) && editLayoutDisplayContext.isDraft()) %>">
 
 				<%
 				for (Locale availableLocale : LanguageUtil.getAvailableLocales(group.getGroupId())) {
@@ -218,7 +218,7 @@ renderResponse.setTitle(layoutsAdminDisplayContext.getConfigurationTitle(selLayo
 							</c:when>
 						</c:choose>
 
-						<c:if test="<%= (selLayout.getGroupId() != layoutsAdminDisplayContext.getGroupId()) && selLayoutGroup.isUserGroup() %>">
+						<c:if test="<%= (selLayout.getGroupId() != editLayoutDisplayContext.getGroupId()) && selLayoutGroup.isUserGroup() %>">
 
 							<%
 							UserGroup userGroup = UserGroupLocalServiceUtil.getUserGroup(selLayoutGroup.getClassPK());
@@ -238,7 +238,7 @@ renderResponse.setTitle(layoutsAdminDisplayContext.getConfigurationTitle(selLayo
 				</clay:sheet-section>
 
 				<clay:sheet-footer>
-					<c:if test="<%= (selLayout.getGroupId() == layoutsAdminDisplayContext.getGroupId()) && SitesUtil.isLayoutUpdateable(selLayout) && LayoutPermissionUtil.contains(permissionChecker, selLayout, ActionKeys.UPDATE) %>">
+					<c:if test="<%= (selLayout.getGroupId() == editLayoutDisplayContext.getGroupId()) && SitesUtil.isLayoutUpdateable(selLayout) && LayoutPermissionUtil.contains(permissionChecker, selLayout, ActionKeys.UPDATE) %>">
 						<aui:button type="submit" />
 
 						<c:if test="<%= Validator.isNotNull(backURL) %>">
