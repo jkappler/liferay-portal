@@ -15,9 +15,7 @@
 package com.liferay.portal.instances.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.instances.configuration.PortalInstancesConfiguration;
-import com.liferay.portal.instances.internal.configuration.PortalInstancesConfigurationFactory;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -115,11 +113,9 @@ public class PortalInstancesConfigurationFactoryTest {
 						new ServiceTracker<>(
 							bundleContext,
 							FrameworkUtil.createFilter(
-								StringBundler.concat(
-									"(component.name=",
-									PortalInstancesConfigurationFactory.class.
-										getName(),
-									")")),
+								"(component.name=com.liferay.portal." +
+									"instances.internal.configuration." +
+										"PortalInstancesConfigurationFactory)"),
 							null);
 
 					serviceTracker.open();
