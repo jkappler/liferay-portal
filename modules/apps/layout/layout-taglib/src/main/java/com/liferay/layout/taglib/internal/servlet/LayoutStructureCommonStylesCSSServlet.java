@@ -20,7 +20,6 @@ import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
 import com.liferay.frontend.token.definition.FrontendTokenMapping;
 import com.liferay.layout.provider.LayoutStructureProvider;
 import com.liferay.layout.responsive.ViewportSize;
-import com.liferay.layout.taglib.internal.util.SegmentsExperienceUtil;
 import com.liferay.layout.util.structure.CommonStylesUtil;
 import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
@@ -56,6 +55,8 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.util.DefaultStyleBookEntryUtil;
 
@@ -159,8 +160,7 @@ public class LayoutStructureCommonStylesCSSServlet extends HttpServlet {
 		LayoutStructure layoutStructure =
 			_layoutStructureProvider.getLayoutStructure(
 				layout.getPlid(),
-				SegmentsExperienceUtil.getSegmentsExperienceId(
-					httpServletRequest));
+				_getSegmentsExperienceId(httpServletRequest, layout));
 
 		if (layoutStructure == null) {
 			httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -382,6 +382,33 @@ public class LayoutStructureCommonStylesCSSServlet extends HttpServlet {
 		return cssSB.toString();
 	}
 
+	private long _getSegmentsExperienceId(
+		HttpServletRequest httpServletRequest, Layout layout) {
+
+		long segmentsExperienceId = ParamUtil.getLong(
+			httpServletRequest, "segmentsExperienceId", -1);
+
+		if (segmentsExperienceId == -1) {
+			return _segmentsExperienceLocalService.
+				fetchDefaultSegmentsExperienceId(layout.getPlid());
+		}
+
+		SegmentsExperience segmentsExperience =
+			_segmentsExperienceLocalService.fetchSegmentsExperience(
+				segmentsExperienceId);
+
+		if ((segmentsExperience == null) ||
+			((_portal.getClassNameId(Layout.class.getName()) !=
+				segmentsExperience.getClassNameId()) &&
+			 (layout.getPlid() != segmentsExperience.getClassPK()))) {
+
+			return _segmentsExperienceLocalService.
+				fetchDefaultSegmentsExperienceId(layout.getPlid());
+		}
+
+		return segmentsExperience.getSegmentsExperienceId();
+	}
+
 	private String _getStyleFromStyleBookEntry(
 		JSONObject frontendTokensJSONObject, String styleValue) {
 
@@ -553,6 +580,9 @@ public class LayoutStructureCommonStylesCSSServlet extends HttpServlet {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 	@Reference
 	private UserLocalService _userLocalService;
