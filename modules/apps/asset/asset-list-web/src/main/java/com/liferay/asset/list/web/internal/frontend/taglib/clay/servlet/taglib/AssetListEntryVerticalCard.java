@@ -17,8 +17,11 @@ package com.liferay.asset.list.web.internal.frontend.taglib.clay.servlet.taglib;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.web.internal.display.context.AssetListDisplayContext;
 import com.liferay.frontend.taglib.clay.servlet.taglib.BaseVerticalCard;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.RowChecker;
+
+import java.util.List;
 
 import javax.portlet.RenderRequest;
 
@@ -32,10 +35,16 @@ public class AssetListEntryVerticalCard extends BaseVerticalCard {
 		AssetListEntry assetListEntry, RenderRequest renderRequest,
 		RowChecker rowChecker) {
 
-		super(null, renderRequest, rowChecker);
+		super(assetListEntry, renderRequest, rowChecker);
 
 		_assetListDisplayContext = assetListDisplayContext;
 		_assetListEntry = assetListEntry;
+	}
+
+	@Override
+	public List<DropdownItem> getActionDropdownItems() {
+		return _assetListDisplayContext.
+			getAssetListEntryActionDropdownItemsProvider(_assetListEntry);
 	}
 
 	@Override
