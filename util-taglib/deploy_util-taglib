@@ -1,0 +1,29 @@
+diff --git a/util-taglib/src/com/liferay/taglib/aui/ATag.java b/util-taglib/src/com/liferay/taglib/aui/ATag.java
+index 67d54d65fc7a..d4e03d8222ac 100644
+--- a/util-taglib/src/com/liferay/taglib/aui/ATag.java
++++ b/util-taglib/src/com/liferay/taglib/aui/ATag.java
+@@ -60,13 +60,13 @@ public class ATag extends BaseATag {
+ 				jspWriter.write("role=\"img\"><use href=\"");
+ 				jspWriter.write(FrontendIconsUtil.getSpritemap(themeDisplay));
+ 				jspWriter.write("#shortcut\" /><span ");
+-				jspWriter.write("class=\"sr-only\">");
++				jspWriter.write("class=\"sr-only\">Holi");
+ 
+ 				String opensNewWindowLabel = LanguageUtil.get(
+ 					TagResourceBundleUtil.getResourceBundle(pageContext),
+ 					"opens-new-window");
+ 
+-				jspWriter.write(opensNewWindowLabel);
++				jspWriter.write("Holi" + opensNewWindowLabel);
+ 
+ 				jspWriter.write("</span>");
+ 				jspWriter.write("<title>");
+@@ -175,7 +175,7 @@ public class ATag extends BaseATag {
+ 
+ 		_writeDynamicAttributes(jspWriter);
+ 
+-		jspWriter.write(">");
++		jspWriter.write(">Holi");
+ 
+ 		if (Validator.isNotNull(label)) {
+ 			if (getLocalizeLabel()) {

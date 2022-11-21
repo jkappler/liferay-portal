@@ -60,13 +60,13 @@ public class ATag extends BaseATag {
 				jspWriter.write("role=\"img\"><use href=\"");
 				jspWriter.write(FrontendIconsUtil.getSpritemap(themeDisplay));
 				jspWriter.write("#shortcut\" /><span ");
-				jspWriter.write("class=\"sr-only\">");
+				jspWriter.write("class=\"sr-only\">Holi");
 
 				String opensNewWindowLabel = LanguageUtil.get(
 					TagResourceBundleUtil.getResourceBundle(pageContext),
 					"opens-new-window");
 
-				jspWriter.write(opensNewWindowLabel);
+				jspWriter.write("Holi" + opensNewWindowLabel);
 
 				jspWriter.write("</span>");
 				jspWriter.write("<title>");
@@ -175,7 +175,7 @@ public class ATag extends BaseATag {
 
 		_writeDynamicAttributes(jspWriter);
 
-		jspWriter.write(">");
+		jspWriter.write(">Holi");
 
 		if (Validator.isNotNull(label)) {
 			if (getLocalizeLabel()) {
