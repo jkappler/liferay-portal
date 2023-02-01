@@ -28,8 +28,11 @@ import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.base.FragmentEntryLinkLocalServiceBaseImpl;
 import com.liferay.fragment.service.persistence.FragmentCollectionPersistence;
 import com.liferay.fragment.service.persistence.FragmentEntryPersistence;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.cache.CacheRegistryUtil;
+import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -53,6 +56,9 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -576,6 +582,46 @@ public class FragmentEntryLinkLocalServiceImpl
 		}
 
 		return fragmentEntryLinkPersistence.update(fragmentEntryLink);
+	}
+
+	@Override
+	public void updateFragmentEntryLinksByRendererKey(
+			String rendererKey, String configuration, String css, String html,
+			String js, int type)
+		throws Exception {
+
+		if (Validator.isNull(rendererKey)) {
+			throw new UnsupportedOperationException();
+		}
+
+		StringBundler sb = new StringBundler(4);
+
+		sb.append("update FragmentEntryLink SET configuration = ?, css = ?, ");
+		sb.append("html = ?, js = ?, type_ = ?, lastPropagationDate = ? WHERE ");
+		sb.append("rendererKey = ? AND (configuration != ? OR css != ? OR ");
+		sb.append("html != ? OR js != ? OR type_ != ?)");
+
+		try (Connection connection = DataAccess.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				sb.toString())) {
+
+			preparedStatement.setString(1, configuration);
+			preparedStatement.setString(2, css);
+			preparedStatement.setString(3, html);
+			preparedStatement.setString(4, js);
+			preparedStatement.setInt(5, type);
+			preparedStatement.setDate(6, null);
+			preparedStatement.setString(7, rendererKey);
+			preparedStatement.setString(8, configuration);
+			preparedStatement.setString(9, css);
+			preparedStatement.setString(10, html);
+			preparedStatement.setString(11, js);
+			preparedStatement.setInt(12, type);
+
+			preparedStatement.execute();
+		}
+
+		CacheRegistryUtil.clear();
 	}
 
 	@Override
