@@ -59,6 +59,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -594,12 +595,42 @@ public class FragmentEntryLinkLocalServiceImpl
 			throw new UnsupportedOperationException();
 		}
 
-		StringBundler sb = new StringBundler(4);
+		boolean update = false;
+
+		try (Connection connection = DataAccess.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				"select configuration, css, html, js, type_ from " +
+					"FragmentEntryLink where rendererKey = ? limit 1")) {
+
+			preparedStatement.setString(1, rendererKey);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				while (resultSet.next()) {
+					if ((resultSet.getInt("type_") != type) ||
+						!Objects.equals(
+							configuration,
+							resultSet.getString("configuration")) ||
+						!Objects.equals(css, resultSet.getString("css")) ||
+						!Objects.equals(html, resultSet.getString("html")) ||
+						!Objects.equals(js, resultSet.getString("js"))) {
+
+						update = true;
+					}
+
+					break;
+				}
+			}
+		}
+
+		if (!update) {
+			return;
+		}
+
+		StringBundler sb = new StringBundler(3);
 
 		sb.append("update FragmentEntryLink SET configuration = ?, css = ?, ");
-		sb.append("html = ?, js = ?, type_ = ?, lastPropagationDate = ? WHERE ");
-		sb.append("rendererKey = ? AND (configuration != ? OR css != ? OR ");
-		sb.append("html != ? OR js != ? OR type_ != ?)");
+		sb.append("html = ?, js = ?, type_ = ?, lastPropagationDate = ? ");
+		sb.append("WHERE rendererKey = ?");
 
 		try (Connection connection = DataAccess.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(
@@ -612,11 +643,6 @@ public class FragmentEntryLinkLocalServiceImpl
 			preparedStatement.setInt(5, type);
 			preparedStatement.setDate(6, null);
 			preparedStatement.setString(7, rendererKey);
-			preparedStatement.setString(8, configuration);
-			preparedStatement.setString(9, css);
-			preparedStatement.setString(10, html);
-			preparedStatement.setString(11, js);
-			preparedStatement.setInt(12, type);
 
 			preparedStatement.execute();
 		}
