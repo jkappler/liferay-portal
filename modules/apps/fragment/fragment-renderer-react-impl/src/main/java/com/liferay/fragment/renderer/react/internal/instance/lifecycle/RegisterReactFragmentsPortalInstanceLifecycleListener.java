@@ -49,9 +49,9 @@ public class RegisterReactFragmentsPortalInstanceLifecycleListener
 		_jsPackage = _npmResolver.getJSPackage();
 
 		List<FragmentEntryLink> fragmentEntryLinks =
-			_fragmentEntryLinkLocalService.getFragmentEntryLinks(
-				FragmentConstants.TYPE_REACT, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null);
+			_fragmentEntryLinkLocalService.getFragmentEntryLinksByCompany(
+				company.getCompanyId(), FragmentConstants.TYPE_REACT,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 
 		NPMRegistryUpdate npmRegistryUpdate = _npmRegistry.update();
 
@@ -71,9 +71,9 @@ public class RegisterReactFragmentsPortalInstanceLifecycleListener
 		_jsPackage = _npmResolver.getJSPackage();
 
 		List<FragmentEntryLink> fragmentEntryLinks =
-			_fragmentEntryLinkLocalService.getFragmentEntryLinks(
-				FragmentConstants.TYPE_REACT, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null);
+			_fragmentEntryLinkLocalService.getFragmentEntryLinksByCompany(
+				company.getCompanyId(), FragmentConstants.TYPE_REACT,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 
 		NPMRegistryUpdate npmRegistryUpdate = _npmRegistry.update();
 
