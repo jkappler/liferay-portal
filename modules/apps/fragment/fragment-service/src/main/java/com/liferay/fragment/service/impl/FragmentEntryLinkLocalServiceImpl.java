@@ -22,12 +22,14 @@ import com.liferay.fragment.listener.FragmentEntryLinkListenerRegistry;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.model.FragmentEntryLinkTable;
 import com.liferay.fragment.processor.DefaultFragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.base.FragmentEntryLinkLocalServiceBaseImpl;
 import com.liferay.fragment.service.persistence.FragmentCollectionPersistence;
 import com.liferay.fragment.service.persistence.FragmentEntryPersistence;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -358,6 +360,29 @@ public class FragmentEntryLinkLocalServiceImpl
 	@Override
 	public List<FragmentEntryLink> getFragmentEntryLinks(String rendererKey) {
 		return fragmentEntryLinkPersistence.findByRendererKey(rendererKey);
+	}
+
+	@Override
+	public List<FragmentEntryLink> getFragmentEntryLinksByCompany(
+		long companyId, int type, int start, int end,
+		OrderByComparator<FragmentEntryLink> orderByComparator) {
+
+		return fragmentEntryLinkPersistence.dslQuery(
+			DSLQueryFactoryUtil.select(
+				FragmentEntryLinkTable.INSTANCE
+			).from(
+				FragmentEntryLinkTable.INSTANCE
+			).where(
+				FragmentEntryLinkTable.INSTANCE.companyId.eq(
+					companyId
+				).and(
+					FragmentEntryLinkTable.INSTANCE.type.eq(type)
+				)
+			).orderBy(
+				FragmentEntryLinkTable.INSTANCE, orderByComparator
+			).limit(
+				start, end
+			));
 	}
 
 	@Override
