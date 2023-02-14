@@ -344,6 +344,11 @@ public interface FragmentEntryLinkLocalService
 	public List<FragmentEntryLink> getFragmentEntryLinks(String rendererKey);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<FragmentEntryLink> getFragmentEntryLinksByCompany(
+		long companyId, int type, int start, int end,
+		OrderByComparator<FragmentEntryLink> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<FragmentEntryLink> getFragmentEntryLinksByFragmentEntryId(
 		long fragmentEntryId);
 

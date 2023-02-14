@@ -469,6 +469,16 @@ public class FragmentEntryLinkLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<FragmentEntryLink> getFragmentEntryLinksByCompany(
+		long companyId, int type, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<FragmentEntryLink>
+			orderByComparator) {
+
+		return _fragmentEntryLinkLocalService.getFragmentEntryLinksByCompany(
+			companyId, type, start, end, orderByComparator);
+	}
+
+	@Override
 	public java.util.List<FragmentEntryLink>
 		getFragmentEntryLinksByFragmentEntryId(long fragmentEntryId) {
 

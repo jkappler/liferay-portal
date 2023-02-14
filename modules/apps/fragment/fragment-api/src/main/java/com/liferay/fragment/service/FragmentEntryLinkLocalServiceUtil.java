@@ -414,6 +414,14 @@ public class FragmentEntryLinkLocalServiceUtil {
 		return getService().getFragmentEntryLinks(rendererKey);
 	}
 
+	public static List<FragmentEntryLink> getFragmentEntryLinksByCompany(
+		long companyId, int type, int start, int end,
+		OrderByComparator<FragmentEntryLink> orderByComparator) {
+
+		return getService().getFragmentEntryLinksByCompany(
+			companyId, type, start, end, orderByComparator);
+	}
+
 	public static List<FragmentEntryLink>
 		getFragmentEntryLinksByFragmentEntryId(long fragmentEntryId) {
 
