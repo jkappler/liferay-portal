@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.fragment.renderer.react.internal.model.listener;
+package com.liferay.fragment.renderer.react.internal.instance.lifecycle;
 
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.model.FragmentEntryLink;
@@ -25,80 +25,64 @@ import com.liferay.frontend.js.loader.modules.extender.npm.NPMRegistryUpdate;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
+import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.model.BaseModelListener;
-import com.liferay.portal.kernel.model.ModelListener;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Iván Zaera Avellón
+ * @author Jürgen Kappler
  */
-@Component(service = ModelListener.class)
-public class FragmentEntryLinkModelListener
-	extends BaseModelListener<FragmentEntryLink> {
+@Component(service = PortalInstanceLifecycleListener.class)
+public class RegisterReactFragmentsPortalInstanceLifecycleListener
+	extends BasePortalInstanceLifecycleListener {
 
 	@Override
-	public void onAfterCreate(FragmentEntryLink fragmentEntryLink) {
-		if (!fragmentEntryLink.isTypeReact()) {
-			return;
-		}
+	public void portalInstanceRegistered(Company company) {
+		_jsPackage = _npmResolver.getJSPackage();
+
+		List<FragmentEntryLink> fragmentEntryLinks =
+			_fragmentEntryLinkLocalService.getFragmentEntryLinks(
+				FragmentConstants.TYPE_REACT, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null);
 
 		NPMRegistryUpdate npmRegistryUpdate = _npmRegistry.update();
 
-		npmRegistryUpdate.registerJSModule(
-			_jsPackage,
-			FragmentEntryFragmentRendererReactUtil.getModuleName(
-				fragmentEntryLink),
-			_dependencies, _getJs(fragmentEntryLink), null);
+		for (FragmentEntryLink fragmentEntryLink : fragmentEntryLinks) {
+			npmRegistryUpdate.registerJSModule(
+				_jsPackage,
+				FragmentEntryFragmentRendererReactUtil.getModuleName(
+					fragmentEntryLink),
+				_dependencies, _getJs(fragmentEntryLink), null);
+		}
 
 		npmRegistryUpdate.finish();
 	}
 
 	@Override
-	public void onAfterRemove(FragmentEntryLink fragmentEntryLink) {
-		if (!fragmentEntryLink.isTypeReact()) {
-			return;
-		}
+	public void portalInstanceUnregistered(Company company) {
+		_jsPackage = _npmResolver.getJSPackage();
+
+		List<FragmentEntryLink> fragmentEntryLinks =
+			_fragmentEntryLinkLocalService.getFragmentEntryLinks(
+				FragmentConstants.TYPE_REACT, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null);
 
 		NPMRegistryUpdate npmRegistryUpdate = _npmRegistry.update();
 
-		npmRegistryUpdate.unregisterJSModule(
-			_jsPackage.getJSModule(
-				FragmentEntryFragmentRendererReactUtil.getModuleName(
-					fragmentEntryLink)));
-
-		npmRegistryUpdate.finish();
-	}
-
-	@Override
-	public void onAfterUpdate(
-		FragmentEntryLink originalFragmentEntryLink,
-		FragmentEntryLink fragmentEntryLink) {
-
-		if (!fragmentEntryLink.isTypeReact()) {
-			return;
+		for (FragmentEntryLink fragmentEntryLink : fragmentEntryLinks) {
+			npmRegistryUpdate.unregisterJSModule(
+				_jsPackage.getJSModule(
+					FragmentEntryFragmentRendererReactUtil.getModuleName(
+						fragmentEntryLink)));
 		}
-
-		NPMRegistryUpdate npmRegistryUpdate = _npmRegistry.update();
-
-		npmRegistryUpdate.unregisterJSModule(
-			_jsPackage.getJSModule(
-				FragmentEntryFragmentRendererReactUtil.getModuleName(
-					originalFragmentEntryLink)));
-
-		npmRegistryUpdate.registerJSModule(
-			_jsPackage,
-			FragmentEntryFragmentRendererReactUtil.getModuleName(
-				fragmentEntryLink),
-			_dependencies, _getJs(fragmentEntryLink), null);
 
 		npmRegistryUpdate.finish();
 	}
