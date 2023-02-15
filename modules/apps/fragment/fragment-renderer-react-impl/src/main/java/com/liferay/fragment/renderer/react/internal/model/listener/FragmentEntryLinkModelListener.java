@@ -15,7 +15,7 @@
 package com.liferay.fragment.renderer.react.internal.model.listener;
 
 import com.liferay.fragment.model.FragmentEntryLink;
-import com.liferay.fragment.renderer.react.internal.util.FragmentEntryFragmentRendererReactHelper;
+import com.liferay.fragment.renderer.react.internal.helper.FragmentEntryLinkJSModuleHelper;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 
@@ -37,10 +37,9 @@ public class FragmentEntryLinkModelListener
 			return;
 		}
 
-		_fragmentEntryFragmentRendererReactHelper.ensureInitialized();
+		_fragmentEntryLinkJSModuleHelper.ensureInitialized();
 
-		_fragmentEntryFragmentRendererReactHelper.registerJSModule(
-			fragmentEntryLink);
+		_fragmentEntryLinkJSModuleHelper.registerJSModule(fragmentEntryLink);
 	}
 
 	@Override
@@ -49,10 +48,9 @@ public class FragmentEntryLinkModelListener
 			return;
 		}
 
-		_fragmentEntryFragmentRendererReactHelper.ensureInitialized();
+		_fragmentEntryLinkJSModuleHelper.ensureInitialized();
 
-		_fragmentEntryFragmentRendererReactHelper.unregisterJSModule(
-			fragmentEntryLink);
+		_fragmentEntryLinkJSModuleHelper.unregisterJSModule(fragmentEntryLink);
 	}
 
 	@Override
@@ -64,14 +62,12 @@ public class FragmentEntryLinkModelListener
 			return;
 		}
 
-		_fragmentEntryFragmentRendererReactHelper.ensureInitialized();
+		_fragmentEntryLinkJSModuleHelper.ensureInitialized();
 
-		_fragmentEntryFragmentRendererReactHelper.updateJSModule(
-			fragmentEntryLink);
+		_fragmentEntryLinkJSModuleHelper.updateJSModule(fragmentEntryLink);
 	}
 
 	@Reference
-	private FragmentEntryFragmentRendererReactHelper
-		_fragmentEntryFragmentRendererReactHelper;
+	private FragmentEntryLinkJSModuleHelper _fragmentEntryLinkJSModuleHelper;
 
 }
