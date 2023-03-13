@@ -66,6 +66,10 @@ public class FormNavigatorTag extends IncludeTag {
 		return _showButtons;
 	}
 
+	public boolean isUseSheets() {
+		return _useSheets;
+	}
+
 	public void setBackURL(String backURL) {
 		_backURL = backURL;
 	}
@@ -93,6 +97,10 @@ public class FormNavigatorTag extends IncludeTag {
 		_showButtons = showButtons;
 	}
 
+	public void setUseSheets(boolean useSheets) {
+		_useSheets = useSheets;
+	}
+
 	@Override
 	protected void cleanUp() {
 		super.cleanUp();
@@ -102,6 +110,7 @@ public class FormNavigatorTag extends IncludeTag {
 		_formModelBean = null;
 		_id = null;
 		_showButtons = true;
+		_useSheets = false;
 	}
 
 	@Override
@@ -125,6 +134,9 @@ public class FormNavigatorTag extends IncludeTag {
 		httpServletRequest.setAttribute(
 			"liferay-frontend:form-navigator:showButtons",
 			String.valueOf(_showButtons));
+		httpServletRequest.setAttribute(
+			"liferay-frontend:form-navigator:useSheets",
+			String.valueOf(_useSheets));
 	}
 
 	private String _getBackURL() {
@@ -182,5 +194,6 @@ public class FormNavigatorTag extends IncludeTag {
 	private Object _formModelBean;
 	private String _id;
 	private boolean _showButtons = true;
+	private boolean _useSheets;
 
 }

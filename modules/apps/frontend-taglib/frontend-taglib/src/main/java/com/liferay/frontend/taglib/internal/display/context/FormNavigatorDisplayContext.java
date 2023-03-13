@@ -104,6 +104,12 @@ public class FormNavigatorDisplayContext {
 				"liferay-frontend:form-navigator:showButtons"));
 	}
 
+	public boolean isUseSheets() {
+		return GetterUtil.getBoolean(
+			(String)_httpServletRequest.getAttribute(
+				"liferay-frontend:form-navigator:useSheets"));
+	}
+
 	private final HttpServletRequest _httpServletRequest;
 
 }
