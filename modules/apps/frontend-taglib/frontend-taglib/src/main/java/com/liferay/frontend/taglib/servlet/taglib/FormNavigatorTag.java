@@ -62,6 +62,10 @@ public class FormNavigatorTag extends IncludeTag {
 		return _id;
 	}
 
+	public String getTitle() {
+		return _title;
+	}
+
 	public boolean isShowButtons() {
 		return _showButtons;
 	}
@@ -97,6 +101,10 @@ public class FormNavigatorTag extends IncludeTag {
 		_showButtons = showButtons;
 	}
 
+	public void setTitle(String title) {
+		_title = title;
+	}
+
 	public void setUseSheets(boolean useSheets) {
 		_useSheets = useSheets;
 	}
@@ -110,6 +118,7 @@ public class FormNavigatorTag extends IncludeTag {
 		_formModelBean = null;
 		_id = null;
 		_showButtons = true;
+		_title = null;
 		_useSheets = false;
 	}
 
@@ -134,6 +143,8 @@ public class FormNavigatorTag extends IncludeTag {
 		httpServletRequest.setAttribute(
 			"liferay-frontend:form-navigator:showButtons",
 			String.valueOf(_showButtons));
+		httpServletRequest.setAttribute(
+			"liferay-frontend:form-navigator:title", _title);
 		httpServletRequest.setAttribute(
 			"liferay-frontend:form-navigator:useSheets",
 			String.valueOf(_useSheets));
@@ -194,6 +205,7 @@ public class FormNavigatorTag extends IncludeTag {
 	private Object _formModelBean;
 	private String _id;
 	private boolean _showButtons = true;
+	private String _title;
 	private boolean _useSheets;
 
 }

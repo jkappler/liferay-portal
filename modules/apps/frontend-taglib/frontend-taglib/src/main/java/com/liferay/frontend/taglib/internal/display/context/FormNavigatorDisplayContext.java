@@ -98,6 +98,11 @@ public class FormNavigatorDisplayContext {
 		return randomNamespace + "_tabs1";
 	}
 
+	public String getTitle() {
+		return (String)_httpServletRequest.getAttribute(
+			"liferay-frontend:form-navigator:title");
+	}
+
 	public boolean isShowButtons() {
 		return GetterUtil.getBoolean(
 			(String)_httpServletRequest.getAttribute(

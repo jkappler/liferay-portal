@@ -477,6 +477,12 @@
 			<type>boolean</type>
 		</attribute>
 		<attribute>
+			<description>Form title</description>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<description>Whether to use a sheet instead of a field set for each section.</description>
 			<name>useSheets</name>
 			<required>false</required>
