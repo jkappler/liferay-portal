@@ -16,6 +16,7 @@ package com.liferay.frontend.taglib.servlet.taglib;
 
 import com.liferay.frontend.taglib.form.navigator.FormNavigatorCategoryProvider;
 import com.liferay.frontend.taglib.form.navigator.FormNavigatorEntryProvider;
+import com.liferay.frontend.taglib.internal.constants.FormNavigatorDisplayStyleType;
 import com.liferay.frontend.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -50,6 +51,10 @@ public class FormNavigatorTag extends IncludeTag {
 		return _backURL;
 	}
 
+	public String getDisplayStyle() {
+		return _displayStyle;
+	}
+
 	public String getFieldSetCssClass() {
 		return _fieldSetCssClass;
 	}
@@ -68,6 +73,10 @@ public class FormNavigatorTag extends IncludeTag {
 
 	public void setBackURL(String backURL) {
 		_backURL = backURL;
+	}
+
+	public void setDisplayStyle(String displayStyle) {
+		_displayStyle = displayStyle;
 	}
 
 	public void setFieldSetCssClass(String fieldSetCssClass) {
@@ -98,6 +107,7 @@ public class FormNavigatorTag extends IncludeTag {
 		super.cleanUp();
 
 		_backURL = null;
+		_displayStyle = FormNavigatorDisplayStyleType.TYPE_FIELDSET.getValue();
 		_fieldSetCssClass = null;
 		_formModelBean = null;
 		_id = null;
@@ -115,6 +125,9 @@ public class FormNavigatorTag extends IncludeTag {
 			"liferay-frontend:form-navigator:backURL", _getBackURL());
 		httpServletRequest.setAttribute(
 			"liferay-frontend:form-navigator:categoryKeys", _getCategoryKeys());
+		httpServletRequest.setAttribute(
+			"liferay-frontend:form-navigator:displayStyle",
+			String.valueOf(_displayStyle));
 		httpServletRequest.setAttribute(
 			"liferay-frontend:form-navigator:fieldSetCssClass",
 			_fieldSetCssClass);
@@ -178,6 +191,8 @@ public class FormNavigatorTag extends IncludeTag {
 	}
 
 	private String _backURL;
+	private String _displayStyle =
+		FormNavigatorDisplayStyleType.TYPE_FIELDSET.getValue();
 	private String _fieldSetCssClass;
 	private Object _formModelBean;
 	private String _id;

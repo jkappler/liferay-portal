@@ -452,6 +452,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<description>The display style for each section.</description>
+			<name>displayStyle</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<description>A CSS class for styling the field set.</description>
 			<name>fieldSetCssClass</name>
 			<required>false</required>
