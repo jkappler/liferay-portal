@@ -24,8 +24,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -33,7 +31,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
-import com.liferay.segments.constants.SegmentsWebKeys;
 import com.liferay.segments.manager.SegmentsExperienceManager;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.model.SegmentsExperience;
@@ -96,20 +93,21 @@ public class SegmentsExperienceSelectorDisplayContext {
 					_httpServletRequest);
 		}
 
+		Layout layout = _themeDisplay.getLayout();
+
 		if (segmentsExperienceId > 0) {
-			long[] currentSegmentsExperienceIds = GetterUtil.getLongValues(
-				_httpServletRequest.getAttribute(
-					SegmentsWebKeys.SEGMENTS_EXPERIENCE_IDS));
-
-			if (ArrayUtil.contains(
-					currentSegmentsExperienceIds, segmentsExperienceId)) {
-
-				return _segmentsExperienceLocalService.fetchSegmentsExperience(
+			SegmentsExperience segmentsExperience =
+				_segmentsExperienceLocalService.fetchSegmentsExperience(
 					segmentsExperienceId);
+
+			if ((segmentsExperience != null) &&
+				(_portal.getClassNameId(Layout.class.getName()) ==
+					segmentsExperience.getClassNameId()) &&
+				(layout.getPlid() == segmentsExperience.getClassPK())) {
+
+				return segmentsExperience;
 			}
 		}
-
-		Layout layout = _themeDisplay.getLayout();
 
 		return _segmentsExperienceLocalService.fetchSegmentsExperience(
 			layout.getGroupId(), SegmentsExperienceConstants.KEY_DEFAULT,
