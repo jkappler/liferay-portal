@@ -30,9 +30,9 @@ import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
-import com.liferay.portal.kernel.service.PortalPreferencesLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -96,6 +96,16 @@ public class LayoutServiceContextHelperImpl
 
 		return new ServiceContextTemporarySwapper(company);
 	}
+
+	@Override
+	public AutoCloseable getServiceContextAutoCloseable(Layout layout)
+		throws PortalException {
+
+		return new ServiceContextTemporarySwapper(layout);
+	}
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private GroupLocalService _groupLocalService;
@@ -564,6 +574,12 @@ public class LayoutServiceContextHelperImpl
 		public ServiceContextTemporarySwapper(Company company)
 			throws PortalException {
 
+			this(company, null);
+		}
+
+		public ServiceContextTemporarySwapper(Company company, Layout layout)
+			throws PortalException {
+
 			_company = company;
 
 			_originalCompanyId = CompanyThreadLocal.getCompanyId();
@@ -605,18 +621,30 @@ public class LayoutServiceContextHelperImpl
 				}
 			}
 
-			Group group = _groupLocalService.getGroup(
-				company.getCompanyId(), GroupConstants.GUEST);
+			if (layout == null) {
+				Group group = _groupLocalService.getGroup(
+					company.getCompanyId(), GroupConstants.GUEST);
 
-			_layout = _layoutLocalService.fetchFirstLayout(
-				group.getGroupId(), false,
-				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, false);
+				_layout = _layoutLocalService.fetchFirstLayout(
+					group.getGroupId(), false,
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, false);
+			}
+			else {
+				_layout = layout;
+			}
 
 			_user = _userLocalService.fetchGuestUser(company.getCompanyId());
 
 			_permissionChecker = PermissionCheckerFactoryUtil.create(_user);
 
 			_setCompanyServiceContext();
+		}
+
+		public ServiceContextTemporarySwapper(Layout layout)
+			throws PortalException {
+
+			this(
+				_companyLocalService.getCompany(layout.getCompanyId()), layout);
 		}
 
 		@Override
