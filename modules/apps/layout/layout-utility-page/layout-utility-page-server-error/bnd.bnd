@@ -1,0 +1,4 @@
+Bundle-Name: Liferay Layout Utility Page Server Error
+Bundle-SymbolicName: com.liferay.layout.utility.page.server.error
+Bundle-Version: 1.0.0
+Web-ContextPath: /layout-utility-page-server-error
