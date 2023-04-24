@@ -22,7 +22,6 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.util.DDMFormFieldValueTransformer;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -32,7 +31,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.StagedModel;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
@@ -41,6 +40,7 @@ import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XPath;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -108,21 +108,23 @@ public class ImageImportDDMFormFieldValueTransformer
 
 			value.addString(locale, fileEntryJSON);
 
-			XPath xPath = SAXReaderUtil.createXPath(
-				StringBundler.concat(
-					"//dynamic-element[@type='image']",
-					"/dynamic-content[contains(text(),",
-					HtmlUtil.escapeXPathAttribute(valueString), ")]"));
+			List<Node> addedImageNodes = new ArrayList<>();
 
-			List<Node> imageNodes = xPath.selectNodes(_document);
-
-			for (Node imageNode : imageNodes) {
+			for (Node imageNode : _imageNodes) {
 				Element imageElement = (Element)imageNode;
+
+				if (!StringUtil.contains(imageElement.getText(), valueString)) {
+					continue;
+				}
 
 				imageElement.clearContent();
 
 				imageElement.addCDATA(fileEntryJSON);
+
+				addedImageNodes.add(imageNode);
 			}
+
+			_imageNodes.removeAll(addedImageNodes);
 		}
 	}
 
@@ -166,6 +168,11 @@ public class ImageImportDDMFormFieldValueTransformer
 				_log.debug("Invalid content:\n" + content, documentException);
 			}
 		}
+
+		XPath xPath = SAXReaderUtil.createXPath(
+			"//dynamic-element[@type='image']/dynamic-content");
+
+		_imageNodes = xPath.selectNodes(_document);
 	}
 
 	private String _toJSON(
@@ -209,6 +216,7 @@ public class ImageImportDDMFormFieldValueTransformer
 
 	private final DLAppService _dlAppService;
 	private Document _document;
+	private List<Node> _imageNodes;
 	private final PortletDataContext _portletDataContext;
 	private final StagedModel _stagedModel;
 
