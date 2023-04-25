@@ -16,10 +16,7 @@ package com.liferay.layout.internal.importer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.liferay.fragment.listener.FragmentEntryLinkListener;
-import com.liferay.fragment.listener.FragmentEntryLinkListenerRegistry;
 import com.liferay.fragment.model.FragmentEntryLink;
-import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.headless.delivery.dto.v1_0.ContentSubtype;
 import com.liferay.headless.delivery.dto.v1_0.ContentType;
 import com.liferay.headless.delivery.dto.v1_0.DisplayPageTemplate;
@@ -28,8 +25,6 @@ import com.liferay.headless.delivery.dto.v1_0.PageDefinition;
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
 import com.liferay.headless.delivery.dto.v1_0.PageTemplate;
 import com.liferay.headless.delivery.dto.v1_0.PageTemplateCollection;
-import com.liferay.headless.delivery.dto.v1_0.Settings;
-import com.liferay.headless.delivery.dto.v1_0.StyleBook;
 import com.liferay.headless.delivery.dto.v1_0.UtilityPageTemplate;
 import com.liferay.info.item.InfoItemFormVariation;
 import com.liferay.info.item.InfoItemServiceRegistry;
@@ -38,7 +33,8 @@ import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.importer.LayoutsImporter;
 import com.liferay.layout.importer.LayoutsImporterResultEntry;
 import com.liferay.layout.internal.importer.exception.DropzoneLayoutStructureItemException;
-import com.liferay.layout.internal.importer.structure.util.LayoutStructureItemImporter;
+import com.liferay.layout.internal.importer.processor.PageDefinitionImporterProcessor;
+import com.liferay.layout.internal.importer.processor.PageElementImporterProcessor;
 import com.liferay.layout.internal.importer.validator.DisplayPageTemplateValidator;
 import com.liferay.layout.internal.importer.validator.MasterPageValidator;
 import com.liferay.layout.internal.importer.validator.PageDefinitionValidator;
@@ -49,61 +45,46 @@ import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeCon
 import com.liferay.layout.page.template.constants.LayoutPageTemplateExportImportConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
-import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
-import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.layout.util.constants.LayoutStructureConstants;
-import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
-import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.utility.page.constants.LayoutUtilityPageExportImportConstants;
 import com.liferay.layout.utility.page.converter.LayoutUtilityPageEntryTypeConverter;
 import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
 import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
 import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryService;
-import com.liferay.osgi.service.tracker.collections.map.ServiceReferenceMapperFactory;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.validator.JSONValidatorException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.PortletPreferences;
 import com.liferay.portal.kernel.model.Repository;
-import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
-import com.liferay.style.book.model.StyleBookEntry;
-import com.liferay.style.book.service.StyleBookEntryLocalService;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,17 +97,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -184,8 +161,9 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 
 		Consumer<LayoutStructure> consumer = processedLayoutStructure -> {
 			try {
-				_updateLayoutPageTemplateStructure(
-					layout, processedLayoutStructure);
+				_pageDefinitionImporterProcessor.
+					updateLayoutPageTemplateStructure(
+						layout, processedLayoutStructure);
 			}
 			catch (Exception exception) {
 				if (_log.isWarnEnabled()) {
@@ -227,20 +205,6 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 		return _importPageElement(
 			consumer, layout, layoutStructure, parentItemId, pageElementJSON,
 			position, segmentsExperienceId);
-	}
-
-	@Activate
-	protected void activate(BundleContext bundleContext) {
-		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
-			bundleContext, LayoutStructureItemImporter.class, null,
-			ServiceReferenceMapperFactory.createFromFunction(
-				bundleContext,
-				LayoutStructureItemImporter::getPageElementType));
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		_serviceTrackerMap.close();
 	}
 
 	private void _deleteExistingPortletPreferences(long plid) {
@@ -873,20 +837,6 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 		return fileEntry.getFileEntryId();
 	}
 
-	private String _getThemeId(long companyId, String themeName) {
-		List<Theme> themes = ListUtil.filter(
-			_themeLocalService.getThemes(companyId),
-			theme -> Objects.equals(theme.getName(), themeName));
-
-		if (ListUtil.isNotEmpty(themes)) {
-			Theme theme = themes.get(0);
-
-			return theme.getThemeId();
-		}
-
-		return null;
-	}
-
 	private ZipEntry _getThumbnailZipEntry(String fileName, ZipFile zipFile) {
 		String path = fileName.substring(
 			0, fileName.lastIndexOf(StringPool.FORWARD_SLASH) + 1);
@@ -914,7 +864,7 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 
 		List<FragmentEntryLink> fragmentEntryLinks = new ArrayList<>();
 
-		_processPageElement(
+		_pageElementImporterProcessor.processPageElement(
 			fragmentEntryLinks, layout, layoutStructure,
 			LayoutStructureConstants.LATEST_PAGE_DEFINITION_VERSION,
 			pageElement, parentItemId, position, segmentsExperienceId,
@@ -1107,7 +1057,7 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 			if (added) {
 				Set<String> warningMessages = new HashSet<>();
 
-				_processPageDefinition(
+				_pageDefinitionImporterProcessor.processPageDefinition(
 					layoutPageTemplateEntry.getPlid(), pageDefinition,
 					warningMessages);
 
@@ -1243,7 +1193,7 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 			if (added) {
 				Set<String> warningMessages = new HashSet<>();
 
-				_processPageDefinition(
+				_pageDefinitionImporterProcessor.processPageDefinition(
 					layoutUtilityPageEntry.getPlid(), pageDefinition,
 					warningMessages);
 
@@ -1330,120 +1280,6 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 		}
 	}
 
-	private void _processPageDefinition(
-			long plid, PageDefinition pageDefinition,
-			Set<String> warningMessages)
-		throws Exception {
-
-		Layout layout = _layoutLocalService.getLayout(plid);
-
-		LayoutStructure layoutStructure = new LayoutStructure();
-
-		LayoutStructureItem rootLayoutStructureItem =
-			layoutStructure.addRootLayoutStructureItem();
-
-		if (pageDefinition != null) {
-			PageElement pageElement = pageDefinition.getPageElement();
-
-			if ((pageElement.getType() == PageElement.Type.ROOT) &&
-				(pageElement.getPageElements() != null)) {
-
-				double pageDefinitionVersion = GetterUtil.getDouble(
-					pageDefinition.getVersion(), 1);
-				int position = 0;
-
-				for (PageElement childPageElement :
-						pageElement.getPageElements()) {
-
-					if (_processPageElement(
-							new ArrayList<>(), layout, layoutStructure,
-							pageDefinitionVersion, childPageElement,
-							rootLayoutStructureItem.getItemId(), position,
-							_segmentsExperienceLocalService.
-								fetchDefaultSegmentsExperienceId(
-									layout.getPlid()),
-							warningMessages)) {
-
-						position++;
-					}
-				}
-			}
-
-			Settings settings = pageDefinition.getSettings();
-
-			layout = _layoutLocalService.fetchLayout(layout.getPlid());
-
-			_updateLayoutSettings(layout, settings);
-		}
-
-		_updateLayoutPageTemplateStructure(layout, layoutStructure);
-
-		_updateLayouts(plid);
-	}
-
-	private boolean _processPageElement(
-			List<FragmentEntryLink> fragmentEntryLinks, Layout layout,
-			LayoutStructure layoutStructure, double pageDefinitionVersion,
-			PageElement pageElement, String parentItemId, int position,
-			long segmentsExperienceId, Set<String> warningMessages)
-		throws Exception {
-
-		LayoutStructureItemImporter layoutStructureItemImporter =
-			_serviceTrackerMap.getService(pageElement.getType());
-
-		LayoutStructureItem layoutStructureItem = null;
-
-		if (layoutStructureItemImporter != null) {
-			layoutStructureItem =
-				layoutStructureItemImporter.addLayoutStructureItem(
-					layoutStructure,
-					new LayoutStructureItemImporterContext(
-						layout, pageDefinitionVersion, parentItemId, position,
-						segmentsExperienceId),
-					pageElement, warningMessages);
-		}
-		else if (pageElement.getType() == PageElement.Type.ROOT) {
-			layoutStructureItem = layoutStructure.getMainLayoutStructureItem();
-		}
-		else {
-			return false;
-		}
-
-		if (layoutStructureItem == null) {
-			return false;
-		}
-
-		if (layoutStructureItem instanceof FragmentStyledLayoutStructureItem) {
-			FragmentStyledLayoutStructureItem
-				fragmentStyledLayoutStructureItem =
-					(FragmentStyledLayoutStructureItem)layoutStructureItem;
-
-			fragmentEntryLinks.add(
-				_fragmentEntryLinkLocalService.getFragmentEntryLink(
-					fragmentStyledLayoutStructureItem.
-						getFragmentEntryLinkId()));
-		}
-
-		if (pageElement.getPageElements() == null) {
-			return true;
-		}
-
-		int childPosition = 0;
-
-		for (PageElement childPageElement : pageElement.getPageElements()) {
-			if (_processPageElement(
-					fragmentEntryLinks, layout, layoutStructure,
-					pageDefinitionVersion, childPageElement,
-					layoutStructureItem.getItemId(), childPosition,
-					segmentsExperienceId, warningMessages)) {
-
-				childPosition++;
-			}
-		}
-
-		return true;
-	}
-
 	private void _processPageTemplateEntries(
 			long groupId,
 			LayoutPageTemplateCollection layoutPageTemplateCollection,
@@ -1513,135 +1349,6 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 		return null;
 	}
 
-	private void _updateLayoutPageTemplateStructure(
-			Layout layout, LayoutStructure layoutStructure)
-		throws Exception {
-
-		JSONObject jsonObject = layoutStructure.toJSONObject();
-
-		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			_layoutPageTemplateStructureLocalService.
-				fetchLayoutPageTemplateStructure(
-					layout.getGroupId(), layout.getPlid());
-
-		if (layoutPageTemplateStructure != null) {
-			_layoutPageTemplateStructureLocalService.
-				deleteLayoutPageTemplateStructure(layoutPageTemplateStructure);
-		}
-
-		_layoutPageTemplateStructureLocalService.addLayoutPageTemplateStructure(
-			layout.getUserId(), layout.getGroupId(), layout.getPlid(),
-			_segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
-				layout.getPlid()),
-			jsonObject.toString(),
-			ServiceContextThreadLocal.getServiceContext());
-
-		for (FragmentEntryLink fragmentEntryLink :
-				_fragmentEntryLinkLocalService.getFragmentEntryLinksByPlid(
-					layout.getGroupId(), layout.getPlid())) {
-
-			for (FragmentEntryLinkListener fragmentEntryLinkListener :
-					_fragmentEntryLinkListenerRegistry.
-						getFragmentEntryLinkListeners()) {
-
-				fragmentEntryLinkListener.onAddFragmentEntryLink(
-					fragmentEntryLink);
-			}
-		}
-	}
-
-	private void _updateLayouts(long plid) throws Exception {
-		Layout layout = _layoutLocalService.fetchLayout(plid);
-
-		Layout draftLayout = layout.fetchDraftLayout();
-
-		draftLayout = _layoutCopyHelper.copyLayoutContent(layout, draftLayout);
-
-		_layoutLocalService.updateStatus(
-			draftLayout.getUserId(), draftLayout.getPlid(),
-			WorkflowConstants.STATUS_APPROVED,
-			ServiceContextThreadLocal.getServiceContext());
-	}
-
-	private void _updateLayoutSettings(Layout layout, Settings settings) {
-		if (settings == null) {
-			layout.setThemeId(null);
-
-			layout.setColorSchemeId(null);
-
-			_layoutLocalService.updateLayout(layout);
-
-			return;
-		}
-
-		UnicodeProperties unicodeProperties =
-			layout.getTypeSettingsProperties();
-
-		Map<String, String> themeSettings =
-			(Map<String, String>)settings.getThemeSettings();
-
-		Set<Map.Entry<String, String>> entrySet = unicodeProperties.entrySet();
-
-		entrySet.removeIf(
-			entry -> {
-				String key = entry.getKey();
-
-				return key.startsWith("lfr-theme:");
-			});
-
-		if (themeSettings != null) {
-			for (Map.Entry<String, String> entry : themeSettings.entrySet()) {
-				unicodeProperties.put(entry.getKey(), entry.getValue());
-			}
-
-			layout.setTypeSettingsProperties(unicodeProperties);
-		}
-
-		if (Validator.isNotNull(settings.getThemeName())) {
-			String themeId = _getThemeId(
-				layout.getCompanyId(), settings.getThemeName());
-
-			layout.setThemeId(themeId);
-		}
-
-		if (Validator.isNotNull(settings.getColorSchemeName())) {
-			layout.setColorSchemeId(settings.getColorSchemeName());
-		}
-
-		if (Validator.isNotNull(settings.getCss())) {
-			layout.setCss(settings.getCss());
-		}
-
-		MasterPage masterPage = settings.getMasterPage();
-
-		if (masterPage != null) {
-			LayoutPageTemplateEntry masterLayoutPageTemplateEntry =
-				_layoutPageTemplateEntryLocalService.
-					fetchLayoutPageTemplateEntry(
-						layout.getGroupId(), masterPage.getKey());
-
-			if (masterLayoutPageTemplateEntry != null) {
-				layout.setMasterLayoutPlid(
-					masterLayoutPageTemplateEntry.getPlid());
-			}
-		}
-
-		StyleBook styleBook = settings.getStyleBook();
-
-		if (styleBook != null) {
-			StyleBookEntry styleBookEntry =
-				_styleBookEntryLocalService.fetchStyleBookEntry(
-					layout.getGroupId(), styleBook.getKey());
-
-			if (styleBookEntry != null) {
-				layout.setStyleBookEntryId(
-					styleBookEntry.getStyleBookEntryId());
-			}
-		}
-
-		_layoutLocalService.updateLayout(layout);
-	}
-
 	private static final String _DISPLAY_PAGE_TEMPLATE_ENTRY_KEY_DEFAULT =
 		"imported-display-page-template";
 
@@ -1677,23 +1384,10 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
 	@Reference
-	private FragmentEntryLinkListenerRegistry
-		_fragmentEntryLinkListenerRegistry;
-
-	@Reference
-	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
-
-	@Reference
 	private InfoItemServiceRegistry _infoItemServiceRegistry;
 
 	@Reference
 	private Language _language;
-
-	@Reference
-	private LayoutCopyHelper _layoutCopyHelper;
-
-	@Reference
-	private LayoutLocalService _layoutLocalService;
 
 	@Reference
 	private LayoutPageTemplateCollectionLocalService
@@ -1724,6 +1418,12 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 	private LayoutUtilityPageEntryService _layoutUtilityPageEntryService;
 
 	@Reference
+	private PageDefinitionImporterProcessor _pageDefinitionImporterProcessor;
+
+	@Reference
+	private PageElementImporterProcessor _pageElementImporterProcessor;
+
+	@Reference
 	private Portal _portal;
 
 	@Reference
@@ -1734,15 +1434,6 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 
 	@Reference
 	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
-
-	private ServiceTrackerMap<PageElement.Type, LayoutStructureItemImporter>
-		_serviceTrackerMap;
-
-	@Reference
-	private StyleBookEntryLocalService _styleBookEntryLocalService;
-
-	@Reference
-	private ThemeLocalService _themeLocalService;
 
 	private static class DisplayPageTemplateEntry {
 
