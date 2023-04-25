@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,21 +12,4 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-
-package com.liferay.layout.utility.page.kernel.constants;
-
-/**
- * @author Eudaldo Alonso
- */
-public class LayoutUtilityPageEntryConstants {
-
-	public static final String TYPE_SC_INTERNAL_SERVER_ERROR =
-		"SC_INTERNAL_SERVER_ERROR";
-
-	public static final String TYPE_SC_NOT_FOUND = "SC_NOT_FOUND";
-
-	public static final String TYPE_STATUS = "STATUS";
-
-	public static final String TYPE_TERMS_OF_USE = "TERMS_OF_USE";
-
-}
+--%>

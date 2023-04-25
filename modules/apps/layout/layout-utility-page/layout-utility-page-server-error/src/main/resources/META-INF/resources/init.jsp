@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,21 +12,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+--%>
 
-package com.liferay.layout.utility.page.kernel.constants;
+<%@ taglib uri="http://liferay.com/tld/layout" prefix="liferay-layout" %><%@
+taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
+taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-/**
- * @author Eudaldo Alonso
- */
-public class LayoutUtilityPageEntryConstants {
+<%@ page import="com.liferay.layout.utility.page.kernel.constants.LayoutUtilityPageEntryConstants" %><%@
+page import="com.liferay.layout.utility.page.server.error.internal.display.context.ServerErrorDisplayContext" %>
 
-	public static final String TYPE_SC_INTERNAL_SERVER_ERROR =
-		"SC_INTERNAL_SERVER_ERROR";
+<liferay-theme:defineObjects />
 
-	public static final String TYPE_SC_NOT_FOUND = "SC_NOT_FOUND";
-
-	public static final String TYPE_STATUS = "STATUS";
-
-	public static final String TYPE_TERMS_OF_USE = "TERMS_OF_USE";
-
-}
+<%@ include file="/init-ext.jsp" %>
