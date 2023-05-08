@@ -6820,6 +6820,9 @@ public class PortalImpl implements Portal {
 
 			dynamicRequest.setAttribute("status_code", status);
 
+			_setInternalServerErrorParametersAndAttributes(
+				dynamicRequest, status);
+
 			httpServletRequest = dynamicRequest;
 
 			redirect = PATH_MAIN + "/portal/status";
@@ -8888,6 +8891,103 @@ public class PortalImpl implements Portal {
 		}
 
 		return false;
+	}
+
+	private void _setInternalServerErrorParametersAndAttributes(
+		DynamicServletRequest dynamicRequest, int status) {
+
+		if (status != HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+			return;
+		}
+
+		long companyId = GetterUtil.getLong(
+			dynamicRequest.getAttribute(WebKeys.COMPANY_ID));
+
+		if (companyId == 0) {
+			return;
+		}
+
+		String currentURL = PortalUtil.getCurrentURL(dynamicRequest);
+
+		if (Validator.isNull(currentURL)) {
+			return;
+		}
+
+		String contextPath = dynamicRequest.getContextPath();
+
+		if (Validator.isNotNull(contextPath) &&
+			!contextPath.equals(StringPool.SLASH)) {
+
+			currentURL = currentURL.substring(contextPath.length());
+		}
+
+		String languageId = StringPool.BLANK;
+
+		Set<String> languageIds = I18nServlet.getLanguageIds();
+
+		for (String currentLanguageId : languageIds) {
+			if (StringUtil.startsWith(
+					currentURL, currentLanguageId + StringPool.FORWARD_SLASH)) {
+
+				currentURL = currentURL.substring(currentLanguageId.length());
+
+				languageId = currentLanguageId.substring(1);
+
+				break;
+			}
+		}
+
+		if (Validator.isNull(currentURL) ||
+			currentURL.equals(StringPool.SLASH)) {
+
+			return;
+		}
+
+		String[] urlParts = currentURL.split("\\/", 4);
+
+		if ((currentURL.charAt(0) != CharPool.SLASH) &&
+			(urlParts.length != 4)) {
+
+			return;
+		}
+
+		String urlPrefix = StringPool.SLASH + urlParts[1];
+
+		if (!(_PUBLIC_GROUP_SERVLET_MAPPING.equals(urlPrefix) ||
+			  _PRIVATE_GROUP_SERVLET_MAPPING.equals(urlPrefix) ||
+			  _PRIVATE_USER_SERVLET_MAPPING.equals(urlPrefix))) {
+
+			return;
+		}
+
+		Group group = GroupLocalServiceUtil.fetchFriendlyURLGroup(
+			companyId, StringPool.SLASH + urlParts[2]);
+
+		if (group == null) {
+			return;
+		}
+
+		Layout layout = LayoutLocalServiceUtil.fetchFirstLayout(
+			group.getGroupId(), false,
+			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
+
+		if (layout == null) {
+			layout = LayoutLocalServiceUtil.fetchFirstLayout(
+				group.getGroupId(), true,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
+		}
+
+		if (layout != null) {
+			dynamicRequest.setParameter(
+				"groupId", String.valueOf(group.getGroupId()));
+			dynamicRequest.setParameter(
+				"layoutId", String.valueOf(layout.getLayoutId()));
+
+			if (Validator.isNotNull(languageId)) {
+				dynamicRequest.setAttribute(
+					WebKeys.I18N_LANGUAGE_ID, languageId);
+			}
+		}
 	}
 
 	private static final String _J_SECURITY_CHECK = "j_security_check";
