@@ -28,7 +28,7 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 	description = "ai-creator-open-ai-company-configuration-description",
 	id = "com.liferay.ai.creator.open.ai.configuration.AICreatorOpenAICompanyConfiguration",
 	localization = "content/Language",
-	name = "ai-creator-open-ai-company-configuration"
+	name = "ai-creator-open-ai-company-configuration-name"
 )
 public interface AICreatorOpenAICompanyConfiguration {
 
