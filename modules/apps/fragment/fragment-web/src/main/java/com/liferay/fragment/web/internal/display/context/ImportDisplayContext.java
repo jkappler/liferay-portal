@@ -18,8 +18,12 @@ import com.liferay.fragment.importer.FragmentsImporterResultEntry;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.RenderRequest;
 
@@ -40,8 +44,34 @@ public class ImportDisplayContext {
 	public List<String> getFragmentsImporterResultEntries(
 		FragmentsImporterResultEntry.Status status) {
 
+		Map
+			<FragmentsImporterResultEntry.Status,
+			 Map
+				 <FragmentsImporterResultEntry.Type,
+				  List<FragmentsImporterResultEntry>>>
+					fragmentsImporterResultEntriesMap =
+						_geFragmentsImporterResultEntriesMap();
+
+		Map
+			<FragmentsImporterResultEntry.Type,
+			 List<FragmentsImporterResultEntry>>
+				fragmentsImporterResultEntryTypeMap =
+					fragmentsImporterResultEntriesMap.get(status);
+
+		if (MapUtil.isEmpty(fragmentsImporterResultEntryTypeMap)) {
+			return null;
+		}
+
 		List<FragmentsImporterResultEntry> fragmentsImporterResultEntries =
-			_getFragmentsImporterResultEntries();
+			new ArrayList<>();
+
+		for (Map.Entry
+				<FragmentsImporterResultEntry.Type,
+				 List<FragmentsImporterResultEntry>> entry :
+					fragmentsImporterResultEntryTypeMap.entrySet()) {
+
+			fragmentsImporterResultEntries.addAll(entry.getValue());
+		}
 
 		if (ListUtil.isEmpty(fragmentsImporterResultEntries)) {
 			return null;
@@ -49,30 +79,71 @@ public class ImportDisplayContext {
 
 		return TransformUtil.transform(
 			fragmentsImporterResultEntries,
-			fragmentsImporterResultEntry -> {
-				if (fragmentsImporterResultEntry.getStatus() == status) {
-					return fragmentsImporterResultEntry.getName();
-				}
-
-				return null;
-			});
+			fragmentsImporterResultEntry ->
+				fragmentsImporterResultEntry.getName());
 	}
 
-	private List<FragmentsImporterResultEntry>
-		_getFragmentsImporterResultEntries() {
+	private Map
+		<FragmentsImporterResultEntry.Status,
+		 Map
+			 <FragmentsImporterResultEntry.Type,
+			  List<FragmentsImporterResultEntry>>>
+				_geFragmentsImporterResultEntriesMap() {
 
-		if (_fragmentsImporterResultEntries != null) {
-			return _fragmentsImporterResultEntries;
+		if (_fragmentsImporterResultEntriesMap != null) {
+			return _fragmentsImporterResultEntriesMap;
 		}
 
-		_fragmentsImporterResultEntries =
+		Map
+			<FragmentsImporterResultEntry.Status,
+			 Map
+				 <FragmentsImporterResultEntry.Type,
+				  List<FragmentsImporterResultEntry>>>
+					fragmentsImporterResultEntriesMap = new HashMap<>();
+
+		List<FragmentsImporterResultEntry> fragmentsImporterResultEntries =
 			(List<FragmentsImporterResultEntry>)SessionMessages.get(
 				_renderRequest, "fragmentsImporterResultEntries");
 
-		return _fragmentsImporterResultEntries;
+		if (ListUtil.isEmpty(fragmentsImporterResultEntries)) {
+			_fragmentsImporterResultEntriesMap =
+				fragmentsImporterResultEntriesMap;
+
+			return _fragmentsImporterResultEntriesMap;
+		}
+
+		for (FragmentsImporterResultEntry fragmentsImporterResultEntry :
+				fragmentsImporterResultEntries) {
+
+			Map
+				<FragmentsImporterResultEntry.Type,
+				 List<FragmentsImporterResultEntry>>
+					fragmentsImporterResultEntryTypeMap =
+						fragmentsImporterResultEntriesMap.computeIfAbsent(
+							fragmentsImporterResultEntry.getStatus(),
+							k -> new HashMap<>());
+
+			List<FragmentsImporterResultEntry>
+				currentFragmentsImporterResultEntries =
+					fragmentsImporterResultEntryTypeMap.computeIfAbsent(
+						fragmentsImporterResultEntry.getType(),
+						k -> new ArrayList<>());
+
+			currentFragmentsImporterResultEntries.add(
+				fragmentsImporterResultEntry);
+		}
+
+		_fragmentsImporterResultEntriesMap = fragmentsImporterResultEntriesMap;
+
+		return _fragmentsImporterResultEntriesMap;
 	}
 
-	private List<FragmentsImporterResultEntry> _fragmentsImporterResultEntries;
+	private Map
+		<FragmentsImporterResultEntry.Status,
+		 Map
+			 <FragmentsImporterResultEntry.Type,
+			  List<FragmentsImporterResultEntry>>>
+				_fragmentsImporterResultEntriesMap;
 	private final HttpServletRequest _httpServletRequest;
 	private final RenderRequest _renderRequest;
 
