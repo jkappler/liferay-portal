@@ -35,7 +35,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import java.io.File;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -60,18 +59,16 @@ public class ImportMVCActionCommand extends BaseMVCActionCommand {
 		ActionRequest actionRequest, ActionResponse actionResponse) {
 
 		if (FeatureFlagManagerUtil.isEnabled("LPS-174939")) {
-			SessionMessages.add(
-				actionRequest, "requestProcessed",
-				_getSuccessMessage(actionRequest));
+			return;
 		}
-		else {
-			String successMessage = _language.get(
-				_portal.getHttpServletRequest(actionRequest),
-				"the-files-were-imported-correctly");
 
-			SessionMessages.add(
-				actionRequest, "requestProcessed", successMessage);
-		}
+		String successMessage = _language.get(
+			_portal.getHttpServletRequest(actionRequest),
+			"the-files-were-imported-correctly");
+
+		SessionMessages.add(
+			actionRequest, "requestProcessed", successMessage);
+
 	}
 
 	@Override
@@ -104,6 +101,10 @@ public class ImportMVCActionCommand extends BaseMVCActionCommand {
 					fragmentsImporterResultEntries);
 			}
 
+			if (FeatureFlagManagerUtil.isEnabled("LPS-174939")) {
+				hideDefaultSuccessMessage(actionRequest);
+			}
+
 			SessionMessages.add(actionRequest, "success");
 		}
 		catch (Exception exception) {
@@ -125,77 +126,6 @@ public class ImportMVCActionCommand extends BaseMVCActionCommand {
 		}
 
 		sendRedirect(actionRequest, actionResponse);
-	}
-
-	private String _getSuccessMessage(ActionRequest actionRequest) {
-		String successMessage = _language.get(
-			_portal.getHttpServletRequest(actionRequest),
-			"the-files-were-imported-correctly");
-
-		if (!SessionMessages.contains(
-				actionRequest, "fragmentsImporterResultEntries")) {
-
-			return successMessage;
-		}
-
-		int validCompositionsCount = 0;
-		int validFragmentsCount = 0;
-
-		List<FragmentsImporterResultEntry> fragmentsImporterResultEntries =
-			(List<FragmentsImporterResultEntry>)SessionMessages.get(
-				actionRequest, "fragmentsImporterResultEntries");
-
-		for (FragmentsImporterResultEntry fragmentsImporterResultEntry :
-				fragmentsImporterResultEntries) {
-
-			if (fragmentsImporterResultEntry.getStatus() !=
-					FragmentsImporterResultEntry.Status.IMPORTED) {
-
-				continue;
-			}
-
-			if (Objects.equals(
-					fragmentsImporterResultEntry.getType(),
-					FragmentsImporterResultEntry.Type.COMPOSITION)) {
-
-				validCompositionsCount++;
-			}
-			else if (Objects.equals(
-						fragmentsImporterResultEntry.getType(),
-						FragmentsImporterResultEntry.Type.FRAGMENT)) {
-
-				validFragmentsCount++;
-			}
-		}
-
-		if ((validFragmentsCount > 0) && (validCompositionsCount > 0)) {
-			successMessage = _language.format(
-				_portal.getHttpServletRequest(actionRequest),
-				"x-x-s-and-x-x-s-imported-correctly",
-				new String[] {
-					String.valueOf(validCompositionsCount), "composition",
-					String.valueOf(validFragmentsCount), "fragments"
-				},
-				true);
-		}
-		else if (validCompositionsCount > 0) {
-			successMessage = _language.format(
-				_portal.getHttpServletRequest(actionRequest),
-				"x-x-s-imported-correctly",
-				new String[] {
-					String.valueOf(validCompositionsCount), "composition"
-				},
-				true);
-		}
-		else if (validFragmentsCount > 0) {
-			successMessage = _language.format(
-				_portal.getHttpServletRequest(actionRequest),
-				"x-x-s-imported-correctly",
-				new String[] {String.valueOf(validFragmentsCount), "fragments"},
-				true);
-		}
-
-		return successMessage;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

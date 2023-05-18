@@ -362,9 +362,19 @@ List<FragmentCollectionContributor> fragmentCollectionContributors = fragmentDis
 ImportDisplayContext importDisplayContext = new ImportDisplayContext(request, renderRequest);
 
 List<String> draftFragmentsImporterResultEntries = importDisplayContext.getFragmentsImporterResultEntries(FragmentsImporterResultEntry.Status.IMPORTED_DRAFT);
+
+String successMessage = importDisplayContext.getSuccessMessage();
 %>
 
 <aui:script>
+	<c:if test="<%= successMessage != null %>">
+		Liferay.Util.openToast({
+			message: '<%= successMessage %>',
+			title: '<liferay-ui:message key="success" />:',
+			type: 'success',
+		});
+	</c:if>
+
 	<c:if test="<%= ListUtil.isNotEmpty(draftFragmentsImporterResultEntries) %>">
 		Liferay.Util.openToast({
 			message:

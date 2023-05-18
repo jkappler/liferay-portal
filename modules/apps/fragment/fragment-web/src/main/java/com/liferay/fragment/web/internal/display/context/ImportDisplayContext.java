@@ -16,6 +16,8 @@ package com.liferay.fragment.web.internal.display.context;
 
 import com.liferay.fragment.importer.FragmentsImporterResultEntry;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -81,6 +83,81 @@ public class ImportDisplayContext {
 			fragmentsImporterResultEntries,
 			fragmentsImporterResultEntry ->
 				fragmentsImporterResultEntry.getName());
+	}
+
+	public String getSuccessMessage() {
+		if (!FeatureFlagManagerUtil.isEnabled("LPS-174939") ||
+			!SessionMessages.contains(_renderRequest, "success")) {
+
+			return null;
+		}
+
+		Map
+			<FragmentsImporterResultEntry.Status,
+			 Map
+				 <FragmentsImporterResultEntry.Type,
+				  List<FragmentsImporterResultEntry>>>
+					fragmentsImporterResultEntriesMap =
+						_geFragmentsImporterResultEntriesMap();
+
+		Map
+			<FragmentsImporterResultEntry.Type,
+			 List<FragmentsImporterResultEntry>>
+				fragmentsImporterResultEntryTypeMap =
+					fragmentsImporterResultEntriesMap.get(
+						FragmentsImporterResultEntry.Status.IMPORTED);
+
+		if (MapUtil.isEmpty(fragmentsImporterResultEntryTypeMap)) {
+			return null;
+		}
+
+		String successMessage = null;
+
+		List<FragmentsImporterResultEntry> validCompositions =
+			fragmentsImporterResultEntryTypeMap.get(
+				FragmentsImporterResultEntry.Type.COMPOSITION);
+
+		int validCompositionsCount = 0;
+
+		if (ListUtil.isNotEmpty(validCompositions)) {
+			validCompositionsCount = validCompositions.size();
+		}
+
+		List<FragmentsImporterResultEntry> validFragments =
+			fragmentsImporterResultEntryTypeMap.get(
+				FragmentsImporterResultEntry.Type.FRAGMENT);
+
+		int validFragmentsCount = 0;
+
+		if (ListUtil.isNotEmpty(validFragments)) {
+			validFragmentsCount = validFragments.size();
+		}
+
+		if ((validFragmentsCount > 0) && (validCompositionsCount > 0)) {
+			successMessage = LanguageUtil.format(
+				_httpServletRequest, "x-x-s-and-x-x-s-imported-correctly",
+				new String[] {
+					String.valueOf(validCompositionsCount), "composition",
+					String.valueOf(validFragmentsCount), "fragments"
+				},
+				true);
+		}
+		else if (validCompositionsCount > 0) {
+			successMessage = LanguageUtil.format(
+				_httpServletRequest, "x-x-s-imported-correctly",
+				new String[] {
+					String.valueOf(validCompositionsCount), "composition"
+				},
+				true);
+		}
+		else if (validFragmentsCount > 0) {
+			successMessage = LanguageUtil.format(
+				_httpServletRequest, "x-x-s-imported-correctly",
+				new String[] {String.valueOf(validFragmentsCount), "fragments"},
+				true);
+		}
+
+		return successMessage;
 	}
 
 	private Map
