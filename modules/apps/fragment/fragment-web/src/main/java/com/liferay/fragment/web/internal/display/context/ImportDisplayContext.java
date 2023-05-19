@@ -138,7 +138,7 @@ public class ImportDisplayContext {
 				_httpServletRequest, "x-x-s-and-x-x-s-imported-correctly",
 				new String[] {
 					String.valueOf(validCompositionsCount), "composition",
-					String.valueOf(validFragmentsCount), "fragments"
+					String.valueOf(validFragmentsCount), "fragment"
 				},
 				true);
 		}
@@ -153,7 +153,7 @@ public class ImportDisplayContext {
 		else if (validFragmentsCount > 0) {
 			successMessage = LanguageUtil.format(
 				_httpServletRequest, "x-x-s-imported-correctly",
-				new String[] {String.valueOf(validFragmentsCount), "fragments"},
+				new String[] {String.valueOf(validFragmentsCount), "fragment"},
 				true);
 		}
 
