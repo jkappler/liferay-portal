@@ -361,9 +361,8 @@ List<FragmentCollectionContributor> fragmentCollectionContributors = fragmentDis
 <%
 ImportDisplayContext importDisplayContext = new ImportDisplayContext(request, renderRequest);
 
-List<String> draftFragmentsImporterResultEntries = importDisplayContext.getFragmentsImporterResultEntries(FragmentsImporterResultEntry.Status.IMPORTED_DRAFT);
-
 String successMessage = importDisplayContext.getSuccessMessage();
+String draftMessage = importDisplayContext.getDraftMessage();
 %>
 
 <aui:script>
@@ -375,10 +374,9 @@ String successMessage = importDisplayContext.getSuccessMessage();
 		});
 	</c:if>
 
-	<c:if test="<%= ListUtil.isNotEmpty(draftFragmentsImporterResultEntries) %>">
+	<c:if test="<%= draftMessage != null %>">
 		Liferay.Util.openToast({
-			message:
-				'<liferay-ui:message arguments='<%= "<strong>" + StringUtil.merge(draftFragmentsImporterResultEntries, StringPool.COMMA_AND_SPACE) + "</strong>" %>' key="the-following-fragments-have-validation-issues.-they-have-been-left-in-draft-status-x" />',
+			message: '<%= draftMessage %>',
 			title: '<liferay-ui:message key="warning" />:',
 			type: 'warning',
 		});

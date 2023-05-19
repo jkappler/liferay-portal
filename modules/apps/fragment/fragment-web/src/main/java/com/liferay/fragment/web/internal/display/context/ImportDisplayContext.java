@@ -43,6 +43,37 @@ public class ImportDisplayContext {
 		_renderRequest = renderRequest;
 	}
 
+	public String getDraftMessage() {
+		List<String> draftFragmentsImporterResultEntries =
+			getFragmentsImporterResultEntries(
+				FragmentsImporterResultEntry.Status.IMPORTED_DRAFT);
+
+		if (ListUtil.isEmpty(draftFragmentsImporterResultEntries)) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder("");
+
+		String draftMessage = LanguageUtil.format(
+			_httpServletRequest,
+			"x-imported-fragments-contains-errors-that-might-cause-malfunction",
+			draftFragmentsImporterResultEntries.size());
+
+		sb.append(draftMessage);
+
+		if (draftFragmentsImporterResultEntries.size() < 3) {
+			sb.append("<ul>");
+
+			for (String fragment : draftFragmentsImporterResultEntries) {
+				sb.append("<li>" + fragment + "</li>");
+			}
+
+			sb.append("</ul>");
+		}
+
+		return sb.toString();
+	}
+
 	public List<String> getFragmentsImporterResultEntries(
 		FragmentsImporterResultEntry.Status status) {
 
