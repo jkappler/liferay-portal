@@ -17,7 +17,10 @@ package com.liferay.fragment.web.internal.portlet.action;
 import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.importer.FragmentsImporter;
 import com.liferay.fragment.importer.FragmentsImporterResultEntry;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -95,11 +98,28 @@ public class ImportMVCActionCommand extends BaseMVCActionCommand {
 			SessionMessages.add(actionRequest, "success");
 		}
 		catch (Exception exception) {
-			SessionErrors.add(actionRequest, exception.getClass(), exception);
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+
+			if (FeatureFlagManagerUtil.isEnabled("LPS-174939")) {
+				hideDefaultErrorMessage(actionRequest);
+
+				SessionErrors.add(
+					actionRequest, "fragmentImportFailed",
+					uploadPortletRequest.getFileName("file"));
+			}
+			else {
+				SessionErrors.add(
+					actionRequest, exception.getClass(), exception);
+			}
 		}
 
 		sendRedirect(actionRequest, actionResponse);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ImportMVCActionCommand.class);
 
 	@Reference
 	private FragmentsImporter _fragmentsImporter;

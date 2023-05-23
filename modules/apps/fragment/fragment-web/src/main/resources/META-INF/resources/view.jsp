@@ -44,6 +44,12 @@ List<FragmentCollectionContributor> fragmentCollectionContributors = fragmentDis
 
 <liferay-ui:error embed="<%= false %>" exception="<%= InvalidFileException.class %>" message="the-selected-file-is-not-a-valid-zip-file" />
 
+<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPS-174939") %>'>
+	<liferay-ui:error embed="<%= false %>" key="fragmentImportFailed">
+		<liferay-ui:message arguments='<%= (String)SessionErrors.get(renderRequest, "fragmentImportFailed") %>' key="something-went-wrong-and-x-could-not-be-imported" translateArguments="<%= false %>" />
+	</liferay-ui:error>
+</c:if>
+
 <liferay-ui:success key="fragmentEntryCopied" message="the-fragment-was-copied-successfully" />
 
 <clay:container-fluid
