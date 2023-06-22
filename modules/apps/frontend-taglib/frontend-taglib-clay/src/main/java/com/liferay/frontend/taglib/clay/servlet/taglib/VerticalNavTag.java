@@ -178,13 +178,14 @@ public class VerticalNavTag extends BaseContainerTag {
 				jspWriter.write(" role=\"button\" tabindex=\"-1\">");
 			}
 			else {
-				jspWriter.write("<a class=\"nav-link ");
-				jspWriter.write(" role=\"menuitem\" tabindex=\"-1\"");
+				jspWriter.write("<a class=\"nav-link");
 
 				if (active) {
 					jspWriter.write(" active");
 				}
 
+				jspWriter.write("\"");
+				jspWriter.write(" role=\"menuitem\" tabindex=\"-1\"");
 				jspWriter.write(" href=\"");
 				jspWriter.write((String)verticalNavItem.get("href"));
 				jspWriter.write("\">");

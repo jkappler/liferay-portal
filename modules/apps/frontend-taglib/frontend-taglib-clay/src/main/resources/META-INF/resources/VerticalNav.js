@@ -43,6 +43,7 @@ export default function VerticalNav({
 		>
 			{(item) => (
 				<ClayVerticalNav.Item
+					active={item.active}
 					href={item.href}
 					items={item.items}
 					key={item.id}
