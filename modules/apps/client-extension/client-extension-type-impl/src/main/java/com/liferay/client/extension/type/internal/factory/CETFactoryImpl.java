@@ -63,6 +63,9 @@ public class CETFactoryImpl implements CETFactory {
 			ClientExtensionEntryConstants.TYPE_FDS_FILTER,
 			new FDSFilterCETImplFactoryImpl()
 		).put(
+			ClientExtensionEntryConstants.TYPE_FRAGMENT,
+			new FragmentCETImplFactoryImpl()
+		).put(
 			ClientExtensionEntryConstants.TYPE_GLOBAL_CSS,
 			new GlobalCSSCETImplFactoryImpl()
 		).put(
