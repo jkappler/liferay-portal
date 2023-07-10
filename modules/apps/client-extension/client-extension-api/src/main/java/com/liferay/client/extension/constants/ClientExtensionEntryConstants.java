@@ -16,6 +16,8 @@ public class ClientExtensionEntryConstants {
 
 	public static final String TYPE_FDS_FILTER = "fdsFilter";
 
+	public static final String TYPE_FRAGMENT = "fragment";
+
 	public static final String TYPE_GLOBAL_CSS = "globalCSS";
 
 	public static final String TYPE_GLOBAL_JS = "globalJS";
