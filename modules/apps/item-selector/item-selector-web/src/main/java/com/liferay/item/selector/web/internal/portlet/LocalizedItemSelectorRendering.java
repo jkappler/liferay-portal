@@ -16,9 +16,11 @@ package com.liferay.item.selector.web.internal.portlet;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemList;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.VerticalNavItemList;
 import com.liferay.item.selector.ItemSelectorRendering;
 import com.liferay.item.selector.ItemSelectorView;
 import com.liferay.item.selector.ItemSelectorViewRenderer;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.HashMap;
@@ -87,13 +89,27 @@ public class LocalizedItemSelectorRendering {
 			});
 	}
 
-	public String getItemSelectedEventName() {
-		return _itemSelectorRendering.getItemSelectedEventName();
-	}
-
 	public List<NavigationItem> getNavigationItems() {
 		return _navigationItems;
 	}
+
+	public VerticalNavItemList getVerticalNavItemList() {
+		VerticalNavItemList verticalNavItemList = new VerticalNavItemList();
+		for (NavigationItem navigationItem : getNavigationItems()) {
+			verticalNavItemList.add(
+				verticalNavItem -> {
+					String name = GetterUtil.getString(navigationItem.get("label"));
+
+					verticalNavItem.setActive(GetterUtil.getBoolean(navigationItem.get("active")));
+					verticalNavItem.setHref(GetterUtil.getString(navigationItem.get("href")));
+					verticalNavItem.setLabel(name);
+					verticalNavItem.setId(name);
+				}
+			);
+		}
+		return verticalNavItemList;
+	}
+
 
 	public ItemSelectorViewRenderer getSelectedItemSelectorViewRenderer() {
 		return _itemSelectorViewRenderers.get(_selectedNavigationItemLabel);
