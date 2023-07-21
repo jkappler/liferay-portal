@@ -115,6 +115,15 @@ public class LocalizedItemSelectorRendering {
 		return _itemSelectorViewRenderers.get(_selectedNavigationItemLabel);
 	}
 
+	public NavigationItem getActiveNavigationItem(){
+		for (NavigationItem navigationItem: getNavigationItems()){
+			if (GetterUtil.getBoolean(navigationItem.get("active"))){
+				return navigationItem;
+			}
+		}
+		return null;
+	}
+
 	public void store(PortletRequest portletRequest) {
 		portletRequest.setAttribute(
 			LocalizedItemSelectorRendering.class.getName(), this);
