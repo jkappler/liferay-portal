@@ -5,6 +5,7 @@
 
 package com.liferay.fragment.internal.renderer;
 
+import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.contributor.FragmentCollectionContributorRegistry;
 import com.liferay.fragment.exception.FragmentEntryContentException;
 import com.liferay.fragment.model.FragmentEntryLink;
@@ -172,9 +173,21 @@ public class FragmentRendererControllerImpl
 
 		FragmentRenderer fragmentRenderer = null;
 
-		if (Validator.isNotNull(fragmentEntryLink.getRendererKey())) {
+		if ((fragmentEntryLink.getType() !=
+				FragmentConstants.TYPE_CLIENT_EXTENSION_ENTRY) &&
+			Validator.isNotNull(fragmentEntryLink.getRendererKey())) {
+
 			fragmentRenderer = _fragmentRendererRegistry.getFragmentRenderer(
 				fragmentEntryLink.getRendererKey());
+		}
+
+		if ((fragmentEntryLink.getType() ==
+				FragmentConstants.TYPE_CLIENT_EXTENSION_ENTRY) &&
+			Validator.isNotNull(fragmentEntryLink.getRendererKey())) {
+
+			fragmentRenderer = _fragmentRendererRegistry.getFragmentRenderer(
+				FragmentRendererConstants.
+					FRAGMENT_ENTRY_FRAGMENT_RENDERER_KEY_CLIENT_EXTENSION_ENTRY);
 		}
 
 		if ((fragmentRenderer == null) && fragmentEntryLink.isTypeReact()) {

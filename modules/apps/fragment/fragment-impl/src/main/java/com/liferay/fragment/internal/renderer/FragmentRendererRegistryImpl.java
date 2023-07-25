@@ -174,7 +174,11 @@ public class FragmentRendererRegistryImpl implements FragmentRendererRegistry {
 				!StringUtil.equals(
 					fragmentRenderer.getKey(),
 					FragmentRendererConstants.
-						FRAGMENT_ENTRY_FRAGMENT_RENDERER_KEY_REACT)) {
+						FRAGMENT_ENTRY_FRAGMENT_RENDERER_KEY_REACT) &&
+				!StringUtil.equals(
+					fragmentRenderer.getKey(),
+					FragmentRendererConstants.
+						FRAGMENT_ENTRY_FRAGMENT_RENDERER_KEY_CLIENT_EXTENSION_ENTRY)) {
 
 				return false;
 			}

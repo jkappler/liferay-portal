@@ -5,6 +5,9 @@
 
 package com.liferay.layout.content.page.editor.web.internal.util;
 
+import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
+import com.liferay.client.extension.type.CET;
+import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.fragment.contributor.FragmentCollectionContributorRegistry;
@@ -23,7 +26,11 @@ import com.liferay.layout.content.page.editor.web.internal.constants.ContentPage
 import com.liferay.layout.util.PortalPreferencesUtil;
 import com.liferay.layout.util.structure.DropZoneLayoutStructureItem;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
@@ -36,6 +43,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.vulcan.pagination.Pagination;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -288,6 +296,65 @@ public class FragmentCollectionManager {
 	}
 
 	private Map<String, Map<String, Object>>
+		_getFragmentClientExtensionEntriesFragmentCollectionMaps(
+			Map<String, Map<String, Object>> fragmentCollectionMaps,
+			Set<String> highlightedFragmentEntryKeys,
+			ThemeDisplay themeDisplay) {
+
+		try {
+			int count = _cetManager.getCETsCount(
+				themeDisplay.getCompanyId(), null,
+				ClientExtensionEntryConstants.TYPE_FRAGMENT);
+
+			if (count <= 0) {
+				return fragmentCollectionMaps;
+			}
+
+			List<Map<String, Object>> fragmentEntryMapsList = new ArrayList<>();
+
+			for (CET cet :
+					_cetManager.getCETs(
+						themeDisplay.getCompanyId(), null,
+						ClientExtensionEntryConstants.TYPE_FRAGMENT,
+						Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS),
+						null)) {
+
+				fragmentEntryMapsList.add(
+					HashMapBuilder.<String, Object>put(
+						"fragmentEntryKey", cet.getExternalReferenceCode()
+					).put(
+						"highlighted",
+						highlightedFragmentEntryKeys.contains(
+							cet.getExternalReferenceCode())
+					).put(
+						"name", cet.getName(themeDisplay.getLocale())
+					).put(
+						"type", FragmentConstants.TYPE_CLIENT_EXTENSION_ENTRY
+					).build());
+			}
+
+			fragmentCollectionMaps.put(
+				"CET_fragmentCollectionId",
+				HashMapBuilder.<String, Object>put(
+					"fragmentCollectionId", "CET_fragmentCollectionId"
+				).put(
+					"fragmentEntries", fragmentEntryMapsList
+				).put(
+					"name",
+					() -> _language.get(
+						themeDisplay.getLocale(), "fragment-client-extensions")
+				).build());
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+		}
+
+		return fragmentCollectionMaps;
+	}
+
+	private Map<String, Map<String, Object>>
 		_getFragmentCollectionContributorMaps(
 			boolean hideInputFragments,
 			Set<String> highlightedFragmentEntryKeys,
@@ -512,6 +579,11 @@ public class FragmentCollectionManager {
 			highlightedFragmentEntryKeys, httpServletRequest,
 			masterDropZoneLayoutStructureItem, themeDisplay);
 
+		fragmentCollectionMaps =
+			_getFragmentClientExtensionEntriesFragmentCollectionMaps(
+				fragmentCollectionMaps, highlightedFragmentEntryKeys,
+				themeDisplay);
+
 		Map<String, List<Map<String, Object>>> layoutElementMapsListMap =
 			ObjectUtil.getLayoutElementMapsListMap(
 				themeDisplay.getCompanyId(), _infoItemServiceRegistry,
@@ -615,6 +687,12 @@ public class FragmentCollectionManager {
 	private static final String[] _SORTED_FRAGMENT_COLLECTION_KEYS = {
 		"layout-elements", "BASIC_COMPONENT", "INPUTS", "content-display"
 	};
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		FragmentCollectionManager.class);
+
+	@Reference
+	private CETManager _cetManager;
 
 	@Reference
 	private FragmentCollectionContributorRegistry

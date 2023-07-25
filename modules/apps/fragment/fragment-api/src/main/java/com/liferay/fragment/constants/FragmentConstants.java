@@ -29,6 +29,11 @@ public class FragmentConstants {
 
 	public static final String TYPE_PORTLET_LABEL = "widget";
 
+	public static final int TYPE_CLIENT_EXTENSION_ENTRY = 5;
+
+	public static final String TYPE_CLIENT_EXTENSION_ENTRY_LABEL =
+		"clientExtensionEntry";
+
 	public static final int TYPE_REACT = 2;
 
 	public static final String TYPE_REACT_LABEL = "react";
@@ -38,6 +43,10 @@ public class FragmentConstants {
 	public static final String TYPE_SECTION_LABEL = "section";
 
 	public static int getTypeFromLabel(String label) {
+		if (Objects.equals(TYPE_CLIENT_EXTENSION_ENTRY_LABEL, label)) {
+			return TYPE_CLIENT_EXTENSION_ENTRY;
+		}
+
 		if (Objects.equals(TYPE_COMPONENT_LABEL, label)) {
 			return TYPE_COMPONENT;
 		}
@@ -58,6 +67,10 @@ public class FragmentConstants {
 	}
 
 	public static String getTypeLabel(int type) {
+		if (type == TYPE_CLIENT_EXTENSION_ENTRY) {
+			return TYPE_CLIENT_EXTENSION_ENTRY_LABEL;
+		}
+
 		if (type == TYPE_COMPONENT) {
 			return TYPE_COMPONENT_LABEL;
 		}

@@ -5,6 +5,10 @@
 
 package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 
+import com.liferay.client.extension.type.CET;
+import com.liferay.client.extension.type.FragmentCET;
+import com.liferay.client.extension.type.manager.CETManager;
+import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.exception.FragmentEntryContentException;
 import com.liferay.fragment.exception.NoSuchEntryException;
 import com.liferay.fragment.listener.FragmentEntryLinkListener;
@@ -65,6 +69,9 @@ public class AddFragmentEntryLinkMVCActionCommand
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			actionRequest);
 
+		CET cet = _cetManager.getCET(
+			serviceContext.getCompanyId(), fragmentEntryKey);
+
 		FragmentEntry fragmentEntry =
 			_fragmentEntryLinkManager.getFragmentEntry(
 				groupId, fragmentEntryKey, serviceContext.getLocale());
@@ -72,7 +79,9 @@ public class AddFragmentEntryLinkMVCActionCommand
 		FragmentRenderer fragmentRenderer =
 			_fragmentRendererRegistry.getFragmentRenderer(fragmentEntryKey);
 
-		if ((fragmentEntry == null) && (fragmentRenderer == null)) {
+		if ((cet == null) && (fragmentEntry == null) &&
+			(fragmentRenderer == null)) {
+
 			throw new NoSuchEntryException();
 		}
 
@@ -94,6 +103,16 @@ public class AddFragmentEntryLinkMVCActionCommand
 				fragmentEntry.getConfiguration(), null, StringPool.BLANK, 0,
 				contributedRendererKey, fragmentEntry.getType(),
 				serviceContext);
+		}
+
+		if (cet != null) {
+			FragmentCET fragmentCET = (FragmentCET)cet;
+
+			return _fragmentEntryLinkService.addFragmentEntryLink(
+				serviceContext.getScopeGroupId(), 0, 0, segmentsExperienceId,
+				serviceContext.getPlid(), null, null, null, null, null,
+				StringPool.BLANK, 0, fragmentCET.getExternalReferenceCode(),
+				FragmentConstants.TYPE_CLIENT_EXTENSION_ENTRY, serviceContext);
 		}
 
 		DefaultFragmentRendererContext defaultFragmentRendererContext =
@@ -193,6 +212,9 @@ public class AddFragmentEntryLinkMVCActionCommand
 			"layoutData", layoutStructure.toJSONObject()
 		);
 	}
+
+	@Reference
+	private CETManager _cetManager;
 
 	@Reference
 	private FragmentEntryLinkListenerRegistry
