@@ -4,11 +4,13 @@
  */
 
 import ClayIcon from '@clayui/icon';
+import {createPortletURL} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import {LAYOUT_DATA_ITEM_TYPES} from '../../app/config/constants/layoutDataItemTypes';
 import {config} from '../../app/config/index';
-import {useCustomCollectionSelectorURL} from '../../app/contexts/CollectionItemContext';
+import {useSelector} from '../../app/contexts/StoreContext';
 import itemSelectorValueToCollection from '../../app/utils/item_selector_value/itemSelectorValueToCollection';
 import ItemSelector from './ItemSelector';
 
@@ -18,13 +20,19 @@ export default function CollectionSelector({
 	collectionItem,
 	itemSelectorURL,
 	label,
+	item,
 	onBeforeCollectionSelect,
 	onCollectionSelect,
 	optionsMenuItems = DEFAULT_OPTION_MENU_ITEMS,
 }) {
 	const eventName = `${config.portletNamespace}selectInfoList`;
 
-	const customCollectionSelectorURL = useCustomCollectionSelectorURL();
+	const layoutData = useSelector((state) => state.layoutData);
+
+	const customCollectionSelectorURL = getCustomCollectionURL({
+		item,
+		layoutData,
+	});
 
 	const filterConfig = collectionItem?.config ?? {};
 
@@ -66,6 +74,41 @@ export default function CollectionSelector({
 		</>
 	);
 }
+
+const getCustomCollectionURL = ({item, layoutData}) => {
+	const getFormOrCollectionParentConfig = (item, layoutData) => {
+		if (!item) {
+			return null;
+		}
+
+		if (item.type === LAYOUT_DATA_ITEM_TYPES.collection) {
+			return item.config?.collection;
+		}
+
+		if (item.type === LAYOUT_DATA_ITEM_TYPES.form) {
+			return item.config;
+		}
+
+		return getFormOrCollectionParentConfig(
+			layoutData.items[item.parentId],
+			layoutData
+		);
+	};
+
+	const itemConfig = getFormOrCollectionParentConfig(
+		layoutData.items[item.parentId],
+		layoutData
+	);
+
+	if (!itemConfig) {
+		return null;
+	}
+
+	return createPortletURL(config.selectCollectionURL, {
+		classNameId: itemConfig.classNameId || 0,
+		itemType: itemConfig.itemType || '',
+	});
+};
 
 CollectionSelector.propTypes = {
 	collectionItem: PropTypes.shape({title: PropTypes.string}),

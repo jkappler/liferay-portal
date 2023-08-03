@@ -260,6 +260,7 @@ export function CollectionGeneralPanel({item}) {
 						<>
 							<CollectionSelector
 								collectionItem={collection}
+								item={item}
 								itemSelectorURL={config.collectionSelectorURL}
 								label={Liferay.Language.get('collection')}
 								onBeforeCollectionSelect={

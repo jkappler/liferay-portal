@@ -9,12 +9,13 @@ import React from 'react';
 import CollectionSelector from '../../../common/components/CollectionSelector';
 import {ConfigurationFieldPropTypes} from '../../../prop_types/index';
 
-export function CollectionSelectorField({field, onValueSelect, value}) {
+export function CollectionSelectorField({field, item, onValueSelect, value}) {
 	const {typeOptions = {}} = field;
 
 	return (
 		<CollectionSelector
 			collectionItem={value}
+			item={item}
 			itemSelectorURL={typeOptions.infoListSelectorURL}
 			label={field.label}
 			onCollectionSelect={(collection) => {
