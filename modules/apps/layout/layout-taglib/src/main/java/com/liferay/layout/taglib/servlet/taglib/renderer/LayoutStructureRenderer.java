@@ -18,7 +18,10 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.RowTag;
 import com.liferay.frontend.taglib.servlet.taglib.ComponentTag;
 import com.liferay.info.constants.InfoDisplayWebKeys;
 import com.liferay.info.form.InfoForm;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.ERCInfoItemIdentifier;
 import com.liferay.info.item.InfoItemDetails;
+import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemDetailsProvider;
@@ -907,25 +910,24 @@ public class LayoutStructureRenderer {
 		jspWriter.write(
 			String.valueOf(formStyledLayoutStructureItem.getClassTypeId()));
 
-		if (FeatureFlagManagerUtil.isEnabled("LPS-183727")) {
-			LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
-				(LayoutDisplayPageObjectProvider<?>)
-					_httpServletRequest.getAttribute(
-						LayoutDisplayPageWebKeys.
-							LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
+		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
+			(LayoutDisplayPageObjectProvider<?>)
+				_httpServletRequest.getAttribute(
+					LayoutDisplayPageWebKeys.
+						LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
 
-			if (layoutDisplayPageObjectProvider != null) {
-				jspWriter.write(
-					"\"><input name=\"classPK\" type=\"hidden\" value=\"");
-				jspWriter.write(
-					String.valueOf(
-						layoutDisplayPageObjectProvider.getClassPK()));
-				jspWriter.write(
-					"\"><input name=\"externalReferenceCode\" type=\"hidden\"");
-				jspWriter.write(" value=\"");
-				jspWriter.write(
-					layoutDisplayPageObjectProvider.getExternalReferenceCode());
-			}
+		if (FeatureFlagManagerUtil.isEnabled("LPS-183727") &&
+			(layoutDisplayPageObjectProvider != null)) {
+
+			jspWriter.write(
+				"\"><input name=\"classPK\" type=\"hidden\" value=\"");
+			jspWriter.write(
+				String.valueOf(layoutDisplayPageObjectProvider.getClassPK()));
+			jspWriter.write(
+				"\"><input name=\"externalReferenceCode\" type=\"hidden\"");
+			jspWriter.write(" value=\"");
+			jspWriter.write(
+				layoutDisplayPageObjectProvider.getExternalReferenceCode());
 		}
 
 		if (FeatureFlagManagerUtil.isEnabled("LPS-183498")) {
@@ -992,8 +994,41 @@ public class LayoutStructureRenderer {
 			_httpServletRequest,
 			"infoFormParameterMap" + formStyledLayoutStructureItem.getItemId());
 
-		_renderLayoutStructure(
-			formStyledLayoutStructureItem.getChildrenItemIds(), infoForm);
+		InfoItemReference currentInfoItemReference =
+			(InfoItemReference)_httpServletRequest.getAttribute(
+				InfoDisplayWebKeys.INFO_ITEM_REFERENCE);
+
+		try {
+			if (FeatureFlagManagerUtil.isEnabled("LPS-183727") &&
+				(layoutDisplayPageObjectProvider != null)) {
+
+				InfoItemIdentifier infoItemIdentifier = null;
+
+				if (layoutDisplayPageObjectProvider.getClassPK() > 0) {
+					infoItemIdentifier = new ClassPKInfoItemIdentifier(
+						layoutDisplayPageObjectProvider.getClassPK());
+				}
+				else {
+					infoItemIdentifier = new ERCInfoItemIdentifier(
+						layoutDisplayPageObjectProvider.
+							getExternalReferenceCode());
+				}
+
+				_httpServletRequest.setAttribute(
+					InfoDisplayWebKeys.INFO_ITEM_REFERENCE,
+					new InfoItemReference(
+						layoutDisplayPageObjectProvider.getClassName(),
+						infoItemIdentifier));
+			}
+
+			_renderLayoutStructure(
+				formStyledLayoutStructureItem.getChildrenItemIds(), infoForm);
+		}
+		finally {
+			_httpServletRequest.setAttribute(
+				InfoDisplayWebKeys.INFO_ITEM_REFERENCE,
+				currentInfoItemReference);
+		}
 
 		SessionMessages.remove(_httpServletRequest, "infoFormParameterMap");
 
