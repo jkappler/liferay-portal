@@ -103,6 +103,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -604,6 +605,17 @@ public class ContentPageEditorDisplayContext {
 			).put(
 				"segmentsConfigurationURL",
 				_getSegmentsCompanyConfigurationURL()
+			).put(
+				"selectCollectionURL",
+				() -> PortletURLBuilder.create(
+					PortalUtil.getControlPanelPortletURL(
+						httpServletRequest,
+						ContentPageEditorPortletKeys.
+							CONTENT_PAGE_EDITOR_PORTLET,
+						PortletRequest.RENDER_PHASE)
+				).setMVCRenderCommandName(
+					"/layout_content_page_editor/select_collection"
+				).buildString()
 			).put(
 				"sidebarPanels", getSidebarPanels()
 			).put(
