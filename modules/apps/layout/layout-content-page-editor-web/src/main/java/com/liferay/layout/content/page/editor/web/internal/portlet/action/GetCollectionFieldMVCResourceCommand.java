@@ -5,17 +5,12 @@
 
 package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 
-import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
-import com.liferay.asset.kernel.model.AssetEntry;
-import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
 import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.fragment.entry.processor.helper.FragmentEntryProcessorHelper;
 import com.liferay.fragment.processor.DefaultFragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessorContext;
-import com.liferay.info.collection.provider.item.selector.criterion.InfoCollectionProviderItemSelectorCriterion;
-import com.liferay.info.collection.provider.item.selector.criterion.RelatedInfoItemCollectionProviderItemSelectorCriterion;
 import com.liferay.info.exception.NoSuchInfoItemException;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
@@ -28,13 +23,11 @@ import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.info.item.provider.filter.InfoItemServiceFilter;
-import com.liferay.info.list.provider.item.selector.criterion.InfoListProviderItemSelectorReturnType;
 import com.liferay.info.list.renderer.DefaultInfoListRendererContext;
 import com.liferay.info.list.renderer.InfoListRenderer;
 import com.liferay.info.list.renderer.InfoListRendererRegistry;
 import com.liferay.info.search.InfoSearchClassMapperRegistry;
 import com.liferay.item.selector.ItemSelector;
-import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.content.page.editor.web.internal.util.LayoutObjectReferenceUtil;
 import com.liferay.layout.list.permission.provider.LayoutListPermissionProvider;
@@ -48,7 +41,6 @@ import com.liferay.layout.list.retriever.ListObjectReferenceFactory;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactoryRegistry;
 import com.liferay.layout.list.retriever.SegmentsEntryLayoutListRetriever;
 import com.liferay.layout.util.CollectionPaginationUtil;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
@@ -60,7 +52,6 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
-import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -76,12 +67,10 @@ import com.liferay.segments.context.RequestContextMapper;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import javax.portlet.PortletURL;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
@@ -145,8 +134,7 @@ public class GetCollectionFieldMVCResourceCommand
 				_portal.getHttpServletRequest(resourceRequest),
 				_portal.getHttpServletResponse(resourceResponse), activePage,
 				displayAllItems, displayAllPages, languageId,
-				layoutObjectReference, listStyle, listItemStyle,
-				resourceResponse.getNamespace(), numberOfItems,
+				layoutObjectReference, listStyle, listItemStyle, numberOfItems,
 				numberOfItemsPerPage, numberOfPages, paginationType,
 				segmentsExperienceId, templateKey);
 		}
@@ -211,9 +199,9 @@ public class GetCollectionFieldMVCResourceCommand
 			HttpServletResponse httpServletResponse, int activePage,
 			boolean displayAllItems, boolean displayAllPages, String languageId,
 			String layoutObjectReference, String listStyle,
-			String listItemStyle, String namespace, int numberOfItems,
-			int numberOfItemsPerPage, int numberOfPages, String paginationType,
-			long segmentsExperienceId, String templateKey)
+			String listItemStyle, int numberOfItems, int numberOfItemsPerPage,
+			int numberOfPages, String paginationType, long segmentsExperienceId,
+			String templateKey)
 		throws PortalException {
 
 		JSONObject jsonObject = _jsonFactory.createJSONObject();
@@ -255,8 +243,6 @@ public class GetCollectionFieldMVCResourceCommand
 
 		if (!_hasViewPermission(httpServletRequest, listObjectReference)) {
 			jsonObject.put(
-				"customCollectionSelectorURL", StringPool.BLANK
-			).put(
 				"isRestricted", true
 			).put(
 				"items", _jsonFactory.createJSONArray()
@@ -367,10 +353,6 @@ public class GetCollectionFieldMVCResourceCommand
 		}
 
 		jsonObject.put(
-			"customCollectionSelectorURL",
-			_getCustomCollectionSelectorURL(
-				httpServletRequest, itemType, namespace)
-		).put(
 			"isRestricted", false
 		).put(
 			"items", jsonArray
@@ -395,61 +377,6 @@ public class GetCollectionFieldMVCResourceCommand
 		);
 
 		return jsonObject;
-	}
-
-	private String _getCustomCollectionSelectorURL(
-		HttpServletRequest httpServletRequest, String itemType,
-		String namespace) {
-
-		InfoCollectionProviderItemSelectorCriterion
-			infoCollectionProviderItemSelectorCriterion =
-				new InfoCollectionProviderItemSelectorCriterion();
-
-		infoCollectionProviderItemSelectorCriterion.
-			setDesiredItemSelectorReturnTypes(
-				new InfoListItemSelectorReturnType(),
-				new InfoListProviderItemSelectorReturnType());
-		infoCollectionProviderItemSelectorCriterion.setType(
-			InfoCollectionProviderItemSelectorCriterion.Type.
-				SUPPORTED_INFO_FRAMEWORK_COLLECTIONS);
-
-		RelatedInfoItemCollectionProviderItemSelectorCriterion
-			relatedInfoItemCollectionProviderItemSelectorCriterion =
-				new RelatedInfoItemCollectionProviderItemSelectorCriterion();
-
-		relatedInfoItemCollectionProviderItemSelectorCriterion.
-			setDesiredItemSelectorReturnTypes(
-				new InfoListProviderItemSelectorReturnType());
-
-		List<String> sourceItemTypes = new ArrayList<>();
-
-		sourceItemTypes.add(itemType);
-
-		String className = _infoSearchClassMapperRegistry.getSearchClassName(
-			itemType);
-
-		AssetRendererFactory<?> assetRendererFactory =
-			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
-				className);
-
-		if (assetRendererFactory != null) {
-			sourceItemTypes.add(AssetEntry.class.getName());
-		}
-
-		relatedInfoItemCollectionProviderItemSelectorCriterion.
-			setSourceItemTypes(sourceItemTypes);
-
-		PortletURL infoListSelectorURL = _itemSelector.getItemSelectorURL(
-			RequestBackedPortletURLFactoryUtil.create(httpServletRequest),
-			namespace + "selectInfoList",
-			infoCollectionProviderItemSelectorCriterion,
-			relatedInfoItemCollectionProviderItemSelectorCriterion);
-
-		if (infoListSelectorURL == null) {
-			return StringPool.BLANK;
-		}
-
-		return infoListSelectorURL.toString();
 	}
 
 	private JSONObject _getDisplayObjectJSONObject(

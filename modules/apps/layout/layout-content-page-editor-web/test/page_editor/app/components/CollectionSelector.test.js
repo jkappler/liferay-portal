@@ -8,7 +8,6 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-import {CollectionItemContextProvider} from '../../../../src/main/resources/META-INF/resources/page_editor/app/contexts/CollectionItemContext';
 import {StoreAPIContextProvider} from '../../../../src/main/resources/META-INF/resources/page_editor/app/contexts/StoreContext';
 import CollectionSelector from '../../../../src/main/resources/META-INF/resources/page_editor/common/components/CollectionSelector';
 import {openItemSelector} from '../../../../src/main/resources/META-INF/resources/page_editor/common/openItemSelector';
@@ -23,37 +22,6 @@ jest.mock(
 describe('CollectionSelector', () => {
 	afterEach(() => {
 		openItemSelector.mockClear();
-	});
-
-	it('uses custom item selector URL when present in the collection item context', () => {
-		const CUSTOM_COLLECTION_SELECTOR_URL = 'CUSTOM_COLLECTION_SELECTOR_URL';
-		const DEFAULT_ITEM_SELECTOR_URL = 'DEFAULT_ITEM_SELECTOR_URL';
-
-		render(
-			<StoreAPIContextProvider dispatch={() => {}} getState={() => ({})}>
-				<CollectionItemContextProvider
-					value={{
-						customCollectionSelectorURL: CUSTOM_COLLECTION_SELECTOR_URL,
-					}}
-				>
-					<CollectionSelector
-						itemSelectorURL={DEFAULT_ITEM_SELECTOR_URL}
-						label="something"
-						onCollectionSelect={() => {}}
-					/>
-				</CollectionItemContextProvider>
-			</StoreAPIContextProvider>
-		);
-
-		const button = screen.getByLabelText('select-x');
-
-		userEvent.click(button);
-
-		expect(openItemSelector).toBeCalledWith(
-			expect.objectContaining({
-				itemSelectorURL: CUSTOM_COLLECTION_SELECTOR_URL,
-			})
-		);
 	});
 
 	it('uses passed item selector URL when not inside a collection item context', () => {
