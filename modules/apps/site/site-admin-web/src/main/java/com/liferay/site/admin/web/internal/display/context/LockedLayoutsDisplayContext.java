@@ -5,43 +5,25 @@
 
 package com.liferay.site.admin.web.internal.display.context;
 
-import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
-import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
-import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
-import com.liferay.layout.utility.page.kernel.LayoutUtilityPageEntryViewRenderer;
-import com.liferay.layout.utility.page.kernel.LayoutUtilityPageEntryViewRendererRegistryUtil;
-import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
-import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
-import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
-import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
+import com.liferay.layout.model.LockedLayout;
+import com.liferay.layout.util.LayoutLockManager;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.model.LayoutConstants;
-import com.liferay.portal.kernel.model.LayoutTable;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
-import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.lock.model.LockTable;
 
-import java.io.Serializable;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Lourdes Fernández Besada
@@ -49,18 +31,12 @@ import java.util.Objects;
 public class LockedLayoutsDisplayContext {
 
 	public LockedLayoutsDisplayContext(
-		Language language, LayoutLocalService layoutLocalService,
-		LayoutPageTemplateEntryLocalService layoutPageTemplateEntryLocalService,
-		LayoutUtilityPageEntryLocalService layoutUtilityPageEntryLocalService,
+		Language language, LayoutLockManager layoutLockManager,
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse) {
 
 		_language = language;
-		_layoutLocalService = layoutLocalService;
-		_layoutPageTemplateEntryLocalService =
-			layoutPageTemplateEntryLocalService;
-		_layoutUtilityPageEntryLocalService =
-			layoutUtilityPageEntryLocalService;
+		_layoutLockManager = layoutLockManager;
 		_liferayPortletRequest = liferayPortletRequest;
 		_liferayPortletResponse = liferayPortletResponse;
 
@@ -69,39 +45,50 @@ public class LockedLayoutsDisplayContext {
 	}
 
 	public boolean existLockedLayouts() {
-		if (ListUtil.isEmpty(_getLockedLayoutDTOs())) {
+		if (ListUtil.isEmpty(_getLockedLayouts())) {
 			return false;
 		}
 
 		return true;
 	}
 
-	public String getKeywords() {
-		if (_keywords != null) {
-			return _keywords;
-		}
+	public String getLastAutoSave(LockedLayout lockedLayout) throws Exception {
+		Date lastAutoSaveDate = lockedLayout.getLastAutoSaveDate();
 
-		_keywords = ParamUtil.getString(_liferayPortletRequest, "keywords");
-
-		return _keywords;
+		return _language.format(
+			_themeDisplay.getLocale(), "x-ago",
+			_language.getTimeDescription(
+				_themeDisplay.getLocale(),
+				System.currentTimeMillis() - lastAutoSaveDate.getTime(), true));
 	}
 
-	public SearchContainer<LockedLayoutDTO> getSearchContainer() {
+	public String getLayoutType(LockedLayout lockedLayout) {
+		return _layoutLockManager.getLayoutType(
+			lockedLayout.getClassPK(), _themeDisplay.getLocale(),
+			lockedLayout.getType());
+	}
+
+	public String getName(LockedLayout lockedLayout) {
+		return LocalizationUtil.getLocalization(
+			lockedLayout.getName(), _themeDisplay.getLanguageId());
+	}
+
+	public SearchContainer<LockedLayout> getSearchContainer() {
 		if (_searchContainer != null) {
 			return _searchContainer;
 		}
 
-		SearchContainer<LockedLayoutDTO> searchContainer = new SearchContainer(
+		SearchContainer<LockedLayout> searchContainer = new SearchContainer(
 			_liferayPortletRequest,
 			PortletURLUtil.getCurrent(
 				_liferayPortletRequest, _liferayPortletResponse),
 			ListUtil.fromArray("name", "type", "current-user", "last-autosave"),
 			"there-are-no-locked-pages");
 
-		List<LockedLayoutDTO> lockedLayoutDTOs = _getFilteredLockedLayoutDTOs();
+		List<LockedLayout> lockedLayouts = _getFilteredLockedLayouts();
 
 		searchContainer.setResultsAndTotal(
-			() -> lockedLayoutDTOs, lockedLayoutDTOs.size());
+			() -> lockedLayouts, lockedLayouts.size());
 
 		searchContainer.setRowChecker(
 			new EmptyOnClickRowChecker(_liferayPortletResponse));
@@ -111,234 +98,69 @@ public class LockedLayoutsDisplayContext {
 		return _searchContainer;
 	}
 
-	public class LockedLayoutDTO implements Serializable {
-
-		public LockedLayoutDTO(
-			long classPK, Date lastAutoSaveDate, String name, long plid,
-			String type, String userName) {
-
-			_classPK = classPK;
-			_lastAutoSaveDate = lastAutoSaveDate;
-			_name = LocalizationUtil.getLocalization(
-				name, _themeDisplay.getLanguageId());
-			_plid = plid;
-			_type = type;
-			_userName = userName;
+	private List<LockedLayout> _getFilteredLockedLayouts() {
+		if (_filteredLockedLayouts != null) {
+			return _filteredLockedLayouts;
 		}
 
-		public String getLastAutoSave() throws Exception {
-			return _language.format(
-				_themeDisplay.getLocale(), "x-ago",
-				_language.getTimeDescription(
-					_themeDisplay.getLocale(),
-					System.currentTimeMillis() - _lastAutoSaveDate.getTime(),
-					true));
+		if (Validator.isNull(_getKeywords())) {
+			_filteredLockedLayouts = _getLockedLayouts();
+
+			return _getLockedLayouts();
 		}
 
-		public String getLayoutType() {
-			return _language.get(
-				_themeDisplay.getLocale(), _getLayoutType(_classPK, _type));
-		}
+		String keywords = StringUtil.toLowerCase(_getKeywords());
 
-		public String getName() {
-			return HtmlUtil.escape(_name);
-		}
+		_filteredLockedLayouts = ListUtil.filter(
+			_getLockedLayouts(),
+			lockedLayout -> _hasKeywords(keywords, lockedLayout));
 
-		public long getPlid() {
-			return _plid;
-		}
-
-		public String getUserName() {
-			return HtmlUtil.escape(_userName);
-		}
-
-		public boolean hasKeywords(String keywords) {
-			if (StringUtil.contains(
-					StringUtil.toLowerCase(_name), keywords,
-					StringPool.BLANK) ||
-				StringUtil.contains(
-					StringUtil.toLowerCase(_userName), keywords,
-					StringPool.BLANK)) {
-
-				return true;
-			}
-
-			return false;
-		}
-
-		private final long _classPK;
-		private final Date _lastAutoSaveDate;
-		private final String _name;
-		private final long _plid;
-		private final String _type;
-		private final String _userName;
-
+		return _filteredLockedLayouts;
 	}
 
-	private List<LockedLayoutDTO> _getFilteredLockedLayoutDTOs() {
-		if (_filteredLockedLayoutDTOs != null) {
-			return _filteredLockedLayoutDTOs;
+	private String _getKeywords() {
+		if (_keywords != null) {
+			return _keywords;
 		}
 
-		if (Validator.isNull(getKeywords())) {
-			_filteredLockedLayoutDTOs = _getLockedLayoutDTOs();
+		_keywords = ParamUtil.getString(_liferayPortletRequest, "keywords");
 
-			return _getLockedLayoutDTOs();
-		}
-
-		String keywords = StringUtil.toLowerCase(getKeywords());
-
-		_filteredLockedLayoutDTOs = ListUtil.filter(
-			_getLockedLayoutDTOs(),
-			lockedLayoutDTO -> lockedLayoutDTO.hasKeywords(keywords));
-
-		return _filteredLockedLayoutDTOs;
+		return _keywords;
 	}
 
-	private String _getLayoutPageTemplateEntryTypeLabel(
-		LayoutPageTemplateEntry layoutPageTemplateEntry) {
-
-		if (Objects.equals(
-				layoutPageTemplateEntry.getType(),
-				LayoutPageTemplateEntryTypeConstants.TYPE_BASIC)) {
-
-			return "content-page-template";
+	private List<LockedLayout> _getLockedLayouts() {
+		if (_lockedLayouts != null) {
+			return _lockedLayouts;
 		}
 
-		if (Objects.equals(
-				layoutPageTemplateEntry.getType(),
-				LayoutPageTemplateEntryTypeConstants.TYPE_DISPLAY_PAGE)) {
+		_lockedLayouts = _layoutLockManager.getLockedLayouts(
+			_themeDisplay.getScopeGroupId());
 
-			return "display-page-template";
-		}
-
-		if (Objects.equals(
-				layoutPageTemplateEntry.getType(),
-				LayoutPageTemplateEntryTypeConstants.TYPE_MASTER_LAYOUT)) {
-
-			return "master";
-		}
-
-		return StringPool.BLANK;
+		return _lockedLayouts;
 	}
 
-	private String _getLayoutType(long classPK, String type) {
-		if (Objects.equals(type, LayoutConstants.TYPE_ASSET_DISPLAY)) {
-			return "display-page-template";
+	private boolean _hasKeywords(String keywords, LockedLayout lockedLayout) {
+		if (StringUtil.contains(
+				StringUtil.toLowerCase(lockedLayout.getUserName()), keywords,
+				StringPool.BLANK) ||
+			StringUtil.contains(
+				StringUtil.toLowerCase(getName(lockedLayout)), keywords,
+				StringPool.BLANK)) {
+
+			return true;
 		}
 
-		if (Objects.equals(type, LayoutConstants.TYPE_COLLECTION)) {
-			return "collection-page";
-		}
-
-		if (!Objects.equals(type, LayoutConstants.TYPE_CONTENT)) {
-			return StringPool.BLANK;
-		}
-
-		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_layoutPageTemplateEntryLocalService.
-				fetchLayoutPageTemplateEntryByPlid(classPK);
-
-		if (layoutPageTemplateEntry != null) {
-			return _getLayoutPageTemplateEntryTypeLabel(
-				layoutPageTemplateEntry);
-		}
-
-		LayoutUtilityPageEntry layoutUtilityPageEntry =
-			_layoutUtilityPageEntryLocalService.
-				fetchLayoutUtilityPageEntryByPlid(classPK);
-
-		if (layoutUtilityPageEntry != null) {
-			return _getLayoutUtilityPageEntryTypeLabel(layoutUtilityPageEntry);
-		}
-
-		return "content-page";
+		return false;
 	}
 
-	private String _getLayoutUtilityPageEntryTypeLabel(
-		LayoutUtilityPageEntry layoutUtilityPageEntry) {
-
-		LayoutUtilityPageEntryViewRenderer layoutUtilityPageEntryViewRenderer =
-			LayoutUtilityPageEntryViewRendererRegistryUtil.
-				getLayoutUtilityPageEntryViewRenderer(
-					layoutUtilityPageEntry.getType());
-
-		if (layoutUtilityPageEntryViewRenderer == null) {
-			return StringPool.BLANK;
-		}
-
-		return layoutUtilityPageEntryViewRenderer.getLabel(
-			_themeDisplay.getLocale());
-	}
-
-	private List<LockedLayoutDTO> _getLockedLayoutDTOs() {
-		if (_lockedLayoutDTOs != null) {
-			return _lockedLayoutDTOs;
-		}
-
-		List<Object[]> results = _layoutLocalService.dslQuery(
-			DSLQueryFactoryUtil.select(
-				LayoutTable.INSTANCE.classPK, LockTable.INSTANCE.createDate,
-				LayoutTable.INSTANCE.name, LayoutTable.INSTANCE.plid,
-				LayoutTable.INSTANCE.type, LockTable.INSTANCE.userName
-			).from(
-				LayoutTable.INSTANCE
-			).innerJoinON(
-				LockTable.INSTANCE,
-				LockTable.INSTANCE.key.eq(
-					DSLFunctionFactoryUtil.castText(LayoutTable.INSTANCE.plid))
-			).where(
-				LayoutTable.INSTANCE.groupId.eq(
-					_themeDisplay.getScopeGroupId()
-				).and(
-					LayoutTable.INSTANCE.hidden.eq(true)
-				).and(
-					LayoutTable.INSTANCE.system.eq(true)
-				).and(
-					LayoutTable.INSTANCE.status.eq(
-						WorkflowConstants.STATUS_DRAFT)
-				).and(
-					LayoutTable.INSTANCE.type.in(
-						new String[] {
-							LayoutConstants.TYPE_COLLECTION,
-							LayoutConstants.TYPE_CONTENT
-						})
-				)
-			).orderBy(
-				orderByStep -> orderByStep.orderBy(
-					LayoutTable.INSTANCE.modifiedDate.descending())
-			));
-
-		List<LockedLayoutDTO> lockedLayoutDTOs = new ArrayList<>(
-			results.size());
-
-		for (Object[] columns : results) {
-			lockedLayoutDTOs.add(
-				new LockedLayoutDTO(
-					GetterUtil.getLong(columns[0]), (Date)columns[1],
-					GetterUtil.getString(columns[2]),
-					GetterUtil.getLong(columns[3]),
-					GetterUtil.getString(columns[4]),
-					GetterUtil.getString(columns[5])));
-		}
-
-		_lockedLayoutDTOs = lockedLayoutDTOs;
-
-		return _lockedLayoutDTOs;
-	}
-
-	private List<LockedLayoutDTO> _filteredLockedLayoutDTOs;
+	private List<LockedLayout> _filteredLockedLayouts;
 	private String _keywords;
 	private final Language _language;
-	private final LayoutLocalService _layoutLocalService;
-	private final LayoutPageTemplateEntryLocalService
-		_layoutPageTemplateEntryLocalService;
-	private final LayoutUtilityPageEntryLocalService
-		_layoutUtilityPageEntryLocalService;
+	private final LayoutLockManager _layoutLockManager;
 	private final LiferayPortletRequest _liferayPortletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
-	private List<LockedLayoutDTO> _lockedLayoutDTOs;
-	private SearchContainer<LockedLayoutDTO> _searchContainer;
+	private List<LockedLayout> _lockedLayouts;
+	private SearchContainer<LockedLayout> _searchContainer;
 	private final ThemeDisplay _themeDisplay;
 
 }

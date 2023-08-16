@@ -48,33 +48,33 @@ LockedLayoutsDisplayContext lockedLayoutsDisplayContext = (LockedLayoutsDisplayC
 				searchContainer="<%= lockedLayoutsDisplayContext.getSearchContainer() %>"
 			>
 				<liferay-ui:search-container-row
-					className="com.liferay.site.admin.web.internal.display.context.LockedLayoutsDisplayContext.LockedLayoutDTO"
+					className="com.liferay.layout.model.LockedLayout"
 					escapedModel="<%= true %>"
 					keyProperty="plid"
-					modelVar="lockedLayoutDTO"
+					modelVar="lockedLayout"
 				>
 					<liferay-ui:search-container-column-text
 						cssClass="modify-text"
 						name="name"
-						value="<%= lockedLayoutDTO.getName() %>"
+						value="<%= lockedLayoutsDisplayContext.getName(lockedLayout) %>"
 					/>
 
 					<liferay-ui:search-container-column-text
 						cssClass="modify-text"
 						name="type"
-						value="<%= lockedLayoutDTO.getLayoutType() %>"
+						value="<%= lockedLayoutsDisplayContext.getLayoutType(lockedLayout) %>"
 					/>
 
 					<liferay-ui:search-container-column-text
 						cssClass="modify-text"
 						name="current-user"
-						value="<%= lockedLayoutDTO.getUserName() %>"
+						value="<%= HtmlUtil.escape(lockedLayout.getUserName()) %>"
 					/>
 
 					<liferay-ui:search-container-column-text
 						cssClass="modify-text"
 						name="last-autosave"
-						value="<%= lockedLayoutDTO.getLastAutoSave() %>"
+						value="<%= lockedLayoutsDisplayContext.getLastAutoSave(lockedLayout) %>"
 					/>
 				</liferay-ui:search-container-row>
 
