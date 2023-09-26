@@ -8,7 +8,9 @@ package com.liferay.layout.page.template.service.impl;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateActionKeys;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
+import com.liferay.layout.page.template.model.LayoutPageTemplateCollectionModel;
 import com.liferay.layout.page.template.service.base.LayoutPageTemplateCollectionServiceBaseImpl;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
 import com.liferay.portal.kernel.dao.orm.WildcardMode;
@@ -17,6 +19,7 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.util.List;
@@ -77,6 +80,15 @@ public class LayoutPageTemplateCollectionServiceImpl
 			_layoutPageTemplateCollectionModelResourcePermission.check(
 				getPermissionChecker(), layoutPageTemplateCollectionId,
 				ActionKeys.DELETE);
+
+			deleteLayoutPageTemplateCollections(
+				ArrayUtil.toLongArray(
+					TransformUtil.transform(
+						layoutPageTemplateCollectionPersistence.
+							findByParentLayoutPageTemplateCollectionId(
+								layoutPageTemplateCollectionId),
+						LayoutPageTemplateCollectionModel::
+							getLayoutPageTemplateCollectionId)));
 
 			layoutPageTemplateCollectionLocalService.
 				deleteLayoutPageTemplateCollection(
