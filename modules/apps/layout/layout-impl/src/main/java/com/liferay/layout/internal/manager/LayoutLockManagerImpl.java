@@ -29,12 +29,17 @@ import com.liferay.petra.sql.dsl.query.LimitStep;
 import com.liferay.petra.sql.dsl.query.OrderByStep;
 import com.liferay.petra.sql.dsl.query.sort.OrderByExpression;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.LockedLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.lock.LockManager;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutTable;
@@ -293,46 +298,38 @@ public class LayoutLockManagerImpl implements LayoutLockManager {
 		Date lastAutosaveDate = new Date(
 			System.currentTimeMillis() - (timeWithoutAutosave * Time.MINUTE));
 
-		List<Long> plids = _layoutLocalService.dslQuery(
-			DSLQueryFactoryUtil.selectDistinct(
-				LayoutTable.INSTANCE.plid
-			).from(
-				LayoutTable.INSTANCE
-			).innerJoinON(
-				LockTable.INSTANCE,
-				LockTable.INSTANCE.companyId.eq(
-					companyId
-				).and(
-					LockTable.INSTANCE.className.eq(Layout.class.getName())
-				).and(
-					LockTable.INSTANCE.key.eq(
-						DSLFunctionFactoryUtil.castText(
-							LayoutTable.INSTANCE.plid))
-				).and(
-					LockTable.INSTANCE.createDate.lt(lastAutosaveDate)
-				)
-			).where(
-				LayoutTable.INSTANCE.classPK.gt(
-					0L
-				).and(
-					LayoutTable.INSTANCE.hidden.eq(true)
-				).and(
-					LayoutTable.INSTANCE.system.eq(true)
-				).and(
-					LayoutTable.INSTANCE.status.eq(
-						WorkflowConstants.STATUS_DRAFT)
-				).and(
-					LayoutTable.INSTANCE.type.in(
-						new String[] {
-							LayoutConstants.TYPE_ASSET_DISPLAY,
-							LayoutConstants.TYPE_COLLECTION,
-							LayoutConstants.TYPE_CONTENT
-						})
-				)
-			));
+		ActionableDynamicQuery actionableDynamicQuery =
+			_lockLocalService.getActionableDynamicQuery();
 
-		for (Long plid : plids) {
-			_lockManager.unlock(Layout.class.getName(), String.valueOf(plid));
+		actionableDynamicQuery.setAddCriteriaMethod(
+			dynamicQuery -> {
+				Property companyIdProperty = PropertyFactoryUtil.forName(
+					"companyId");
+
+				dynamicQuery.add(companyIdProperty.eq(companyId));
+
+				Property classNameProperty = PropertyFactoryUtil.forName(
+					"className");
+
+				dynamicQuery.add(classNameProperty.eq(Layout.class.getName()));
+
+				Property createDateProperty = PropertyFactoryUtil.forName(
+					"createDate");
+
+				dynamicQuery.add(createDateProperty.lt(lastAutosaveDate));
+			});
+
+		actionableDynamicQuery.setPerformActionMethod(
+			(Lock lock) -> _lockManager.unlock(
+				Layout.class.getName(), lock.getKey()));
+
+		try {
+			actionableDynamicQuery.performActions();
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
 		}
 	}
 
@@ -622,6 +619,9 @@ public class LayoutLockManagerImpl implements LayoutLockManager {
 
 		return wherePredicate;
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutLockManagerImpl.class);
 
 	@Reference
 	private Language _language;
