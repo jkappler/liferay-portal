@@ -2458,6 +2458,576 @@ public class LayoutPageTemplateCollectionPersistenceImpl
 	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 =
 		"layoutPageTemplateCollection.groupId = ?";
 
+	private FinderPath
+		_finderPathWithPaginationFindByParentLayoutPageTemplateCollectionId;
+	private FinderPath
+		_finderPathWithoutPaginationFindByParentLayoutPageTemplateCollectionId;
+	private FinderPath _finderPathCountByParentLayoutPageTemplateCollectionId;
+
+	/**
+	 * Returns all the layout page template collections where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @return the matching layout page template collections
+	 */
+	@Override
+	public List<LayoutPageTemplateCollection>
+		findByParentLayoutPageTemplateCollectionId(
+			long parentLayoutPageTemplateCollectionId) {
+
+		return findByParentLayoutPageTemplateCollectionId(
+			parentLayoutPageTemplateCollectionId, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the layout page template collections where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPageTemplateCollectionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @param start the lower bound of the range of layout page template collections
+	 * @param end the upper bound of the range of layout page template collections (not inclusive)
+	 * @return the range of matching layout page template collections
+	 */
+	@Override
+	public List<LayoutPageTemplateCollection>
+		findByParentLayoutPageTemplateCollectionId(
+			long parentLayoutPageTemplateCollectionId, int start, int end) {
+
+		return findByParentLayoutPageTemplateCollectionId(
+			parentLayoutPageTemplateCollectionId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout page template collections where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPageTemplateCollectionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @param start the lower bound of the range of layout page template collections
+	 * @param end the upper bound of the range of layout page template collections (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching layout page template collections
+	 */
+	@Override
+	public List<LayoutPageTemplateCollection>
+		findByParentLayoutPageTemplateCollectionId(
+			long parentLayoutPageTemplateCollectionId, int start, int end,
+			OrderByComparator<LayoutPageTemplateCollection> orderByComparator) {
+
+		return findByParentLayoutPageTemplateCollectionId(
+			parentLayoutPageTemplateCollectionId, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns an ordered range of all the layout page template collections where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>LayoutPageTemplateCollectionModelImpl</code>.
+	 * </p>
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @param start the lower bound of the range of layout page template collections
+	 * @param end the upper bound of the range of layout page template collections (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching layout page template collections
+	 */
+	@Override
+	public List<LayoutPageTemplateCollection>
+		findByParentLayoutPageTemplateCollectionId(
+			long parentLayoutPageTemplateCollectionId, int start, int end,
+			OrderByComparator<LayoutPageTemplateCollection> orderByComparator,
+			boolean useFinderCache) {
+
+		boolean productionMode = ctPersistenceHelper.isProductionMode(
+			LayoutPageTemplateCollection.class);
+
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			if (useFinderCache && productionMode) {
+				finderPath =
+					_finderPathWithoutPaginationFindByParentLayoutPageTemplateCollectionId;
+				finderArgs = new Object[] {
+					parentLayoutPageTemplateCollectionId
+				};
+			}
+		}
+		else if (useFinderCache && productionMode) {
+			finderPath =
+				_finderPathWithPaginationFindByParentLayoutPageTemplateCollectionId;
+			finderArgs = new Object[] {
+				parentLayoutPageTemplateCollectionId, start, end,
+				orderByComparator
+			};
+		}
+
+		List<LayoutPageTemplateCollection> list = null;
+
+		if (useFinderCache && productionMode) {
+			list = (List<LayoutPageTemplateCollection>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (LayoutPageTemplateCollection layoutPageTemplateCollection :
+						list) {
+
+					if (parentLayoutPageTemplateCollectionId !=
+							layoutPageTemplateCollection.
+								getParentLayoutPageTemplateCollectionId()) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler sb = null;
+
+			if (orderByComparator != null) {
+				sb = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				sb = new StringBundler(3);
+			}
+
+			sb.append(_SQL_SELECT_LAYOUTPAGETEMPLATECOLLECTION_WHERE);
+
+			sb.append(
+				_FINDER_COLUMN_PARENTLAYOUTPAGETEMPLATECOLLECTIONID_PARENTLAYOUTPAGETEMPLATECOLLECTIONID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else {
+				sb.append(LayoutPageTemplateCollectionModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(parentLayoutPageTemplateCollectionId);
+
+				list = (List<LayoutPageTemplateCollection>)QueryUtil.list(
+					query, getDialect(), start, end);
+
+				cacheResult(list);
+
+				if (useFinderCache && productionMode) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first layout page template collection in the ordered set where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching layout page template collection
+	 * @throws NoSuchPageTemplateCollectionException if a matching layout page template collection could not be found
+	 */
+	@Override
+	public LayoutPageTemplateCollection
+			findByParentLayoutPageTemplateCollectionId_First(
+				long parentLayoutPageTemplateCollectionId,
+				OrderByComparator<LayoutPageTemplateCollection>
+					orderByComparator)
+		throws NoSuchPageTemplateCollectionException {
+
+		LayoutPageTemplateCollection layoutPageTemplateCollection =
+			fetchByParentLayoutPageTemplateCollectionId_First(
+				parentLayoutPageTemplateCollectionId, orderByComparator);
+
+		if (layoutPageTemplateCollection != null) {
+			return layoutPageTemplateCollection;
+		}
+
+		StringBundler sb = new StringBundler(4);
+
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		sb.append("parentLayoutPageTemplateCollectionId=");
+		sb.append(parentLayoutPageTemplateCollectionId);
+
+		sb.append("}");
+
+		throw new NoSuchPageTemplateCollectionException(sb.toString());
+	}
+
+	/**
+	 * Returns the first layout page template collection in the ordered set where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching layout page template collection, or <code>null</code> if a matching layout page template collection could not be found
+	 */
+	@Override
+	public LayoutPageTemplateCollection
+		fetchByParentLayoutPageTemplateCollectionId_First(
+			long parentLayoutPageTemplateCollectionId,
+			OrderByComparator<LayoutPageTemplateCollection> orderByComparator) {
+
+		List<LayoutPageTemplateCollection> list =
+			findByParentLayoutPageTemplateCollectionId(
+				parentLayoutPageTemplateCollectionId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last layout page template collection in the ordered set where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching layout page template collection
+	 * @throws NoSuchPageTemplateCollectionException if a matching layout page template collection could not be found
+	 */
+	@Override
+	public LayoutPageTemplateCollection
+			findByParentLayoutPageTemplateCollectionId_Last(
+				long parentLayoutPageTemplateCollectionId,
+				OrderByComparator<LayoutPageTemplateCollection>
+					orderByComparator)
+		throws NoSuchPageTemplateCollectionException {
+
+		LayoutPageTemplateCollection layoutPageTemplateCollection =
+			fetchByParentLayoutPageTemplateCollectionId_Last(
+				parentLayoutPageTemplateCollectionId, orderByComparator);
+
+		if (layoutPageTemplateCollection != null) {
+			return layoutPageTemplateCollection;
+		}
+
+		StringBundler sb = new StringBundler(4);
+
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		sb.append("parentLayoutPageTemplateCollectionId=");
+		sb.append(parentLayoutPageTemplateCollectionId);
+
+		sb.append("}");
+
+		throw new NoSuchPageTemplateCollectionException(sb.toString());
+	}
+
+	/**
+	 * Returns the last layout page template collection in the ordered set where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching layout page template collection, or <code>null</code> if a matching layout page template collection could not be found
+	 */
+	@Override
+	public LayoutPageTemplateCollection
+		fetchByParentLayoutPageTemplateCollectionId_Last(
+			long parentLayoutPageTemplateCollectionId,
+			OrderByComparator<LayoutPageTemplateCollection> orderByComparator) {
+
+		int count = countByParentLayoutPageTemplateCollectionId(
+			parentLayoutPageTemplateCollectionId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<LayoutPageTemplateCollection> list =
+			findByParentLayoutPageTemplateCollectionId(
+				parentLayoutPageTemplateCollectionId, count - 1, count,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the layout page template collections before and after the current layout page template collection in the ordered set where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * @param layoutPageTemplateCollectionId the primary key of the current layout page template collection
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next layout page template collection
+	 * @throws NoSuchPageTemplateCollectionException if a layout page template collection with the primary key could not be found
+	 */
+	@Override
+	public LayoutPageTemplateCollection[]
+			findByParentLayoutPageTemplateCollectionId_PrevAndNext(
+				long layoutPageTemplateCollectionId,
+				long parentLayoutPageTemplateCollectionId,
+				OrderByComparator<LayoutPageTemplateCollection>
+					orderByComparator)
+		throws NoSuchPageTemplateCollectionException {
+
+		LayoutPageTemplateCollection layoutPageTemplateCollection =
+			findByPrimaryKey(layoutPageTemplateCollectionId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			LayoutPageTemplateCollection[] array =
+				new LayoutPageTemplateCollectionImpl[3];
+
+			array[0] = getByParentLayoutPageTemplateCollectionId_PrevAndNext(
+				session, layoutPageTemplateCollection,
+				parentLayoutPageTemplateCollectionId, orderByComparator, true);
+
+			array[1] = layoutPageTemplateCollection;
+
+			array[2] = getByParentLayoutPageTemplateCollectionId_PrevAndNext(
+				session, layoutPageTemplateCollection,
+				parentLayoutPageTemplateCollectionId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception exception) {
+			throw processException(exception);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected LayoutPageTemplateCollection
+		getByParentLayoutPageTemplateCollectionId_PrevAndNext(
+			Session session,
+			LayoutPageTemplateCollection layoutPageTemplateCollection,
+			long parentLayoutPageTemplateCollectionId,
+			OrderByComparator<LayoutPageTemplateCollection> orderByComparator,
+			boolean previous) {
+
+		StringBundler sb = null;
+
+		if (orderByComparator != null) {
+			sb = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			sb = new StringBundler(3);
+		}
+
+		sb.append(_SQL_SELECT_LAYOUTPAGETEMPLATECOLLECTION_WHERE);
+
+		sb.append(
+			_FINDER_COLUMN_PARENTLAYOUTPAGETEMPLATECOLLECTIONID_PARENTLAYOUTPAGETEMPLATECOLLECTIONID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				sb.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(WHERE_GREATER_THAN);
+					}
+					else {
+						sb.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			sb.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						sb.append(ORDER_BY_ASC);
+					}
+					else {
+						sb.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			sb.append(LayoutPageTemplateCollectionModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = sb.toString();
+
+		Query query = session.createQuery(sql);
+
+		query.setFirstResult(0);
+		query.setMaxResults(2);
+
+		QueryPos queryPos = QueryPos.getInstance(query);
+
+		queryPos.add(parentLayoutPageTemplateCollectionId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						layoutPageTemplateCollection)) {
+
+				queryPos.add(orderByConditionValue);
+			}
+		}
+
+		List<LayoutPageTemplateCollection> list = query.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the layout page template collections where parentLayoutPageTemplateCollectionId = &#63; from the database.
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 */
+	@Override
+	public void removeByParentLayoutPageTemplateCollectionId(
+		long parentLayoutPageTemplateCollectionId) {
+
+		for (LayoutPageTemplateCollection layoutPageTemplateCollection :
+				findByParentLayoutPageTemplateCollectionId(
+					parentLayoutPageTemplateCollectionId, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS, null)) {
+
+			remove(layoutPageTemplateCollection);
+		}
+	}
+
+	/**
+	 * Returns the number of layout page template collections where parentLayoutPageTemplateCollectionId = &#63;.
+	 *
+	 * @param parentLayoutPageTemplateCollectionId the parent layout page template collection ID
+	 * @return the number of matching layout page template collections
+	 */
+	@Override
+	public int countByParentLayoutPageTemplateCollectionId(
+		long parentLayoutPageTemplateCollectionId) {
+
+		boolean productionMode = ctPersistenceHelper.isProductionMode(
+			LayoutPageTemplateCollection.class);
+
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		Long count = null;
+
+		if (productionMode) {
+			finderPath = _finderPathCountByParentLayoutPageTemplateCollectionId;
+
+			finderArgs = new Object[] {parentLayoutPageTemplateCollectionId};
+
+			count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+		}
+
+		if (count == null) {
+			StringBundler sb = new StringBundler(2);
+
+			sb.append(_SQL_COUNT_LAYOUTPAGETEMPLATECOLLECTION_WHERE);
+
+			sb.append(
+				_FINDER_COLUMN_PARENTLAYOUTPAGETEMPLATECOLLECTIONID_PARENTLAYOUTPAGETEMPLATECOLLECTIONID_2);
+
+			String sql = sb.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query query = session.createQuery(sql);
+
+				QueryPos queryPos = QueryPos.getInstance(query);
+
+				queryPos.add(parentLayoutPageTemplateCollectionId);
+
+				count = (Long)query.uniqueResult();
+
+				if (productionMode) {
+					finderCache.putResult(finderPath, finderArgs, count);
+				}
+			}
+			catch (Exception exception) {
+				throw processException(exception);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String
+		_FINDER_COLUMN_PARENTLAYOUTPAGETEMPLATECOLLECTIONID_PARENTLAYOUTPAGETEMPLATECOLLECTIONID_2 =
+			"layoutPageTemplateCollection.parentLayoutPageTemplateCollectionId = ?";
+
 	private FinderPath _finderPathWithPaginationFindByG_T;
 	private FinderPath _finderPathWithoutPaginationFindByG_T;
 	private FinderPath _finderPathCountByG_T;
@@ -6153,6 +6723,29 @@ public class LayoutPageTemplateCollectionPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByGroupId",
 			new String[] {Long.class.getName()}, new String[] {"groupId"},
 			false);
+
+		_finderPathWithPaginationFindByParentLayoutPageTemplateCollectionId =
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+				"findByParentLayoutPageTemplateCollectionId",
+				new String[] {
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				},
+				new String[] {"parentLPTCollectionId"}, true);
+
+		_finderPathWithoutPaginationFindByParentLayoutPageTemplateCollectionId =
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"findByParentLayoutPageTemplateCollectionId",
+				new String[] {Long.class.getName()},
+				new String[] {"parentLPTCollectionId"}, true);
+
+		_finderPathCountByParentLayoutPageTemplateCollectionId = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByParentLayoutPageTemplateCollectionId",
+			new String[] {Long.class.getName()},
+			new String[] {"parentLPTCollectionId"}, false);
 
 		_finderPathWithPaginationFindByG_T = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByG_T",

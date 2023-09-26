@@ -264,6 +264,16 @@ public class LayoutPageTemplateCollectionPersistenceTest {
 	}
 
 	@Test
+	public void testCountByParentLayoutPageTemplateCollectionId()
+		throws Exception {
+
+		_persistence.countByParentLayoutPageTemplateCollectionId(
+			RandomTestUtil.nextLong());
+
+		_persistence.countByParentLayoutPageTemplateCollectionId(0L);
+	}
+
+	@Test
 	public void testCountByG_T() throws Exception {
 		_persistence.countByG_T(
 			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
