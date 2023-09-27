@@ -26,6 +26,7 @@
 		<column name="lastSuccessDate" type="Date" />
 		<column name="lastSuccessIP" type="String" />
 		<column name="sharedSecret" type="String" />
+		<column name="lastValidTOTP" type="String" />
 
 		<!-- Finder methods -->
 
