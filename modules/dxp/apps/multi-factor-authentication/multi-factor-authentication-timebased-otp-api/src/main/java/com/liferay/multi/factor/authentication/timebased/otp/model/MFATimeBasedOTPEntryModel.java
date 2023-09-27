@@ -265,6 +265,21 @@ public interface MFATimeBasedOTPEntryModel
 	 */
 	public void setSharedSecret(String sharedSecret);
 
+	/**
+	 * Returns the last valid totp of this mfa time based otp entry.
+	 *
+	 * @return the last valid totp of this mfa time based otp entry
+	 */
+	@AutoEscape
+	public String getLastValidTOTP();
+
+	/**
+	 * Sets the last valid totp of this mfa time based otp entry.
+	 *
+	 * @param lastValidTOTP the last valid totp of this mfa time based otp entry
+	 */
+	public void setLastValidTOTP(String lastValidTOTP);
+
 	@Override
 	public MFATimeBasedOTPEntry cloneWithOriginalValues();
 

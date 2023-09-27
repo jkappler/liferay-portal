@@ -69,7 +69,7 @@ public class MFATimeBasedOTPEntryCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -97,6 +97,8 @@ public class MFATimeBasedOTPEntryCacheModel
 		sb.append(lastSuccessIP);
 		sb.append(", sharedSecret=");
 		sb.append(sharedSecret);
+		sb.append(", lastValidTOTP=");
+		sb.append(lastValidTOTP);
 		sb.append("}");
 
 		return sb.toString();
@@ -172,6 +174,13 @@ public class MFATimeBasedOTPEntryCacheModel
 			mfaTimeBasedOTPEntryImpl.setSharedSecret(sharedSecret);
 		}
 
+		if (lastValidTOTP == null) {
+			mfaTimeBasedOTPEntryImpl.setLastValidTOTP("");
+		}
+		else {
+			mfaTimeBasedOTPEntryImpl.setLastValidTOTP(lastValidTOTP);
+		}
+
 		mfaTimeBasedOTPEntryImpl.resetOriginalValues();
 
 		return mfaTimeBasedOTPEntryImpl;
@@ -196,6 +205,7 @@ public class MFATimeBasedOTPEntryCacheModel
 		lastSuccessDate = objectInput.readLong();
 		lastSuccessIP = objectInput.readUTF();
 		sharedSecret = objectInput.readUTF();
+		lastValidTOTP = objectInput.readUTF();
 	}
 
 	@Override
@@ -243,6 +253,13 @@ public class MFATimeBasedOTPEntryCacheModel
 		else {
 			objectOutput.writeUTF(sharedSecret);
 		}
+
+		if (lastValidTOTP == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(lastValidTOTP);
+		}
 	}
 
 	public long mvccVersion;
@@ -258,5 +275,6 @@ public class MFATimeBasedOTPEntryCacheModel
 	public long lastSuccessDate;
 	public String lastSuccessIP;
 	public String sharedSecret;
+	public String lastValidTOTP;
 
 }

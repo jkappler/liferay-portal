@@ -67,7 +67,7 @@ public class MFATimeBasedOTPEntryModelImpl
 		{"modifiedDate", Types.TIMESTAMP}, {"failedAttempts", Types.INTEGER},
 		{"lastFailDate", Types.TIMESTAMP}, {"lastFailIP", Types.VARCHAR},
 		{"lastSuccessDate", Types.TIMESTAMP}, {"lastSuccessIP", Types.VARCHAR},
-		{"sharedSecret", Types.VARCHAR}
+		{"sharedSecret", Types.VARCHAR}, {"lastValidTOTP", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -87,10 +87,11 @@ public class MFATimeBasedOTPEntryModelImpl
 		TABLE_COLUMNS_MAP.put("lastSuccessDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("lastSuccessIP", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("sharedSecret", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("lastValidTOTP", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table MFATimeBasedOTPEntry (mvccVersion LONG default 0 not null,mfaTimeBasedOTPEntryId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,failedAttempts INTEGER,lastFailDate DATE null,lastFailIP VARCHAR(75) null,lastSuccessDate DATE null,lastSuccessIP VARCHAR(75) null,sharedSecret VARCHAR(75) null)";
+		"create table MFATimeBasedOTPEntry (mvccVersion LONG default 0 not null,mfaTimeBasedOTPEntryId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,failedAttempts INTEGER,lastFailDate DATE null,lastFailIP VARCHAR(75) null,lastSuccessDate DATE null,lastSuccessIP VARCHAR(75) null,sharedSecret VARCHAR(75) null,lastValidTOTP VARCHAR(75) null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table MFATimeBasedOTPEntry";
@@ -257,6 +258,8 @@ public class MFATimeBasedOTPEntryModelImpl
 				"lastSuccessIP", MFATimeBasedOTPEntry::getLastSuccessIP);
 			attributeGetterFunctions.put(
 				"sharedSecret", MFATimeBasedOTPEntry::getSharedSecret);
+			attributeGetterFunctions.put(
+				"lastValidTOTP", MFATimeBasedOTPEntry::getLastValidTOTP);
 
 			_attributeGetterFunctions = Collections.unmodifiableMap(
 				attributeGetterFunctions);
@@ -328,6 +331,10 @@ public class MFATimeBasedOTPEntryModelImpl
 				"sharedSecret",
 				(BiConsumer<MFATimeBasedOTPEntry, String>)
 					MFATimeBasedOTPEntry::setSharedSecret);
+			attributeSetterBiConsumers.put(
+				"lastValidTOTP",
+				(BiConsumer<MFATimeBasedOTPEntry, String>)
+					MFATimeBasedOTPEntry::setLastValidTOTP);
 
 			_attributeSetterBiConsumers = Collections.unmodifiableMap(
 				(Map)attributeSetterBiConsumers);
@@ -568,6 +575,25 @@ public class MFATimeBasedOTPEntryModelImpl
 		_sharedSecret = sharedSecret;
 	}
 
+	@Override
+	public String getLastValidTOTP() {
+		if (_lastValidTOTP == null) {
+			return "";
+		}
+		else {
+			return _lastValidTOTP;
+		}
+	}
+
+	@Override
+	public void setLastValidTOTP(String lastValidTOTP) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_lastValidTOTP = lastValidTOTP;
+	}
+
 	public long getColumnBitmask() {
 		if (_columnBitmask > 0) {
 			return _columnBitmask;
@@ -640,6 +666,7 @@ public class MFATimeBasedOTPEntryModelImpl
 		mfaTimeBasedOTPEntryImpl.setLastSuccessDate(getLastSuccessDate());
 		mfaTimeBasedOTPEntryImpl.setLastSuccessIP(getLastSuccessIP());
 		mfaTimeBasedOTPEntryImpl.setSharedSecret(getSharedSecret());
+		mfaTimeBasedOTPEntryImpl.setLastValidTOTP(getLastValidTOTP());
 
 		mfaTimeBasedOTPEntryImpl.resetOriginalValues();
 
@@ -677,6 +704,8 @@ public class MFATimeBasedOTPEntryModelImpl
 			this.<String>getColumnOriginalValue("lastSuccessIP"));
 		mfaTimeBasedOTPEntryImpl.setSharedSecret(
 			this.<String>getColumnOriginalValue("sharedSecret"));
+		mfaTimeBasedOTPEntryImpl.setLastValidTOTP(
+			this.<String>getColumnOriginalValue("lastValidTOTP"));
 
 		return mfaTimeBasedOTPEntryImpl;
 	}
@@ -838,6 +867,14 @@ public class MFATimeBasedOTPEntryModelImpl
 			mfaTimeBasedOTPEntryCacheModel.sharedSecret = null;
 		}
 
+		mfaTimeBasedOTPEntryCacheModel.lastValidTOTP = getLastValidTOTP();
+
+		String lastValidTOTP = mfaTimeBasedOTPEntryCacheModel.lastValidTOTP;
+
+		if ((lastValidTOTP != null) && (lastValidTOTP.length() == 0)) {
+			mfaTimeBasedOTPEntryCacheModel.lastValidTOTP = null;
+		}
+
 		return mfaTimeBasedOTPEntryCacheModel;
 	}
 
@@ -914,6 +951,7 @@ public class MFATimeBasedOTPEntryModelImpl
 	private Date _lastSuccessDate;
 	private String _lastSuccessIP;
 	private String _sharedSecret;
+	private String _lastValidTOTP;
 
 	public <T> T getColumnValue(String columnName) {
 		Function<MFATimeBasedOTPEntry, Object> function =
@@ -957,6 +995,7 @@ public class MFATimeBasedOTPEntryModelImpl
 		_columnOriginalValues.put("lastSuccessDate", _lastSuccessDate);
 		_columnOriginalValues.put("lastSuccessIP", _lastSuccessIP);
 		_columnOriginalValues.put("sharedSecret", _sharedSecret);
+		_columnOriginalValues.put("lastValidTOTP", _lastValidTOTP);
 	}
 
 	private transient Map<String, Object> _columnOriginalValues;
@@ -995,6 +1034,8 @@ public class MFATimeBasedOTPEntryModelImpl
 		columnBitmasks.put("lastSuccessIP", 2048L);
 
 		columnBitmasks.put("sharedSecret", 4096L);
+
+		columnBitmasks.put("lastValidTOTP", 8192L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}
