@@ -7,6 +7,7 @@ package com.liferay.fragment.input.template.parser;
 
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.fragment.constants.FragmentConfigurationFieldDataType;
+import com.liferay.fragment.item.selector.criterion.ObjectsAttachmentItemSelectorCriterion;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.util.configuration.FragmentConfigurationField;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
@@ -33,7 +34,6 @@ import com.liferay.info.search.InfoSearchClassMapperRegistry;
 import com.liferay.info.type.KeyLocalizedLabelPair;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
-import com.liferay.item.selector.criteria.file.criterion.FileItemSelectorCriterion;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -278,19 +278,21 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 		HttpServletRequest httpServletRequest, InfoField infoField,
 		InputTemplateNode inputTemplateNode, String value) {
 
-		String allowedFileExtensions = (String)infoField.getAttribute(
+		String allowedMimeType = (String)infoField.getAttribute(
 			FileInfoFieldType.ALLOWED_FILE_EXTENSIONS);
 
-		if (allowedFileExtensions == null) {
-			allowedFileExtensions = StringPool.BLANK;
+		String[] allowedFileExtensions = {};
+
+		if (allowedMimeType == null) {
+			allowedMimeType = StringPool.BLANK;
 		}
 
-		if (Validator.isNotNull(allowedFileExtensions)) {
+		if (Validator.isNotNull(allowedMimeType)) {
 			StringBundler sb = new StringBundler();
 
-			for (String allowedFileExtension :
-					StringUtil.split(allowedFileExtensions)) {
+			allowedFileExtensions = StringUtil.split(allowedMimeType);
 
+			for (String allowedFileExtension : allowedFileExtensions) {
 				sb.append(StringPool.PERIOD);
 				sb.append(allowedFileExtension.trim());
 				sb.append(StringPool.COMMA);
@@ -298,11 +300,11 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 
 			sb.setIndex(sb.index() - 1);
 
-			allowedFileExtensions = sb.toString();
+			allowedMimeType = sb.toString();
 		}
 
 		inputTemplateNode.addAttribute(
-			"allowedFileExtensions", allowedFileExtensions);
+			"allowedFileExtensions", allowedMimeType);
 
 		Long maximumFileSize = (Long)infoField.getAttribute(
 			FileInfoFieldType.MAX_FILE_SIZE);
@@ -355,11 +357,15 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			"selectFromDocumentLibrary", selectFromDocumentLibrary);
 
 		if (selectFromDocumentLibrary) {
-			FileItemSelectorCriterion fileItemSelectorCriterion =
-				new FileItemSelectorCriterion();
+			ObjectsAttachmentItemSelectorCriterion
+				objectsAttachmentItemSelectorCriterion =
+					new ObjectsAttachmentItemSelectorCriterion(
+						ListUtil.fromArray(allowedFileExtensions),
+						maximumFileSize, allowedMimeType);
 
-			fileItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
-				new FileEntryItemSelectorReturnType());
+			objectsAttachmentItemSelectorCriterion.
+				setDesiredItemSelectorReturnTypes(
+					new FileEntryItemSelectorReturnType());
 
 			inputTemplateNode.addAttribute(
 				"selectFromDocumentLibraryURL",
@@ -368,7 +374,7 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 						RequestBackedPortletURLFactoryUtil.create(
 							httpServletRequest),
 						fragmentEntryLink.getNamespace() + "selectFileEntry",
-						fileItemSelectorCriterion)));
+						objectsAttachmentItemSelectorCriterion)));
 		}
 	}
 
