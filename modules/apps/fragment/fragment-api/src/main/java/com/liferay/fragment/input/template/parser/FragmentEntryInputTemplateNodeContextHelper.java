@@ -7,7 +7,6 @@ package com.liferay.fragment.input.template.parser;
 
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.fragment.constants.FragmentConfigurationFieldDataType;
-import com.liferay.fragment.item.selector.criterion.ObjectsAttachmentItemSelectorCriterion;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.util.configuration.FragmentConfigurationField;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
@@ -33,7 +32,7 @@ import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.info.search.InfoSearchClassMapperRegistry;
 import com.liferay.info.type.KeyLocalizedLabelPair;
 import com.liferay.item.selector.ItemSelector;
-import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
+import com.liferay.item.selector.criteria.upload.criterion.UploadItemSelectorCriterion;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -357,15 +356,15 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			"selectFromDocumentLibrary", selectFromDocumentLibrary);
 
 		if (selectFromDocumentLibrary) {
-			ObjectsAttachmentItemSelectorCriterion
-				objectsAttachmentItemSelectorCriterion =
-					new ObjectsAttachmentItemSelectorCriterion(
-						ListUtil.fromArray(allowedFileExtensions),
-						maximumFileSize, allowedMimeType);
-
-			objectsAttachmentItemSelectorCriterion.
-				setDesiredItemSelectorReturnTypes(
-					new FileEntryItemSelectorReturnType());
+			UploadItemSelectorCriterion uploadItemSelectorCriterion =
+				UploadItemSelectorCriterion.builder(
+				).extensions(
+					allowedFileExtensions
+				).maxFileSize(
+					maximumFileSize
+				).mimeTypeRestriction(
+					allowedMimeType
+				).build();
 
 			inputTemplateNode.addAttribute(
 				"selectFromDocumentLibraryURL",
@@ -374,7 +373,7 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 						RequestBackedPortletURLFactoryUtil.create(
 							httpServletRequest),
 						fragmentEntryLink.getNamespace() + "selectFileEntry",
-						objectsAttachmentItemSelectorCriterion)));
+						uploadItemSelectorCriterion)));
 		}
 	}
 
