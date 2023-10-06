@@ -26,6 +26,7 @@ import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.item.selector.ItemSelectorCriterion;
 import com.liferay.item.selector.ItemSelectorReturnTypeResolver;
 import com.liferay.item.selector.ItemSelectorReturnTypeResolverHandler;
+import com.liferay.item.selector.criteria.file.criterion.FileCustomExtensionItemSelectorCriterion;
 import com.liferay.item.selector.criteria.info.item.criterion.InfoItemItemSelectorCriterion;
 import com.liferay.item.selector.taglib.servlet.taglib.util.RepositoryEntryBrowserTagUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -56,6 +57,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -132,6 +134,13 @@ public class DLItemSelectorViewDisplayContext<T extends ItemSelectorCriterion> {
 	}
 
 	public String[] getExtensions() {
+		if (_itemSelectorCriterion instanceof
+				FileCustomExtensionItemSelectorCriterion) {
+
+			return ((FileCustomExtensionItemSelectorCriterion)
+				_itemSelectorCriterion).getExtensions();
+		}
+
 		return _dlItemSelectorView.getExtensions();
 	}
 
@@ -468,6 +477,24 @@ public class DLItemSelectorViewDisplayContext<T extends ItemSelectorCriterion> {
 
 			if (ArrayUtil.isNotEmpty(infoItemSelectorMimeTypes)) {
 				mimeTypes = infoItemItemSelectorCriterion.getMimeTypes();
+			}
+		}
+		else if (itemSelectorCriterion instanceof
+					FileCustomExtensionItemSelectorCriterion) {
+
+			String[] fileCustomExtensionSelectorMimeTypes = new String[0];
+
+			for (String extension :
+					((FileCustomExtensionItemSelectorCriterion)
+						itemSelectorCriterion).getExtensions()) {
+
+				fileCustomExtensionSelectorMimeTypes = ArrayUtil.append(
+					fileCustomExtensionSelectorMimeTypes,
+					MimeTypesUtil.getExtensionContentType(extension));
+			}
+
+			if (ArrayUtil.isNotEmpty(fileCustomExtensionSelectorMimeTypes)) {
+				mimeTypes = fileCustomExtensionSelectorMimeTypes;
 			}
 		}
 
