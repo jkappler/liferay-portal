@@ -12,6 +12,7 @@ String cmd = ParamUtil.getString(request, Constants.CMD);
 
 Portlet portlet = (Portlet)request.getAttribute(WebKeys.RENDER_PORTLET);
 
+ConfigurationAction configurationAction = portlet.getConfigurationActionInstance();
 String portletId = portlet.getPortletId();
 String rootPortletId = portlet.getRootPortletId();
 String instanceId = portlet.getInstanceId();
@@ -180,7 +181,7 @@ Layout curLayout = PortletConfigurationLayoutUtil.getLayout(themeDisplay);
 if ((!group.hasLocalOrRemoteStagingGroup() || !PropsValues.STAGING_LIVE_GROUP_LOCKING_ENABLED) && PortletPermissionUtil.contains(permissionChecker, themeDisplay.getScopeGroupId(), curLayout, portlet, ActionKeys.CONFIGURATION)) {
 	showConfigurationIcon = true;
 
-	boolean supportsConfigurationLAR = portlet.getConfigurationActionInstance() != null;
+	boolean supportsConfigurationLAR = configurationAction != null;
 	boolean supportsDataLAR = !(portlet.getPortletDataHandlerInstance() instanceof DefaultConfigurationPortletDataHandler);
 
 	if (supportsConfigurationLAR || supportsDataLAR || !group.isControlPanel()) {
@@ -444,9 +445,11 @@ portletDisplay.setURLClose(urlClose);
 PortletURL urlConfiguration = PortletProviderUtil.getPortletURL(request, PortletConfigurationApplicationType.PortletConfiguration.CLASS_NAME, PortletProvider.Action.VIEW);
 
 if (urlConfiguration != null) {
-	urlConfiguration.setWindowState(LiferayWindowState.POP_UP);
+	if (configurationAction != null) {
+		portletDisplay.setUrlConfigurationWindowState(configurationAction.getWindowsState());
 
-	if (portlet.getConfigurationActionInstance() != null) {
+		urlConfiguration.setWindowState(configurationAction.getWindowsState());
+
 		urlConfiguration.setParameter("mvcPath", "/edit_configuration.jsp");
 
 		String settingsScope = (String)request.getAttribute(WebKeys.SETTINGS_SCOPE);
@@ -458,6 +461,8 @@ if (urlConfiguration != null) {
 		}
 	}
 	else {
+		urlConfiguration.setWindowState(LiferayWindowState.POP_UP);
+
 		urlConfiguration.setParameter("mvcPath", "/edit_sharing.jsp");
 	}
 
@@ -796,7 +801,7 @@ if (group.isControlPanel()) {
 	portletDisplay.setShowMoveIcon(false);
 	portletDisplay.setShowPortletCssIcon(false);
 
-	if (!portlet.isPreferencesUniquePerLayout() && (portlet.getConfigurationActionInstance() != null) && PortletPermissionUtil.contains(permissionChecker, themeDisplay.getScopeGroupId(), curLayout, portlet, ActionKeys.CONFIGURATION)) {
+	if (!portlet.isPreferencesUniquePerLayout() && (configurationAction != null) && PortletPermissionUtil.contains(permissionChecker, themeDisplay.getScopeGroupId(), curLayout, portlet, ActionKeys.CONFIGURATION)) {
 		portletDisplay.setShowConfigurationIcon(true);
 	}
 }
