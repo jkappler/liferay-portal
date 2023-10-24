@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIconMenu;
 import com.liferay.portal.kernel.portlet.toolbar.PortletToolbar;
 import com.liferay.portal.kernel.util.Constants;
@@ -28,6 +29,7 @@ import java.io.Serializable;
 import java.io.Writer;
 
 import javax.portlet.PortletPreferences;
+import javax.portlet.WindowState;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -115,6 +117,10 @@ public class PortletDisplay implements Cloneable, Serializable {
 		_urlClose = master.getURLClose();
 		_urlConfiguration = master.getURLConfiguration();
 		_urlConfigurationJS = master.getURLConfigurationJS();
+		_urlConfigurationViewInContext =
+			master.getUrlConfigurationViewInContext();
+		_urlConfigurationViewInContextWindowState =
+			master.getURLConfigurationViewInContextWindowState();
 		_urlEdit = master.getURLEdit();
 		_urlEditDefaults = master.getURLEditDefaults();
 		_urlEditGuest = master.getURLEditGuest();
@@ -185,6 +191,9 @@ public class PortletDisplay implements Cloneable, Serializable {
 		slave.setURLClose(_urlClose);
 		slave.setURLConfiguration(_urlConfiguration);
 		slave.setURLConfigurationJS(_urlConfigurationJS);
+		slave.setURLConfigurationViewInContext(_urlConfigurationViewInContext);
+		slave.setUrlConfigurationViewInContextWindowState(
+			_urlConfigurationViewInContextWindowState);
 		slave.setURLEdit(_urlEdit);
 		slave.setURLEditDefaults(_urlEditDefaults);
 		slave.setURLEditGuest(_urlEditGuest);
@@ -304,6 +313,14 @@ public class PortletDisplay implements Cloneable, Serializable {
 
 	public String getURLConfigurationJS() {
 		return _urlConfigurationJS;
+	}
+
+	public String getUrlConfigurationViewInContext() {
+		return _urlConfigurationViewInContext;
+	}
+
+	public WindowState getURLConfigurationViewInContextWindowState() {
+		return _urlConfigurationViewInContextWindowState;
 	}
 
 	public String getURLEdit() {
@@ -599,6 +616,8 @@ public class PortletDisplay implements Cloneable, Serializable {
 		_urlBack = StringPool.BLANK;
 		_urlClose = StringPool.BLANK;
 		_urlConfiguration = StringPool.BLANK;
+		_urlConfigurationViewInContext = StringPool.BLANK;
+		_urlConfigurationViewInContextWindowState = LiferayWindowState.POP_UP;
 		_urlEdit = StringPool.BLANK;
 		_urlEditDefaults = StringPool.BLANK;
 		_urlEditGuest = StringPool.BLANK;
@@ -865,6 +884,19 @@ public class PortletDisplay implements Cloneable, Serializable {
 		_urlConfigurationJS = urlConfigurationJS;
 	}
 
+	public void setURLConfigurationViewInContext(
+		String urlConfigurationViewInContext) {
+
+		_urlConfigurationViewInContext = urlConfigurationViewInContext;
+	}
+
+	public void setUrlConfigurationViewInContextWindowState(
+		WindowState urlConfigurationViewInContextWindowState) {
+
+		_urlConfigurationViewInContextWindowState =
+			urlConfigurationViewInContextWindowState;
+	}
+
 	public void setURLEdit(String urlEdit) {
 		_urlEdit = urlEdit;
 	}
@@ -983,6 +1015,9 @@ public class PortletDisplay implements Cloneable, Serializable {
 	private String _urlClose = StringPool.BLANK;
 	private String _urlConfiguration = StringPool.BLANK;
 	private String _urlConfigurationJS = StringPool.BLANK;
+	private String _urlConfigurationViewInContext = StringPool.BLANK;
+	private WindowState _urlConfigurationViewInContextWindowState =
+		LiferayWindowState.POP_UP;
 	private String _urlEdit = StringPool.BLANK;
 	private String _urlEditDefaults = StringPool.BLANK;
 	private String _urlEditGuest = StringPool.BLANK;
