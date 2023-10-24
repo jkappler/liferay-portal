@@ -23,6 +23,7 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletRequest;
+import javax.portlet.WindowState;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +48,11 @@ public class JournalConfigurationAction
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
 		return "/configuration.jsp";
+	}
+
+	@Override
+	public WindowState getWindowsState() {
+		return WindowState.MAXIMIZED;
 	}
 
 	@Override
