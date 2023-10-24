@@ -8,6 +8,7 @@ package com.liferay.portal.kernel.portlet;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
+import javax.portlet.WindowState;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author Brian Wing Shun Chan
  */
 public interface ConfigurationAction {
+
+	public default WindowState getWindowsState() {
+		return LiferayWindowState.POP_UP;
+	}
 
 	public void include(
 			PortletConfig portletConfig, HttpServletRequest httpServletRequest,
