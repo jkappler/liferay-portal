@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIconMenu;
 import com.liferay.portal.kernel.portlet.toolbar.PortletToolbar;
 import com.liferay.portal.kernel.util.Constants;
@@ -28,6 +29,7 @@ import java.io.Serializable;
 import java.io.Writer;
 
 import javax.portlet.PortletPreferences;
+import javax.portlet.WindowState;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -115,6 +117,7 @@ public class PortletDisplay implements Cloneable, Serializable {
 		_urlClose = master.getURLClose();
 		_urlConfiguration = master.getURLConfiguration();
 		_urlConfigurationJS = master.getURLConfigurationJS();
+		_urlConfigurationBrowse = master.getUrlConfigurationBrowse();
 		_urlEdit = master.getURLEdit();
 		_urlEditDefaults = master.getURLEditDefaults();
 		_urlEditGuest = master.getURLEditGuest();
@@ -128,6 +131,7 @@ public class PortletDisplay implements Cloneable, Serializable {
 		_urlRefresh = master.getURLRefresh();
 		_urlStaging = master.getURLStaging();
 		_webDAVEnabled = master.isWebDAVEnabled();
+		_windowStateConfiguration = master.getWindowStateConfiguration();
 	}
 
 	public void copyTo(PortletDisplay slave) {
@@ -185,6 +189,8 @@ public class PortletDisplay implements Cloneable, Serializable {
 		slave.setURLClose(_urlClose);
 		slave.setURLConfiguration(_urlConfiguration);
 		slave.setURLConfigurationJS(_urlConfigurationJS);
+		slave.setURLConfigurationBrowse(_urlConfigurationBrowse);
+		slave.setWindowStateConfiguration(_windowStateConfiguration);
 		slave.setURLEdit(_urlEdit);
 		slave.setURLEditDefaults(_urlEditDefaults);
 		slave.setURLEditGuest(_urlEditGuest);
@@ -302,6 +308,10 @@ public class PortletDisplay implements Cloneable, Serializable {
 		return _urlConfiguration;
 	}
 
+	public String getUrlConfigurationBrowse() {
+		return _urlConfigurationBrowse;
+	}
+
 	public String getURLConfigurationJS() {
 		return _urlConfigurationJS;
 	}
@@ -352,6 +362,10 @@ public class PortletDisplay implements Cloneable, Serializable {
 
 	public String getURLStaging() {
 		return _urlStaging;
+	}
+
+	public WindowState getWindowStateConfiguration() {
+		return _windowStateConfiguration;
 	}
 
 	public boolean isActive() {
@@ -599,6 +613,7 @@ public class PortletDisplay implements Cloneable, Serializable {
 		_urlBack = StringPool.BLANK;
 		_urlClose = StringPool.BLANK;
 		_urlConfiguration = StringPool.BLANK;
+		_urlConfigurationBrowse = StringPool.BLANK;
 		_urlEdit = StringPool.BLANK;
 		_urlEditDefaults = StringPool.BLANK;
 		_urlEditGuest = StringPool.BLANK;
@@ -611,6 +626,7 @@ public class PortletDisplay implements Cloneable, Serializable {
 		_urlPrint = StringPool.BLANK;
 		_urlRefresh = StringPool.BLANK;
 		_webDAVEnabled = false;
+		_windowStateConfiguration = LiferayWindowState.POP_UP;
 	}
 
 	public void setActive(boolean active) {
@@ -861,6 +877,10 @@ public class PortletDisplay implements Cloneable, Serializable {
 		_urlConfiguration = urlConfiguration;
 	}
 
+	public void setURLConfigurationBrowse(String urlConfigurationBrowse) {
+		_urlConfigurationBrowse = urlConfigurationBrowse;
+	}
+
 	public void setURLConfigurationJS(String urlConfigurationJS) {
 		_urlConfigurationJS = urlConfigurationJS;
 	}
@@ -915,6 +935,12 @@ public class PortletDisplay implements Cloneable, Serializable {
 
 	public void setWebDAVEnabled(boolean webDAVEnabled) {
 		_webDAVEnabled = webDAVEnabled;
+	}
+
+	public void setWindowStateConfiguration(
+		WindowState windowStateConfiguration) {
+
+		_windowStateConfiguration = windowStateConfiguration;
 	}
 
 	public void writeContent(Writer writer) throws IOException {
@@ -982,6 +1008,7 @@ public class PortletDisplay implements Cloneable, Serializable {
 	private String _urlBackTitle = StringPool.BLANK;
 	private String _urlClose = StringPool.BLANK;
 	private String _urlConfiguration = StringPool.BLANK;
+	private String _urlConfigurationBrowse = StringPool.BLANK;
 	private String _urlConfigurationJS = StringPool.BLANK;
 	private String _urlEdit = StringPool.BLANK;
 	private String _urlEditDefaults = StringPool.BLANK;
@@ -996,5 +1023,6 @@ public class PortletDisplay implements Cloneable, Serializable {
 	private String _urlRefresh = StringPool.BLANK;
 	private String _urlStaging = StringPool.BLANK;
 	private boolean _webDAVEnabled;
+	private WindowState _windowStateConfiguration = LiferayWindowState.POP_UP;
 
 }
