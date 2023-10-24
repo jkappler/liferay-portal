@@ -5,16 +5,12 @@
 
 package com.liferay.portlet.configuration.web.internal.portlet.configuration.icon;
 
-import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.portlet.configuration.icon.BaseJSPPortletConfigurationIcon;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.WebKeys;
-
-import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
@@ -27,41 +23,12 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(service = PortletConfigurationIcon.class)
-public class ConfigurationPortletConfigurationIcon
-	extends BaseJSPPortletConfigurationIcon {
-
-	@Override
-	public Map<String, Object> getContext(PortletRequest portletRequest) {
-		return HashMapBuilder.<String, Object>put(
-			"action", getNamespace(portletRequest) + "configuration"
-		).put(
-			"globalAction", true
-		).build();
-	}
-
-	@Override
-	public String getCssClass() {
-		return "portlet-configuration portlet-configuration-icon";
-	}
-
-	@Override
-	public String getIconCssClass() {
-		return "cog";
-	}
+public class ModalConfigurationPortletConfigurationIcon
+	extends BaseConfigurationPortletConfigurationIcon {
 
 	@Override
 	public String getJspPath() {
 		return "/configuration/icon/configuration.jsp";
-	}
-
-	@Override
-	public String getMessage(PortletRequest portletRequest) {
-		return _language.get(getLocale(portletRequest), "configuration");
-	}
-
-	@Override
-	public double getWeight() {
-		return 14.0;
 	}
 
 	@Override
@@ -77,21 +44,19 @@ public class ConfigurationPortletConfigurationIcon
 
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
-		return portletDisplay.isShowConfigurationIcon();
-	}
+		if (portletDisplay.getWindowStateConfiguration() !=
+				LiferayWindowState.POP_UP) {
 
-	@Override
-	public boolean isShowInEditMode(PortletRequest portletRequest) {
-		return true;
+			return false;
+		}
+
+		return portletDisplay.isShowConfigurationIcon();
 	}
 
 	@Override
 	protected ServletContext getServletContext() {
 		return _servletContext;
 	}
-
-	@Reference
-	private Language _language;
 
 	@Reference(
 		target = "(osgi.web.symbolicname=com.liferay.portlet.configuration.web)"
