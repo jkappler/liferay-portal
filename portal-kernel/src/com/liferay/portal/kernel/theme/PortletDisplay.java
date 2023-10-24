@@ -7,6 +7,7 @@ package com.liferay.portal.kernel.theme;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -365,6 +366,10 @@ public class PortletDisplay implements Cloneable, Serializable {
 	}
 
 	public WindowState getWindowStateConfiguration() {
+		if(!FeatureFlagManagerUtil.isEnabled("LPS-197692")) {
+			return LiferayWindowState.POP_UP;
+		}
+		
 		return _windowStateConfiguration;
 	}
 
