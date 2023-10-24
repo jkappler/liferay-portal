@@ -5,6 +5,7 @@
 
 package com.liferay.portlet.configuration.web.internal.portlet.configuration.icon;
 
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
@@ -44,8 +45,9 @@ public class BasicConfigurationPortletConfigurationIcon
 
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
-		if (portletDisplay.getURLConfigurationViewInContextWindowState() !=
-				LiferayWindowState.POP_UP) {
+		if (FeatureFlagManagerUtil.isEnabled("LPS-197692") &&
+			(portletDisplay.getURLConfigurationViewInContextWindowState() !=
+				LiferayWindowState.POP_UP)) {
 
 			return false;
 		}
