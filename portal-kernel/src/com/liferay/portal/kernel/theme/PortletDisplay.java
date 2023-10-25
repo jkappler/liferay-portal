@@ -366,10 +366,10 @@ public class PortletDisplay implements Cloneable, Serializable {
 	}
 
 	public WindowState getWindowStateConfiguration() {
-		if(!FeatureFlagManagerUtil.isEnabled("LPS-197692")) {
+		if (!FeatureFlagManagerUtil.isEnabled("LPS-197692")) {
 			return LiferayWindowState.POP_UP;
 		}
-		
+
 		return _windowStateConfiguration;
 	}
 
