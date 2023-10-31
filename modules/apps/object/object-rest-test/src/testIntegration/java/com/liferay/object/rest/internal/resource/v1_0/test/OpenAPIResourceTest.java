@@ -39,10 +39,15 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
+import com.liferay.portal.vulcan.yaml.YAMLUtil;
+import com.liferay.portal.vulcan.yaml.openapi.Components;
+import com.liferay.portal.vulcan.yaml.openapi.OpenAPIYAML;
+import com.liferay.portal.vulcan.yaml.openapi.Schema;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.junit.Assert;
@@ -264,6 +269,20 @@ public class OpenAPIResourceTest {
 		}
 	}
 
+	private void _assertOpenAPIYAML(
+		ObjectDefinition objectDefinition, String openAPIYAMLString) {
+
+		OpenAPIYAML openAPIYAML = YAMLUtil.loadOpenAPIYAML(openAPIYAMLString);
+
+		Assert.assertNotNull(openAPIYAML);
+
+		Components components = openAPIYAML.getComponents();
+
+		Map<String, Schema> schemas = components.getSchemas();
+
+		Assert.assertTrue(schemas.containsKey(objectDefinition.getShortName()));
+	}
+
 	private String _getNestedEntitySchema(
 		boolean active, JSONObject jsonObject,
 		ObjectRelationship objectRelationship,
@@ -479,6 +498,12 @@ public class OpenAPIResourceTest {
 			Http.Method.GET);
 
 		Assert.assertEquals("NOT_FOUND", jsonObject.getString("status"));
+
+		_assertOpenAPIYAML(
+			objectDefinition1,
+			HTTPTestUtil.invokeToString(
+				null, objectDefinition1.getRESTContextPath() + "/openapi.yaml",
+				Http.Method.GET));
 	}
 
 	private static final String _OBJECT_FIELD_NAME =
