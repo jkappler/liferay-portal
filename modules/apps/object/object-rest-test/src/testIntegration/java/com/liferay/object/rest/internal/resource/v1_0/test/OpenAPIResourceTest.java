@@ -4,6 +4,8 @@
  */
 
 package com.liferay.object.rest.internal.resource.v1_0.test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.object.constants.ObjectActionExecutorConstants;
@@ -270,11 +272,23 @@ public class OpenAPIResourceTest {
 	}
 
 	private void _assertOpenAPIYAML(
-		ObjectDefinition objectDefinition, String openAPIYAMLString) {
+			ObjectDefinition objectDefinition, String openAPIYAMLString,
+			JSONObject openAPIJSONObject)
+		throws Exception {
 
 		OpenAPIYAML openAPIYAML = YAMLUtil.loadOpenAPIYAML(openAPIYAMLString);
 
 		Assert.assertNotNull(openAPIYAML);
+
+		ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
+
+		Object obj = yamlReader.readValue(openAPIYAMLString, Object.class);
+		ObjectMapper jsonWriter = new ObjectMapper();
+
+		String jsonString = jsonWriter.writerWithDefaultPrettyPrinter(
+		).writeValueAsString(
+			obj
+		);
 
 		Components components = openAPIYAML.getComponents();
 
@@ -462,15 +476,16 @@ public class OpenAPIResourceTest {
 				"/openapi.yaml",
 			jsonArray.get(0));
 
-		jsonObject = HTTPTestUtil.invokeToJSONObject(
+		JSONObject openAPIJSONObject = HTTPTestUtil.invokeToJSONObject(
 			null, objectDefinition1.getRESTContextPath() + "/openapi.json",
 			Http.Method.GET);
 
-		Assert.assertNotNull(jsonObject.getString("openapi"));
+		Assert.assertNotNull(openAPIJSONObject.getString("openapi"));
 		Assert.assertNull(
-			jsonObject.getJSONArray(objectDefinition2.getRESTContextPath()));
+			openAPIJSONObject.getJSONArray(
+				objectDefinition2.getRESTContextPath()));
 
-		JSONObject schemasJSONObject = jsonObject.getJSONObject(
+		JSONObject schemasJSONObject = openAPIJSONObject.getJSONObject(
 			"components"
 		).getJSONObject(
 			"schemas"
@@ -503,7 +518,8 @@ public class OpenAPIResourceTest {
 			objectDefinition1,
 			HTTPTestUtil.invokeToString(
 				null, objectDefinition1.getRESTContextPath() + "/openapi.yaml",
-				Http.Method.GET));
+				Http.Method.GET),
+			openAPIJSONObject);
 	}
 
 	private static final String _OBJECT_FIELD_NAME =
