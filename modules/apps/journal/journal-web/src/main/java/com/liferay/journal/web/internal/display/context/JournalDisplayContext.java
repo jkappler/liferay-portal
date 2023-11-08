@@ -1066,7 +1066,7 @@ public class JournalDisplayContext {
 		).build();
 	}
 
-	public String getSelectDDMStructureURL() {
+	public String getSelectDDMStructureURL(boolean multiSelection) {
 		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
 			RequestBackedPortletURLFactoryUtil.create(_liferayPortletRequest);
 
@@ -1075,6 +1075,7 @@ public class JournalDisplayContext {
 
 		ddmStructureItemSelectorCriterion.setClassNameId(
 			PortalUtil.getClassNameId(JournalArticle.class));
+		ddmStructureItemSelectorCriterion.setMultiSelection(multiSelection);
 		ddmStructureItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
 			new DDMStructureItemSelectorReturnType());
 

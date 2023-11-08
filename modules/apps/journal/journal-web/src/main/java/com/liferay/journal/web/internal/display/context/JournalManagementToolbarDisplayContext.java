@@ -277,7 +277,8 @@ public class JournalManagementToolbarDisplayContext
 		).put(
 			"selectCategoryURL", _getAssetCategorySelectorURL()
 		).put(
-			"selectEntityURL", _journalDisplayContext.getSelectDDMStructureURL()
+			"selectEntityURL",
+			_journalDisplayContext.getSelectDDMStructureURL(false)
 		).put(
 			"selectTagURL", _getAssetTagSelectorURL()
 		).put(
