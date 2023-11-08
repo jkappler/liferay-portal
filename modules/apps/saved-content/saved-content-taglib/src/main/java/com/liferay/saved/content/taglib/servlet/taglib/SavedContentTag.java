@@ -63,6 +63,10 @@ public class SavedContentTag extends IncludeTag {
 		return _savedContentEntry;
 	}
 
+	public boolean isInTrash() {
+		return _inTrash;
+	}
+
 	public void isViewMode(boolean viewMode) {
 		_viewMode = viewMode;
 	}
