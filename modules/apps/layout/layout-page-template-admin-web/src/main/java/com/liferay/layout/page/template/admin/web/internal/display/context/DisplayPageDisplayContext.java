@@ -92,6 +92,12 @@ public class DisplayPageDisplayContext {
 	}
 
 	public SearchContainer<?> getDisplayPagesSearchContainer() {
+		return getDisplayPagesSearchContainer(-1, -1);
+	}
+
+	public SearchContainer<?> getDisplayPagesSearchContainer(
+		long classNameId, long classTypeId) {
+
 		if (_displayPagesSearchContainer != null) {
 			return _displayPagesSearchContainer;
 		}
@@ -201,6 +207,7 @@ public class DisplayPageDisplayContext {
 			() ->
 				LayoutPageTemplateEntryServiceUtil.
 					getLayoutPageCollectionsAndLayoutPageTemplateEntries(
+						classNameId, classTypeId,
 						_themeDisplay.getScopeGroupId(),
 						_getLayoutPageTemplateCollectionId(),
 						LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
@@ -209,7 +216,7 @@ public class DisplayPageDisplayContext {
 						displayPagesSearchContainer.getOrderByComparator()),
 			LayoutPageTemplateEntryServiceUtil.
 				getLayoutPageCollectionsAndLayoutPageTemplateEntriesCount(
-					_themeDisplay.getScopeGroupId(),
+					classNameId, classTypeId, _themeDisplay.getScopeGroupId(),
 					_getLayoutPageTemplateCollectionId(),
 					LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE));
 

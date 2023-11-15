@@ -149,7 +149,6 @@ public class LayoutPageTemplateEntryServiceUtil {
 
 	public static int getLayoutPageCollectionsAndLayoutPageTemplateEntriesCount(
 		long groupId, long layoutPageTemplateCollectionId, int type) {
-
 		return getService().
 			getLayoutPageCollectionsAndLayoutPageTemplateEntriesCount(
 				-1, -1, groupId,
