@@ -175,7 +175,8 @@ public class JournalArticleLayoutDisplayPageProvider
 		if ((article == null) || article.isExpired() || article.isInTrash() ||
 			(article.isPending() && (permissionChecker != null) &&
 			 !permissionChecker.isSignedIn()) ||
-			article.isScheduled()) {
+			article.isScheduled() ||
+			Validator.isNotNull(article.getLayoutUuid())) {
 
 			return false;
 		}
