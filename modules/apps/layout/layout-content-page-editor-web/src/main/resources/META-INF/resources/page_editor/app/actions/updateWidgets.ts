@@ -13,6 +13,7 @@ export interface Widget {
 	portletId: string;
 	portletItems: Widget[];
 	title: string;
+	used: boolean;
 }
 
 export interface WidgetSet {

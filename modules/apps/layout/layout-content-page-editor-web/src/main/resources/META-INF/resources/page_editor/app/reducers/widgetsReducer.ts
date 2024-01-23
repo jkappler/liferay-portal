@@ -19,7 +19,7 @@ function markUsedPortlets(portlets: Widget[], usedPortletsIds: Set<string>) {
 	return portlets.map<Widget>((portlet) => {
 		const normalizedPortlet = {
 			...portlet,
-			used: usedPortletsIds.has(portlet.portletId),
+			used: portlet.used || usedPortletsIds.has(portlet.portletId),
 		};
 
 		if (portlet.portletItems?.length) {
