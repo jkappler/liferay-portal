@@ -13,10 +13,15 @@ import {
 } from '../contexts/StoreContext';
 import selectSegmentsExperienceId from '../selectors/selectSegmentsExperienceId';
 import selectWidgetFragmentEntryLinks from '../selectors/selectWidgetFragmentEntryLinks';
+import WidgetService from '../services/WidgetService';
 import loadWidgets from '../thunks/loadWidgets';
 
 export default function WidgetsManager() {
 	const dispatch = useDispatch();
+
+	const masterLayoutPlid = useSelector(
+		(state) => state.masterLayout?.masterLayoutPlid
+	);
 
 	const fragmentEntryLinksIds = useSelector((state) => {
 		const nextSegmentsExperienceId = selectSegmentsExperienceId(state);
@@ -36,6 +41,12 @@ export default function WidgetsManager() {
 	const fragmentEntryLinksRef = useSelectorRef(
 		selectWidgetFragmentEntryLinks
 	);
+
+	useEffect(() => {
+		WidgetService.getMasterLayoutWidgets({masterLayoutPlid}).then((ids) =>
+			console.log('Master Widgets:', ids)
+		);
+	}, [masterLayoutPlid]);
 
 	useEffect(() => {
 		dispatch(
