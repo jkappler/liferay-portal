@@ -210,6 +210,7 @@ export interface Config {
 	updateFragmentPortletSetsSortURL: string;
 	updateItemConfigURL: string;
 	updateLayoutPageTemplateDataURL: string;
+	updatePortletsHighlightedConfigurationURL: string;
 	updateRowColumnsURL: string;
 	updateRuleURL: string;
 	updateSegmentsExperiencePriorityURL: string;
