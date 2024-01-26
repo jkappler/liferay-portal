@@ -133,6 +133,7 @@ export interface Config {
 	getInfoItemFieldValueURL: string;
 	getLayoutFriendlyURL: string;
 	getLayoutPageTemplateCollectionsURL: string;
+	getMasterLayoutNoninstanciablePortletsURL: string;
 	getPageContentsURL: string;
 	getPortletsURL: string;
 	getRolesURL: string;

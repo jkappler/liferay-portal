@@ -38,6 +38,18 @@ function addPortlet({
 	);
 }
 
+function getMasterLayoutWidgets({
+	masterLayoutPlid,
+}: {
+	masterLayoutPlid: string;
+}) {
+	return serviceFetch(config.getMasterLayoutNoninstanciablePortletsURL, {
+		body: {
+			masterLayoutPlid,
+		},
+	});
+}
+
 function getWidgets() {
 	return serviceFetch(config.getPortletsURL);
 }
@@ -63,4 +75,9 @@ function toggleWidgetHighlighted({
 	);
 }
 
-export default {addPortlet, getWidgets, toggleWidgetHighlighted};
+export default {
+	addPortlet,
+	getMasterLayoutWidgets,
+	getWidgets,
+	toggleWidgetHighlighted,
+};
