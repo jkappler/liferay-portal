@@ -15,8 +15,11 @@ import com.liferay.layout.content.page.editor.web.internal.util.layout.structure
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortletIdException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletItem;
 import com.liferay.portal.kernel.portlet.InvokerPortlet;
@@ -27,6 +30,7 @@ import com.liferay.portal.kernel.portlet.PortletInstanceFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PortletItemLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
@@ -141,12 +145,32 @@ public class AddPortletMVCActionCommand
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		Layout layout = themeDisplay.getLayout();
+
 		String portletId = PortletIdCodec.decodePortletName(
 			ParamUtil.getString(actionRequest, "portletId"));
 
 		PortletPermissionUtil.check(
 			themeDisplay.getPermissionChecker(), themeDisplay.getScopeGroupId(),
-			themeDisplay.getLayout(), portletId, ActionKeys.ADD_TO_PAGE);
+			layout, portletId, ActionKeys.ADD_TO_PAGE);
+
+		Portlet portlet = _portletLocalService.getPortletById(portletId);
+
+		if (!portlet.isInstanceable() && (layout.getMasterLayoutPlid() > 0)) {
+			Layout masterLayout = _layoutLocalService.fetchLayout(
+				layout.getMasterLayoutPlid());
+
+			if (masterLayout != null) {
+				LayoutTypePortlet layoutTypePortlet =
+					(LayoutTypePortlet)masterLayout.getLayoutType();
+
+				if ((layoutTypePortlet != null) &&
+					layoutTypePortlet.hasPortletId(portletId)) {
+
+					throw new PortletIdException();
+				}
+			}
+		}
 
 		long segmentsExperienceId = ParamUtil.getLong(
 			actionRequest, "segmentsExperienceId");
@@ -204,8 +228,6 @@ public class AddPortletMVCActionCommand
 		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
 			actionRequest);
 
-		Portlet portlet = _portletLocalService.getPortletById(portletId);
-
 		InvokerPortlet invokerPortlet = PortletInstanceFactoryUtil.create(
 			portlet, httpServletRequest.getServletContext());
 
@@ -251,6 +273,9 @@ public class AddPortletMVCActionCommand
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
 
 	@Reference
 	private Portal _portal;
