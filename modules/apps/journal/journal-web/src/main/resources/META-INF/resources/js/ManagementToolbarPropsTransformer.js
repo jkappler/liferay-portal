@@ -7,8 +7,10 @@ import {
 	addParams,
 	navigate,
 	openCategorySelectionModal,
+	openModal,
 	openSelectionModal,
 	openTagSelectionModal,
+	sub,
 } from 'frontend-js-web';
 
 import openDeleteArticleModal from './modals/openDeleteArticleModal';
@@ -30,22 +32,49 @@ export default function propsTransformer({
 	portletNamespace,
 	...otherProps
 }) {
-	const changePermissions = () => {
-		const url = new URL(permissionsURL);
+	const changePermissions = (item) => {
+		const resourcePrimKeys = rowsResourcePrimKeys('rowIdsJournalArticle');
 
-		openSelectionModal({
-			title: Liferay.Language.get('permissions'),
-			url: addParams(
-				{
-					[`_${url.searchParams.get(
-						'p_p_id'
-					)}_resourcePrimKey`]: rowsResourcePrimKeys(
-						'rowIdsJournalArticle'
-					),
-				},
-				permissionsURL
-			),
-		});
+		if (resourcePrimKeys.length > item?.data?.maxItemsToShowInfoMessage) {
+			openModal({
+				bodyHTML: `<p class="text-secondary">
+					${sub(
+						Liferay.Language.get(
+							'you-have-selected-more-than-x-x-info-message'
+						),
+						item?.data?.maxItemsToShowInfoMessage,
+						Liferay.Language.get('web-content')
+					)}
+				</p>`,
+				buttons: [
+					{
+						displayType: 'secondary',
+						label: Liferay.Language.get('cancel'),
+						type: 'cancel',
+					},
+					{
+						displayType: 'info',
+						label: Liferay.Language.get('continue'),
+						onClick: ({processClose}) => {
+							processClose();
+							openChangePermissionsSelectionModal(
+								permissionsURL,
+								resourcePrimKeys
+							);
+						},
+						type: 'button',
+					},
+				],
+				status: 'info',
+				title: Liferay.Language.get('bulk-action-performance'),
+			});
+		}
+		else {
+			openChangePermissionsSelectionModal(
+				permissionsURL,
+				resourcePrimKeys
+			);
+		}
 	};
 
 	const deleteEntries = () => {
@@ -117,8 +146,7 @@ export default function propsTransformer({
 					node.name === `${portletNamespace}${selector}`
 			)
 			.map((node) => node.closest('[data-resourceprimkey]'))
-			.map((node) => node.dataset.resourceprimkey)
-			.join(',');
+			.map((node) => node.dataset.resourceprimkey);
 	};
 
 	const rowsValues = (selector) => {
@@ -148,13 +176,32 @@ export default function propsTransformer({
 		navigate(url);
 	};
 
+	const openChangePermissionsSelectionModal = (
+		permissionsURL,
+		resourcePrimKeys
+	) => {
+		const url = new URL(permissionsURL);
+
+		openSelectionModal({
+			title: Liferay.Language.get('permissions'),
+			url: addParams(
+				{
+					[`_${url.searchParams.get(
+						'p_p_id'
+					)}_resourcePrimKey`]: resourcePrimKeys.join(','),
+				},
+				permissionsURL
+			),
+		});
+	};
+
 	return {
 		...otherProps,
 		onActionButtonClick(event, {item}) {
 			const action = item?.data?.action;
 
 			if (action === 'changePermissions') {
-				changePermissions();
+				changePermissions(item);
 			}
 			else if (action === 'deleteEntries') {
 				deleteEntries();
