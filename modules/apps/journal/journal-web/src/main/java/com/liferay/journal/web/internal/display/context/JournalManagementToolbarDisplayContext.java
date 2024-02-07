@@ -176,6 +176,9 @@ public class JournalManagementToolbarDisplayContext
 							dropdownItem -> {
 								dropdownItem.putData(
 									"action", "changePermissions");
+								dropdownItem.putData(
+									"maxItemsToShowInfoMessage",
+									String.valueOf(200));
 								dropdownItem.setIcon("password-policies");
 								dropdownItem.setLabel(
 									LanguageUtil.get(
