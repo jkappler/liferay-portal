@@ -70,6 +70,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.staging.StagingGroupHelper;
 import com.liferay.staging.StagingGroupHelperUtil;
+import com.liferay.taglib.security.PermissionsURLTag;
 import com.liferay.translation.url.provider.TranslationURLProvider;
 import com.liferay.trash.TrashHelper;
 
@@ -163,6 +164,23 @@ public class JournalManagementToolbarDisplayContext
 										httpServletRequest,
 										"export-for-translations"));
 								dropdownItem.setQuickAction(true);
+							}
+						).build());
+					dropdownGroupItem.setSeparator(true);
+				}
+			).addGroup(
+				() -> FeatureFlagManagerUtil.isEnabled("LPD-16469"),
+				dropdownGroupItem -> {
+					dropdownGroupItem.setDropdownItems(
+						DropdownItemListBuilder.add(
+							dropdownItem -> {
+								dropdownItem.putData(
+									"action", "changePermissions");
+								dropdownItem.setIcon("password-policies");
+								dropdownItem.setLabel(
+									LanguageUtil.get(
+										httpServletRequest, "permissions"));
+								dropdownItem.setQuickAction(false);
 							}
 						).build());
 					dropdownGroupItem.setSeparator(true);
@@ -279,6 +297,12 @@ public class JournalManagementToolbarDisplayContext
 			).setWindowState(
 				LiferayWindowState.POP_UP
 			).buildString()
+		).put(
+			"permissionsURL",
+			() -> PermissionsURLTag.doTag(
+				null, JournalArticle.class.getName(),
+				_themeDisplay.getScopeGroupId(),
+				LiferayWindowState.POP_UP.toString(), httpServletRequest)
 		).put(
 			"selectCategoryURL", _getAssetCategorySelectorURL()
 		).put(
