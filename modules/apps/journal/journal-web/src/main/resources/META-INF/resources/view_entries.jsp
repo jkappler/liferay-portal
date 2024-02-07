@@ -54,6 +54,8 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 					).put(
 						"draggable", !BrowserSnifferUtil.isMobile(request) && (JournalArticlePermission.contains(permissionChecker, curArticle, ActionKeys.DELETE) || JournalArticlePermission.contains(permissionChecker, curArticle, ActionKeys.UPDATE))
 					).put(
+						"resourcePrimKey", curArticle.getResourcePrimKey()
+					).put(
 						"title", HtmlUtil.escape(title)
 					).build());
 
