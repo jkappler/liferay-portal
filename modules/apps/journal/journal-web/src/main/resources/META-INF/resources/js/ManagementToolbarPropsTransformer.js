@@ -20,6 +20,7 @@ export default function propsTransformer({
 		exportTranslationURL,
 		moveArticlesAndFoldersURL,
 		openViewMoreStructuresURL,
+		permissionsURL,
 		selectCategoryURL,
 		selectEntityURL,
 		selectTagURL,
@@ -29,6 +30,24 @@ export default function propsTransformer({
 	portletNamespace,
 	...otherProps
 }) {
+	const changePermissions = () => {
+		const url = new URL(permissionsURL);
+
+		openSelectionModal({
+			title: Liferay.Language.get('permissions'),
+			url: addParams(
+				{
+					[`_${url.searchParams.get(
+						'p_p_id'
+					)}_resourcePrimKey`]: rowsResourcePrimKeys(
+						'rowIdsJournalArticle'
+					),
+				},
+				permissionsURL
+			),
+		});
+	};
+
 	const deleteEntries = () => {
 		if (trashEnabled) {
 			Liferay.fire(`${portletNamespace}editEntry`, {
@@ -84,6 +103,24 @@ export default function propsTransformer({
 		);
 	};
 
+	const rowsResourcePrimKeys = (selector) => {
+		const selectorNodes = document.querySelectorAll(
+			'input[type="checkbox"][name="' +
+				`${portletNamespace}${selector}` +
+				'"]'
+		);
+
+		return Array.from(selectorNodes)
+			.filter(
+				(node) =>
+					node.checked &&
+					node.name === `${portletNamespace}${selector}`
+			)
+			.map((node) => node.closest('[data-resourceprimkey]'))
+			.map((node) => node.dataset.resourceprimkey)
+			.join(',');
+	};
+
 	const rowsValues = (selector) => {
 		const selectorNodes = document.querySelectorAll(
 			'input[type="checkbox"][name="' +
@@ -116,7 +153,10 @@ export default function propsTransformer({
 		onActionButtonClick(event, {item}) {
 			const action = item?.data?.action;
 
-			if (action === 'deleteEntries') {
+			if (action === 'changePermissions') {
+				changePermissions();
+			}
+			else if (action === 'deleteEntries') {
 				deleteEntries();
 			}
 			else if (action === 'expireEntries') {
