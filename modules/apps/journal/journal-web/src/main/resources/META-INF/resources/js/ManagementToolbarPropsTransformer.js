@@ -5,6 +5,7 @@
 
 import {
 	addParams,
+	createPortletURL,
 	navigate,
 	openCategorySelectionModal,
 	openModal,
@@ -180,18 +181,11 @@ export default function propsTransformer({
 		permissionsURL,
 		resourcePrimKeys
 	) => {
-		const url = new URL(permissionsURL);
-
 		openSelectionModal({
 			title: Liferay.Language.get('permissions'),
-			url: addParams(
-				{
-					[`_${url.searchParams.get(
-						'p_p_id'
-					)}_resourcePrimKey`]: resourcePrimKeys.join(','),
-				},
-				permissionsURL
-			),
+			url: createPortletURL(permissionsURL, {
+				resourcePrimKey: resourcePrimKeys.join(','),
+			}),
 		});
 	};
 
