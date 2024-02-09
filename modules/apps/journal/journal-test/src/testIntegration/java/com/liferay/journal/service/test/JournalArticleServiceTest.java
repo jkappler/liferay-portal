@@ -8,16 +8,20 @@ package com.liferay.journal.service.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.data.engine.rest.resource.v2_0.DataDefinitionResource;
 import com.liferay.dynamic.data.mapping.exception.RequiredTemplateException;
 import com.liferay.dynamic.data.mapping.exception.StorageFieldRequiredException;
+import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.io.DDMFormDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormDeserializerDeserializeRequest;
 import com.liferay.dynamic.data.mapping.io.DDMFormDeserializerDeserializeResponse;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.exception.NoSuchArticleException;
@@ -28,6 +32,7 @@ import com.liferay.journal.service.JournalArticleService;
 import com.liferay.journal.service.JournalFolderLocalService;
 import com.liferay.journal.test.util.JournalFolderFixture;
 import com.liferay.journal.test.util.JournalTestUtil;
+import com.liferay.journal.util.JournalConverter;
 import com.liferay.journal.util.comparator.ArticleIDComparator;
 import com.liferay.journal.util.comparator.ArticleTitleComparator;
 import com.liferay.journal.util.comparator.ArticleVersionComparator;
@@ -58,6 +63,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -71,6 +77,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -250,6 +257,39 @@ public class JournalArticleServiceTest {
 			_article.isIndexable(), journalArticle.isIndexable());
 		Assert.assertEquals(
 			_article.isSmallImage(), journalArticle.isSmallImage());
+	}
+
+	@Test
+	public void testDeleteArticleWithComplexDDMStructureAndMultipleVersion()
+		throws Exception {
+
+		HashMap<DDMFormField, String> ddmFormFields = new HashMap<>();
+
+		for (int i = 0; i <= 50; i++) {
+			DDMFormField ddmFormField = new DDMFormField(
+				"name" + i, DDMFormFieldTypeConstants.TEXT);
+
+			ddmFormField.setDataType("text");
+
+			ddmFormFields.put(ddmFormField, RandomTestUtil.randomString());
+		}
+
+		JournalArticle journalArticle = JournalTestUtil.addJournalArticle(
+			_dataDefinitionResourceFactory, ddmFormFields,
+			_ddmFormValuesToFieldsConverter, _group.getGroupId(),
+			_journalConverter);
+
+		for (int i = 0; i <= 50; i++) {
+			try (LoggingTimer loggingTimer = new LoggingTimer()) {
+				journalArticle = JournalTestUtil.updateArticle(journalArticle);
+			}
+		}
+
+		try (LoggingTimer loggingTimer = new LoggingTimer()) {
+			_journalArticleLocalService.deleteArticle(
+				journalArticle.getGroupId(), journalArticle.getArticleId(),
+				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+		}
 	}
 
 	@Test
@@ -1282,8 +1322,14 @@ public class JournalArticleServiceTest {
 	@Inject
 	private AssetEntryLocalService _assetEntryLocalService;
 
+	@Inject
+	private DataDefinitionResource.Factory _dataDefinitionResourceFactory;
+
 	@Inject(filter = "ddm.form.deserializer.type=xsd")
 	private DDMFormDeserializer _ddmFormDeserializer;
+
+	@Inject
+	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
 
 	@Inject
 	private DDMTemplateLocalService _ddmTemplateLocalService;
@@ -1293,6 +1339,9 @@ public class JournalArticleServiceTest {
 
 	@Inject
 	private JournalArticleService _journalArticleService;
+
+	@Inject
+	private JournalConverter _journalConverter;
 
 	@Inject
 	private JournalFolderLocalService _journalFolderLocalService;
