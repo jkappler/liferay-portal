@@ -61,9 +61,11 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.rss.util.RSSUtil;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -835,6 +837,21 @@ public class JournalTestUtil {
 			String fieldValue, long groupId, JournalConverter journalConverter)
 		throws Exception {
 
+		return addJournalArticle(
+			dataDefinitionResourceFactory,
+			HashMapBuilder.put(
+				ddmFormField, fieldValue
+			).build(),
+			ddmFormValuesToFieldsConverter, groupId, journalConverter);
+	}
+
+	public static JournalArticle addJournalArticle(
+			DataDefinitionResource.Factory dataDefinitionResourceFactory,
+			Map<DDMFormField, String> ddmFormFields,
+			DDMFormValuesToFieldsConverter ddmFormValuesToFieldsConverter,
+			long groupId, JournalConverter journalConverter)
+		throws Exception {
+
 		Locale locale = PortalUtil.getSiteDefaultLocale(groupId);
 
 		String languageId = LocaleUtil.toLanguageId(locale);
@@ -846,9 +863,7 @@ public class JournalTestUtil {
 					"availableLanguageIds", JSONUtil.put(languageId)
 				).put(
 					"dataDefinitionFields",
-					JSONUtil.put(
-						_getDataDefinitionFieldJSONObject(
-							ddmFormField, languageId))
+					_getDataDefinitionFieldJSONArray(ddmFormFields, languageId)
 				).put(
 					"defaultLanguageId", languageId
 				).put(
@@ -865,8 +880,7 @@ public class JournalTestUtil {
 			ddmStructure,
 			_createDDMFormValues(
 				ddmStructure.getDDMForm(),
-				_getDDMFormFieldValue(ddmFormField, fieldValue, locale),
-				locale));
+				_getDDMFormFieldValues(ddmFormFields, locale), locale));
 
 		String content = journalConverter.getContent(
 			ddmStructure, fields, groupId);
@@ -1062,69 +1076,92 @@ public class JournalTestUtil {
 	}
 
 	private static DDMFormValues _createDDMFormValues(
-		DDMForm ddmForm, DDMFormFieldValue ddmFormFieldValue, Locale locale) {
+		DDMForm ddmForm, List<DDMFormFieldValue> ddmFormFieldValues,
+		Locale locale) {
 
 		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
 
 		ddmFormValues.addAvailableLocale(locale);
-		ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
+
+		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+			ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
+		}
 
 		return ddmFormValues;
 	}
 
-	private static JSONObject _getDataDefinitionFieldJSONObject(
-		DDMFormField ddmFormField, String languageId) {
+	private static JSONArray _getDataDefinitionFieldJSONArray(
+		Map<DDMFormField, String> ddmFormFields, String languageId) {
 
-		return JSONUtil.put(
-			"customProperties",
-			JSONUtil.put(
-				"dataType", ddmFormField.getDataType()
-			).put(
-				"fieldReference", ddmFormField.getFieldReference()
-			).put(
-				"multiple", ddmFormField.isMultiple()
-			).put(
-				"options", _getOptionsJSONObject(ddmFormField, languageId)
-			)
-		).put(
-			"defaultValue", _toI18nJSONObject(ddmFormField.getPredefinedValue())
-		).put(
-			"fieldType", ddmFormField.getType()
-		).put(
-			"indexType", ddmFormField.getIndexType()
-		).put(
-			"label", _toI18nJSONObject(ddmFormField.getLabel())
-		).put(
-			"localizable", ddmFormField.isLocalizable()
-		).put(
-			"name", ddmFormField.getName()
-		).put(
-			"readOnly", ddmFormField.isReadOnly()
-		).put(
-			"repeatable", ddmFormField.isRepeatable()
-		).put(
-			"required", ddmFormField.isRequired()
-		).put(
-			"showLabel", ddmFormField.isShowLabel()
-		).put(
-			"tip", _toI18nJSONObject(ddmFormField.getTip())
-		);
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		for (Map.Entry<DDMFormField, String> entry : ddmFormFields.entrySet()) {
+			DDMFormField ddmFormField = entry.getKey();
+
+			jsonArray.put(
+				JSONUtil.put(
+					"customProperties",
+					JSONUtil.put(
+						"dataType", ddmFormField.getDataType()
+					).put(
+						"fieldReference", ddmFormField.getFieldReference()
+					).put(
+						"multiple", ddmFormField.isMultiple()
+					).put(
+						"options",
+						_getOptionsJSONObject(ddmFormField, languageId)
+					)
+				).put(
+					"defaultValue",
+					_toI18nJSONObject(ddmFormField.getPredefinedValue())
+				).put(
+					"fieldType", ddmFormField.getType()
+				).put(
+					"indexType", ddmFormField.getIndexType()
+				).put(
+					"label", _toI18nJSONObject(ddmFormField.getLabel())
+				).put(
+					"localizable", ddmFormField.isLocalizable()
+				).put(
+					"name", ddmFormField.getName()
+				).put(
+					"readOnly", ddmFormField.isReadOnly()
+				).put(
+					"repeatable", ddmFormField.isRepeatable()
+				).put(
+					"required", ddmFormField.isRequired()
+				).put(
+					"showLabel", ddmFormField.isShowLabel()
+				).put(
+					"tip", _toI18nJSONObject(ddmFormField.getTip())
+				));
+		}
+
+		return jsonArray;
 	}
 
-	private static DDMFormFieldValue _getDDMFormFieldValue(
-		DDMFormField ddmFormField, String fieldValue, Locale locale) {
+	private static List<DDMFormFieldValue> _getDDMFormFieldValues(
+		Map<DDMFormField, String> ddmFormFields, Locale locale) {
 
-		DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
+		List<DDMFormFieldValue> ddmFormFieldValues = new ArrayList<>();
 
-		ddmFormFieldValue.setName(ddmFormField.getName());
+		for (Map.Entry<DDMFormField, String> entry : ddmFormFields.entrySet()) {
+			DDMFormField ddmFormField = entry.getKey();
 
-		Value value = new LocalizedValue(locale);
+			DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
 
-		value.addString(locale, fieldValue);
+			ddmFormFieldValue.setName(ddmFormField.getName());
 
-		ddmFormFieldValue.setValue(value);
+			Value value = new LocalizedValue(locale);
 
-		return ddmFormFieldValue;
+			value.addString(locale, entry.getValue());
+
+			ddmFormFieldValue.setValue(value);
+
+			ddmFormFieldValues.add(ddmFormFieldValue);
+		}
+
+		return ddmFormFieldValues;
 	}
 
 	private static String _getFeedFriendlyURL(long groupId, long plid)
