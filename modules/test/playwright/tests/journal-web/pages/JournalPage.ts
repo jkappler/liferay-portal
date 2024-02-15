@@ -5,8 +5,8 @@
 
 import {Locator, Page} from '@playwright/test';
 
-import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {ProductMenuPage} from '../../../pages/product-navigation-product-menu/ProductMenu.page';
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 
 export class JournalPage {
 	readonly page: Page;
@@ -36,9 +36,15 @@ export class JournalPage {
 		await this.goto();
 		await clickAndExpectToBeVisible({
 			autoClick: true,
-			target: this.page.getByRole('menuitem', { name: 'Basic Web Content' }),
+			target: this.page.getByRole('menuitem', {
+				name: 'Basic Web Content',
+			}),
 			trigger: this.newButton,
 		});
+
+		// Wait for Properties tab to make sure editor is ready
+
+		await this.page.getByRole('tab', {name: 'Properties'}).waitFor();
 	}
 
 	async goToTemplates() {

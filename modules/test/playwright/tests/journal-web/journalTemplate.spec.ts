@@ -67,9 +67,12 @@ test('This is a test for LPS-153976 and LPD-16407.', async ({
 });
 
 test('This is a test to create Web Content', async ({
-	journalEditArticlePage
-																																	 }) => {
+	journalEditArticlePage,
+	page,
+}) => {
 	const title = getRandomString();
 
 	await journalEditArticlePage.publishNewWebContent(title);
+
+	await expect(page.getByTitle(title)).toBeVisible();
 });

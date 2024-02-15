@@ -28,7 +28,7 @@ export class JournalEditArticlePage {
 
 	async publishNewWebContent(title: string) {
 		await this.goto();
-		await this.titlePlaceholder.click();
+
 		await this.titlePlaceholder.fill(title);
 		await this.publishButton.click();
 	}
