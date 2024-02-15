@@ -5,6 +5,7 @@
 
 import {Locator, Page} from '@playwright/test';
 
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {ProductMenuPage} from '../../../pages/product-navigation-product-menu/ProductMenu.page';
 
 export class JournalPage {
@@ -29,6 +30,15 @@ export class JournalPage {
 	async goToCreateNewTemplate() {
 		await this.goToTemplates();
 		await this.newButton.click();
+	}
+
+	async goToCreateNewBasicWebContent() {
+		await this.goto();
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', { name: 'Basic Web Content' }),
+			trigger: this.newButton,
+		});
 	}
 
 	async goToTemplates() {
