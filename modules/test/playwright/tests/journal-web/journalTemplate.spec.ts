@@ -9,6 +9,7 @@ import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {applicationsMenuPageTest} from '../../fixtures/applicationsMenuPageTest';
 import {loginTest} from '../../fixtures/loginTest';
 import {journalPagesTest} from './fixtures/journalPagesTest';
+import {getRandomString} from "../../utils/util";
 
 export const test = mergeTests(
 	apiHelpersTest,
@@ -63,4 +64,12 @@ test('This is a test for LPS-153976 and LPD-16407.', async ({
 			page.getByRole('button', {exact: true, name: reservedVariable})
 		).toBeVisible();
 	}
+});
+
+test('This is a test to create Web Content', async ({
+	journalEditArticlePage
+																																	 }) => {
+	const title = getRandomString();
+
+	await journalEditArticlePage.publishNewWebContent(title);
 });
