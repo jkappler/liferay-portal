@@ -33,7 +33,7 @@ AUI.add(
 		const STR_ROW_SELECTOR = 'rowSelector';
 
 		const TPL_HIDDEN_INPUT_CHECKED =
-			'<input class="hide" name="{name}" value="{value}" type="checkbox" ' +
+			'<input {data} class="hide" name="{name}" value="{value}" type="checkbox" ' +
 			STR_CHECKED +
 			' />';
 
@@ -124,8 +124,17 @@ AUI.add(
 					const allElements = instance._getAllElements(false);
 
 					allElements.each((item) => {
+						let data = '';
+
+						for (const [key, value] of Object.entries(
+							item.getData()
+						)) {
+							data += `data-${key}="${value}"`;
+						}
+
 						elements.push({
 							checked: item.attr('checked'),
+							data,
 							name: item.attr('name'),
 							value: item.val(),
 						});
