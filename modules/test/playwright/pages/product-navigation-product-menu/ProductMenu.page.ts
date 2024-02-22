@@ -40,16 +40,12 @@ export class ProductMenuPage {
 	}
 
 	async openProductMenu() {
-		await this.goto();
-
 		if (await this.openProductMenuButton.isVisible()) {
 			await this.openProductMenuButton.click();
 		}
 	}
 
 	async closeProductMenu() {
-		await this.goto();
-
 		if (await this.closeProductMenuButton.isVisible()) {
 			await this.closeProductMenuButton.click();
 		}
