@@ -8,6 +8,7 @@ import {mergeTests} from '@playwright/test';
 import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {applicationsMenuPageTest} from '../../fixtures/applicationsMenuPageTest';
 import {featureFlagsTest} from '../../fixtures/featureFlagsTest';
+import {isolatedSiteTest} from '../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../fixtures/loginTest';
 import getRandomString from '../../utils/getRandomString';
 import {journalPagesTest} from './fixtures/journalPagesTest';
@@ -18,6 +19,7 @@ export const test = mergeTests(
 	featureFlagsTest({
 		'LPD-16469': true,
 	}),
+	isolatedSiteTest,
 	loginTest,
 	journalPagesTest
 );
@@ -70,7 +72,4 @@ test('LPD-17782: This is a test for bulk permissions of web content', async ({
 		title2,
 		PERMISSIONS_LOCATORS
 	);
-
-	await journalPage.deleteJournalArticle(title1);
-	await journalPage.deleteJournalArticle(title2);
 });
