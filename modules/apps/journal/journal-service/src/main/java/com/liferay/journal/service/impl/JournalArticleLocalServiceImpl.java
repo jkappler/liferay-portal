@@ -5762,6 +5762,9 @@ public class JournalArticleLocalServiceImpl
 				expireMaxVersionArticles(
 					article, user.getUserId(), serviceContext, articleURL);
 
+				deleteMaxVersionExpiredArticles(
+					article, serviceContext, articleURL);
+
 				// Social
 
 				JSONObject extraDataJSONObject = JSONUtil.put("title", title);
@@ -6272,6 +6275,39 @@ public class JournalArticleLocalServiceImpl
 		_serviceTrackerList.close();
 	}
 
+	protected void deleteMaxVersionExpiredArticles(
+			JournalArticle article, ServiceContext serviceContext,
+			String articleURL)
+		throws PortalException {
+
+		int journalArticleMaxExpiredVersionCount =
+			getJournalArticleMaxExpiredVersionCount();
+
+		if (journalArticleMaxExpiredVersionCount <= 0) {
+			return;
+		}
+
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Deleting oldest expired articles past the maximum version " +
+					"limit");
+		}
+
+		List<JournalArticle> articles = journalArticlePersistence.findByG_A_ST(
+			article.getGroupId(), article.getArticleId(),
+			WorkflowConstants.STATUS_EXPIRED);
+
+		for (int i = journalArticleMaxExpiredVersionCount; i < articles.size();
+			 i++) {
+
+			JournalArticle curArticle = articles.get(i);
+
+			deleteArticle(
+				curArticle.getGroupId(), curArticle.getArticleId(),
+				curArticle.getVersion(), articleURL, serviceContext);
+		}
+	}
+
 	protected void expireMaxVersionArticles(
 			JournalArticle article, long userId, ServiceContext serviceContext,
 			String articleURL)
@@ -6563,6 +6599,18 @@ public class JournalArticleLocalServiceImpl
 
 		return journalArticlePersistence.findByG_A_ST_First(
 			groupId, articleId, status, orderByComparator);
+	}
+
+	protected int getJournalArticleMaxExpiredVersionCount()
+		throws PortalException {
+
+		JournalServiceConfiguration journalServiceConfiguration =
+			configurationProvider.getCompanyConfiguration(
+				JournalServiceConfiguration.class,
+				CompanyThreadLocal.getCompanyId());
+
+		return journalServiceConfiguration.
+			journalArticleMaxExpiredVersionCount();
 	}
 
 	protected int getJournalArticleMaxVersionCount() throws PortalException {

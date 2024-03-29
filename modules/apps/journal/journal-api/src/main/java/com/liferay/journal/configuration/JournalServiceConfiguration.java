@@ -106,6 +106,12 @@ public interface JournalServiceConfiguration {
 	public String journalArticlePageBreakToken();
 
 	@Meta.AD(
+		deflt = "0", name = "journal-article-max-expired-version-count",
+		required = false
+	)
+	public int journalArticleMaxExpiredVersionCount();
+
+	@Meta.AD(
 		deflt = "0", name = "journal-article-max-version-count",
 		required = false
 	)
