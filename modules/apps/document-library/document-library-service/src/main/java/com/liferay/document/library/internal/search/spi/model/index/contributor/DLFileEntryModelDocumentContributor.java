@@ -15,6 +15,8 @@ import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalServi
 import com.liferay.document.library.kernel.store.DLStore;
 import com.liferay.document.library.kernel.store.DLStoreRequest;
 import com.liferay.document.library.security.io.InputStreamSanitizer;
+import com.liferay.dynamic.data.mapping.kernel.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.kernel.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -30,6 +32,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.metadata.RawMetadataProcessor;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentHelper;
 import com.liferay.portal.kernel.search.Field;
@@ -49,6 +53,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.portlet.documentlibrary.lar.FileEntryUtil;
 import com.liferay.trash.TrashHelper;
 
 import java.io.IOException;
@@ -142,6 +147,7 @@ public class DLFileEntryModelDocumentContributor
 				"versionCount", GetterUtil.getDouble(dlFileEntry.getVersion()));
 
 			_addFileEntryTypeAttributes(document, dlFileVersion);
+			_addFileEntryMetadataAttributes(document, dlFileEntry);
 
 			if (dlFileEntry.isInHiddenFolder()) {
 				List<RelatedEntryIndexer> relatedEntryIndexers =
@@ -176,6 +182,64 @@ public class DLFileEntryModelDocumentContributor
 		catch (Exception exception) {
 			throw new SystemException(exception);
 		}
+	}
+
+	private void _addFileEntryMetadataAttributes(Document document, DLFileEntry dlFileEntry) {
+		document.addNumber("fileSize", dlFileEntry.getSize());
+
+		try {
+			FileEntry fileEntry = new LiferayFileEntry(dlFileEntry);
+
+			Map
+				<String,
+				 com.liferay.dynamic.data.mapping.kernel.DDMFormValues>
+					rawMetadataMap =
+						_rawMetadataProcessor.getRawMetadataMap(
+							fileEntry.getMimeType(),
+							FileEntryUtil.getContentStream(fileEntry));
+
+			if ((rawMetadataMap != null) &&
+				rawMetadataMap.containsKey(
+					RawMetadataProcessor.TIKA_RAW_METADATA)) {
+
+				com.liferay.dynamic.data.mapping.kernel.DDMFormValues
+					ddmFormValues = rawMetadataMap.get(
+						RawMetadataProcessor.TIKA_RAW_METADATA);
+
+				Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
+					ddmFormValues.getDDMFormFieldValuesMap();
+
+				long height = _getDDMFormFieldValue(
+					ddmFormFieldValuesMap, "TIFF_IMAGE_LENGTH");
+				long width = _getDDMFormFieldValue(
+					ddmFormFieldValuesMap, "TIFF_IMAGE_WIDTH");
+
+				document.addNumber("imageHeight", height);
+				document.addText("aspect", _getOrientation(height, width));
+				document.addNumber("imageWidth", width);
+			}
+		}
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to retrieve content for file entry " +
+					dlFileEntry.getFileEntryId(),
+					exception);
+			}
+		}
+	}
+
+	private String _getOrientation(long height, long width) {
+		if(height == width) {
+			return "square";
+		}
+		if(height > width) {
+			return "tall";
+		}
+
+		return "wide";
+
+
 	}
 
 	@Activate
@@ -313,6 +377,26 @@ public class DLFileEntryModelDocumentContributor
 		return text;
 	}
 
+	private long _getDDMFormFieldValue(
+		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap,
+		String property) {
+
+		List<DDMFormFieldValue> ddmFormFieldValues = ddmFormFieldValuesMap.get(
+			property);
+
+		if (ListUtil.isEmpty(ddmFormFieldValues)) {
+			return 0;
+		}
+
+		DDMFormFieldValue ddmFormFieldValue = ddmFormFieldValues.get(0);
+
+		UnlocalizedValue unlocalizedValue =
+			(UnlocalizedValue)ddmFormFieldValue.getValue();
+
+		return GetterUtil.getLong(
+			unlocalizedValue.getString(unlocalizedValue.getDefaultLocale()));
+	}
+
 	private String _getIndexVersionLabel(DLFileEntry dlFileEntry)
 		throws PortalException {
 
@@ -403,6 +487,9 @@ public class DLFileEntryModelDocumentContributor
 
 	@Reference
 	private PrefsProps _prefsProps;
+
+	@Reference
+	private RawMetadataProcessor _rawMetadataProcessor;
 
 	@Reference
 	private RelatedEntryIndexerRegistry _relatedEntryIndexerRegistry;

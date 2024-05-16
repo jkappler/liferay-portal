@@ -6,6 +6,8 @@
 package com.liferay.content.dashboard.item.filter;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.search.filter.TermsFilter;
 
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +30,10 @@ public interface ContentDashboardItemFilter {
 	public String getParameterName();
 
 	public List<String> getParameterValues();
+
+	public default Filter getFilter() {
+		return null;
+	}
 
 	public Type getType();
 

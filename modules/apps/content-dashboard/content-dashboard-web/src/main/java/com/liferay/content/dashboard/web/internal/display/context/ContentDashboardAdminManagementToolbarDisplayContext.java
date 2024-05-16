@@ -32,6 +32,10 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -46,7 +50,10 @@ import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
+import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -59,6 +66,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.portlet.PortletException;
+import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 
 import javax.servlet.http.HttpServletRequest;
@@ -176,8 +184,16 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 			dropdownGroupItem -> {
 				dropdownGroupItem.setDropdownItems(
 					_getFilterByReviewDateDropdownItems());
-				dropdownGroupItem.setLabel(
-					_language.get(httpServletRequest, "filter-by-review-date"));
+
+				if (FeatureFlagManagerUtil.isEnabled("LPD-25680")) {
+					dropdownGroupItem.setLabel(
+						_language.get(httpServletRequest, "filter-by-date"));
+				}
+				else {
+					dropdownGroupItem.setLabel(
+						_language.get(
+							httpServletRequest, "filter-by-review-date"));
+				}
 			}
 		).build();
 	}
@@ -315,18 +331,24 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 					_getLabel("status", _getStatusLabel(status)));
 			});
 
+		String dateType = _contentDashboardAdminDisplayContext.getDateType();
+		String startDateString =
+			_contentDashboardAdminDisplayContext.getStartDateString();
+		String endDateString =
+			_contentDashboardAdminDisplayContext.getEndDateString();
+
 		labelItemListWrapper.add(
-			() -> Validator.isNotNull(
-				_contentDashboardAdminDisplayContext.getReviewDateString()),
+			() ->
+				Validator.isNotNull(dateType) &&
+				Validator.isNotNull(startDateString) &&
+				Validator.isNotNull(endDateString),
 			labelItem -> {
 				labelItem.putData(
 					"removeLabelURL",
-					_getRemoveLabelURL("reviewDate", (String)null));
+					_getRemoveLabelURL("endDate", "startDate", "endDate"));
 				labelItem.setCloseable(true);
 				labelItem.setLabel(
-					_getLabel(
-						"review-date",
-						_language.get(httpServletRequest, "to-be-reviewed")));
+					_getRangeLabel(dateType, startDateString, endDateString));
 			});
 
 		Set<String> assetTagIds =
@@ -590,6 +612,23 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 			});
 	}
 
+	private JSONArray _getDatesJSONArray() {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		String[] dates = {"create-date", "modified-date"};
+
+		for (String date : dates) {
+			jsonArray.put(
+				JSONUtil.put(
+					"label", _language.get(httpServletRequest, date)
+				).put(
+					"value", date
+				));
+		}
+
+		return jsonArray;
+	}
+
 	private List<DropdownItem> _getFilterAuthorDropdownItems() {
 		List<Long> authorIds =
 			_contentDashboardAdminDisplayContext.getAuthorIds();
@@ -660,6 +699,10 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 		String reviewDate =
 			_contentDashboardAdminDisplayContext.getReviewDateString();
 
+		PortletResponse portletResponse =
+			(PortletResponse)httpServletRequest.getAttribute(
+				JavaConstants.JAVAX_PORTLET_RESPONSE);
+
 		return DropdownItemListBuilder.add(
 			dropdownItem -> {
 				dropdownItem.setActive(Validator.isNull(reviewDate));
@@ -674,6 +717,24 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 				dropdownItem.setLabel(
 					_language.get(httpServletRequest, "to-be-reviewed"));
 			}
+		).add(
+			DropdownItemBuilder.putData(
+				"action", "customDate"
+			).putData(
+				"props",
+				() -> JSONUtil.toString(
+					JSONUtil.put(
+						"dateTypes", _getDatesJSONArray()
+					).put(
+						"filterUrl", _getFilterURL()
+					).put(
+						"namespace", portletResponse.getNamespace()
+					).put(
+						"selectedRange", StringPool.BLANK
+					))
+			).setLabel(
+				_language.get(httpServletRequest, "custom-date")
+			).build()
 		).build();
 	}
 
@@ -792,10 +853,34 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 		};
 	}
 
+	private String _getFilterURL() {
+		PortletResponse portletResponse =
+			(PortletResponse)httpServletRequest.getAttribute(
+				JavaConstants.JAVAX_PORTLET_RESPONSE);
+
+		String url = HttpComponentsUtil.removeParameter(
+			PortalUtil.getCurrentCompleteURL(httpServletRequest),
+			portletResponse.getNamespace() + "dateType");
+
+		url = HttpComponentsUtil.removeParameter(
+			url, portletResponse.getNamespace() + "startDate");
+		url = HttpComponentsUtil.removeParameter(
+			url, portletResponse.getNamespace() + "endDate");
+
+		return url;
+	}
+
 	private String _getLabel(String key, String value) {
 		return StringBundler.concat(
 			_language.get(httpServletRequest, key), StringPool.COLON,
 			StringPool.SPACE, value);
+	}
+
+	private String _getRangeLabel(String key, String value1, String value2) {
+		return StringBundler.concat(
+			_language.get(httpServletRequest, key), StringPool.COLON,
+			StringPool.SPACE, value1, StringPool.SPACE, StringPool.DASH,
+			StringPool.SPACE, value2);
 	}
 
 	private String _getRemoveContentDashboardItemSubtypePayloadsURL(
@@ -827,6 +912,18 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 				},
 				String.class)
 		).buildString();
+	}
+
+	private String _getRemoveLabelURL(String... names) throws PortletException {
+		PortletURLBuilder.PortletURLStep portletURLStep =
+			PortletURLBuilder.create(
+				PortletURLUtil.clone(currentURLObj, liferayPortletResponse));
+
+		for (String name : names) {
+			portletURLStep.setParameter(name, (String)null);
+		}
+
+		return portletURLStep.buildString();
 	}
 
 	private String _getRemoveLabelURL(

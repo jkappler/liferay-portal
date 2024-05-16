@@ -63,6 +63,12 @@ public class DLFileEntryKeywordQueryContributor
 			booleanQuery, searchContext, "extension", false);
 		_queryHelper.addSearchTerm(
 			booleanQuery, searchContext, "fileEntryTypeId", false);
+		_queryHelper.addSearchTerm(
+			booleanQuery, searchContext, "size", false);
+		_queryHelper.addSearchTerm(
+			booleanQuery, searchContext, "imageWidth", false);
+		_queryHelper.addSearchTerm(
+			booleanQuery, searchContext, "imageHeight", false);
 
 		_addSearchLocalizedTerm(booleanQuery, Field.CONTENT, searchContext);
 		_addSearchLocalizedTerm(booleanQuery, Field.TITLE, searchContext);
