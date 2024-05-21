@@ -3,7 +3,7 @@
 		"@liferay/content-dashboard-web": "*",
 		"react": "16.12.0"
 	},
-	"main": "js/index.js",
+	"main": "js/index.ts",
 	"name": "@liferay/content-dashboard-document-library-impl",
 	"private": true,
 	"scripts": {
