@@ -10,6 +10,8 @@ import {applicationsMenuPageTest} from '../../fixtures/applicationsMenuPageTest'
 import {featureFlagsTest} from '../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../fixtures/loginTest';
+import {pageViewModePagesTest} from '../../fixtures/pageViewModePagesTest';
+import {pagesAdminPagesTest} from '../../fixtures/pagesAdminPagesTest';
 import {workflowPagesTest} from '../../fixtures/workflowPagesTest';
 import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
 import fillAndClickOutside from '../../utils/fillAndClickOutside';
@@ -46,6 +48,8 @@ const baseTest = mergeTests(
 	isolatedSiteTest,
 	journalPagesTest,
 	loginTest(),
+	pageViewModePagesTest,
+	pagesAdminPagesTest,
 	workflowPagesTest
 );
 
@@ -1389,6 +1393,72 @@ baseTest(
 		expect(modifiedStructure.dataDefinitionFields[0].defaultValue).toEqual({
 			en_US: `${content}`,
 		});
+	}
+);
+
+baseTest(
+	'Can paginate Web Content in an Asset Publisher',
+	{
+		tag: '@LPD-35348',
+	},
+	async ({
+			   apiHelpers,
+		       page,
+		       pagesAdminPage,
+			   site,
+		       widgetPagePage
+		   }) => {
+
+		const contentStructureId =
+			await getBasicWebContentStructureId(apiHelpers);
+
+		await apiHelpers.jsonWebServicesJournal.addWebContent({
+			content: "section1 @page_break@ section2",
+			ddmStructureId: contentStructureId,
+			groupId: site.id,
+			titleMap: {en_US: getRandomString()},
+		});
+
+		await pagesAdminPage.goto(site.friendlyUrlPath);
+
+		const name = getRandomString();
+		await pagesAdminPage.addWidgetPage({name});
+
+		await pagesAdminPage.goto(site.friendlyUrlPath);
+		await page.getByLabel(name, {exact: true}).click();
+
+		await widgetPagePage.addPortlet('Asset Publisher');
+		await page
+			.locator('.portlet-asset-publisher')
+			.first()
+			.getByLabel('Options')
+			.click();
+		await page
+			.getByRole('menuitem', { name: 'Configuration', exact: true })
+			.click();
+		const configurationFrame = page.frameLocator(
+			'iframe[id="modalIframe"]'
+		);
+		await configurationFrame
+			.getByRole('tab', { name: 'Asset Selection' })
+			.click();
+		await configurationFrame.getByText('Dynamic').click();
+		await configurationFrame
+			.getByRole('button', { name: 'Save' })
+			.click();
+		await configurationFrame
+			.getByRole('tab', { name: 'Display Settings' })
+			.click();
+		await configurationFrame.getByLabel('Display Template').click();
+		await configurationFrame
+			.getByRole('option', { name: 'Full Content' })
+			.click();
+		await configurationFrame.getByRole('button', { name: 'Save' }).click();
+		await page.getByLabel('close', { exact: true }).click();
+
+		await page.getByLabel('Go to page, 2').click();
+
+		await expect(page.getByText("section2")).toBeVisible();
 	}
 );
 
