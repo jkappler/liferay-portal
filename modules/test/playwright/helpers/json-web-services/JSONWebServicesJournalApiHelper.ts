@@ -98,7 +98,15 @@ export class JSONWebServicesJournalApiHelper {
 			'descriptionMap',
 			JSON.stringify(webContent.descriptionMap)
 		);
-		urlSearchParams.append('content', '<p>' + webContent.content + '</p>');
+		urlSearchParams.append('content',
+			`<?xml version="1.0"?>
+			<root available-locales="en_US" default-locale="en_US" version="1.0">
+				<dynamic-element field-reference="content" index-type="text" instance-id="XshQe6SC" name="content" type="rich_text">
+					<dynamic-content language-id="en_US">
+						<![CDATA[<p>${webContent.content}</p>]]>
+					</dynamic-content>
+				</dynamic-element>
+			</root>`);
 		urlSearchParams.append(
 			'ddmStructureId',
 			String(webContent.ddmStructureId)
