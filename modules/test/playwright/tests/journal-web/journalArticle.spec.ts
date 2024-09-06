@@ -1452,8 +1452,8 @@ baseTest(
 			.click();
 		await configurationFrame.getByText('Dynamic').click();
 		await configurationFrame
-			.getByRole('button', { name: 'Save' })
-			.click();
+		.getByLabel('close')
+		.click();
 		await configurationFrame
 			.getByRole('tab', { name: 'Display Settings' })
 			.click();
