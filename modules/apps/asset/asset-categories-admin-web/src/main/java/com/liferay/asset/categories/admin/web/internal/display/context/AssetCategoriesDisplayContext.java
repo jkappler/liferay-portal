@@ -60,6 +60,7 @@ import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.SearchDisplayStyleUtil;
 import com.liferay.portal.kernel.portlet.SearchOrderByUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
@@ -683,6 +684,13 @@ public class AssetCategoriesDisplayContext {
 		return DropdownItemListBuilder.add(
 			dropdownItem -> {
 				dropdownItem.putData("action", "deleteVocabularies");
+				dropdownItem.putData(
+					"deleteMultipleVocabulariesURL",
+					ResourceURLBuilder.createResourceURL(
+						_renderResponse
+					).setResourceID(
+						"/asset_categories_admin/delete_multiple_asset_vocabularies"
+					).buildString());
 				dropdownItem.putData(
 					"deleteVocabulariesURL", deleteVocabulariesURL.toString());
 				dropdownItem.putData(

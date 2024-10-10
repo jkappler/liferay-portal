@@ -22,7 +22,7 @@ const ACTIONS = {
 					openDeleteVocabularyModal({
 						multiple: true,
 						onDelete: () => {
-							fetch(itemData.deleteVocabulariesURL, {
+							fetch(itemData.deleteMultipleVocabulariesURL, {
 								body: objectToFormData({
 									[`${portletNamespace}rowIds`]: selectedItems
 										.map((item) => {
@@ -35,7 +35,9 @@ const ACTIONS = {
 										.join(','),
 								}),
 								method: 'POST',
-							}).then((response) => navigate(response.url));
+							}).then((response) => {
+								navigate(response.url)
+							});
 						},
 					});
 				}
