@@ -32,6 +32,7 @@ export {default as SpaceSticker} from './main/components/SpaceSticker';
 export {default as EditFolder} from './main/components/folders/EditFolder';
 export {default as ViewDashboard} from './main/dashboard/ViewDashboard';
 export {default as NewSpace} from './main/spaces/NewSpace';
+export {default as SpaceSettings} from './main/spaces/SpaceSettings';
 export {default as SpacesNavigation} from './main/spaces_navigation/SpacesNavigation';
 
 // Structure Builder
