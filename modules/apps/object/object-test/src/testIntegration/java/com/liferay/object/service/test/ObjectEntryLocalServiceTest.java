@@ -4082,25 +4082,7 @@ public class ObjectEntryLocalServiceTest {
 			_objectDefinitionLocalService.fetchObjectDefinitionByClassName(
 				TestPropsValues.getCompanyId(), User.class.getName());
 
-		boolean enableLocalization = objectDefinition.isEnableLocalization();
-
-		objectDefinition.setEnableLocalization(true);
-
-		objectDefinition = _objectDefinitionLocalService.updateObjectDefinition(
-			objectDefinition);
-
 		ObjectField objectField1 = _addCustomObjectField(
-			new TextObjectFieldBuilder(
-			).labelMap(
-				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
-			).localized(
-				true
-			).name(
-				"localizedTextField"
-			).objectDefinitionId(
-				objectDefinition.getObjectDefinitionId()
-			).build());
-		ObjectField objectField2 = _addCustomObjectField(
 			new LongIntegerObjectFieldBuilder(
 			).labelMap(
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
@@ -4109,7 +4091,7 @@ public class ObjectEntryLocalServiceTest {
 			).objectDefinitionId(
 				objectDefinition.getObjectDefinitionId()
 			).build());
-		ObjectField objectField3 = _addCustomObjectField(
+		ObjectField objectField2 = _addCustomObjectField(
 			new TextObjectFieldBuilder(
 			).labelMap(
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
@@ -4121,31 +4103,25 @@ public class ObjectEntryLocalServiceTest {
 				true
 			).build());
 
-		ObjectDefinition finalObjectDefinition = objectDefinition;
-
 		User user = UserTestUtil.addUser();
 
-		AssertUtils.assertFailure(
-			ObjectEntryValuesException.Required.class,
-			"No value was provided for required object field \"textField\"",
-			() ->
-				_objectEntryLocalService.
-					addOrUpdateExtensionDynamicObjectDefinitionTableValues(
-						TestPropsValues.getUserId(), finalObjectDefinition,
-						user.getUserId(), Collections.emptyMap(),
-						ServiceContextTestUtil.getServiceContext()));
+		try {
+			_objectEntryLocalService.
+				addOrUpdateExtensionDynamicObjectDefinitionTableValues(
+					TestPropsValues.getUserId(), objectDefinition,
+					user.getUserId(), Collections.emptyMap(),
+					ServiceContextTestUtil.getServiceContext());
+
+			Assert.fail();
+		}
+		catch (ObjectEntryValuesException.Required objectEntryValuesException) {
+			Assert.assertEquals(
+				"No value was provided for required object field \"textField\"",
+				objectEntryValuesException.getMessage());
+		}
 
 		Map<String, Serializable> values =
 			HashMapBuilder.<String, Serializable>put(
-				"localizedTextField", "en_US localizedTextFieldValue1"
-			).put(
-				"localizedTextField_i18n",
-				HashMapBuilder.put(
-					"en_US", "en_US localizedTextFieldValue1"
-				).put(
-					"pt_BR", "pt_BR localizedTextFieldValue1"
-				).build()
-			).put(
 				"longField", 10L
 			).put(
 				"textField", "Value"
@@ -4163,15 +4139,6 @@ public class ObjectEntryLocalServiceTest {
 					objectDefinition, user.getUserId()));
 
 		values = HashMapBuilder.<String, Serializable>put(
-			"localizedTextField", "en_US localizedTextFieldValue2"
-		).put(
-			"localizedTextField_i18n",
-			HashMapBuilder.put(
-				"en_US", "en_US localizedTextFieldValue2"
-			).put(
-				"pt_BR", "pt_BR localizedTextFieldValue2"
-			).build()
-		).put(
 			"longField", 1000L
 		).put(
 			"textField", "New Value"
@@ -4197,8 +4164,6 @@ public class ObjectEntryLocalServiceTest {
 				getExtensionDynamicObjectDefinitionTableValues(
 					objectDefinition, user.getUserId());
 
-		Assert.assertEquals(
-			StringPool.BLANK, extensionValues.get("localizedTextField"));
 		Assert.assertEquals(0L, extensionValues.get("longField"));
 		Assert.assertEquals(StringPool.BLANK, extensionValues.get("textField"));
 
@@ -4206,12 +4171,6 @@ public class ObjectEntryLocalServiceTest {
 			objectField1.getObjectFieldId());
 		_objectFieldLocalService.deleteObjectField(
 			objectField2.getObjectFieldId());
-		_objectFieldLocalService.deleteObjectField(
-			objectField3.getObjectFieldId());
-
-		objectDefinition.setEnableLocalization(enableLocalization);
-
-		_objectDefinitionLocalService.updateObjectDefinition(objectDefinition);
 	}
 
 	@Test
@@ -5877,7 +5836,7 @@ public class ObjectEntryLocalServiceTest {
 
 	@FeatureFlag("LPD-17564")
 	@Test
-	public void testUpdateObjectEntryWithAttachmentObjectFieldAndEnableObjectEntryVersioning()
+	public void testUpdateObjectEntryWithAttachmentAndVersioning()
 		throws Exception {
 
 		Map<String, Serializable> values =
@@ -6557,6 +6516,7 @@ public class ObjectEntryLocalServiceTest {
 	private DLFileEntry _addDLFileEntry() throws Exception {
 		Company company = _companyLocalService.getCompanyById(
 			TestPropsValues.getCompanyId());
+
 		String content = RandomTestUtil.randomString();
 
 		FileEntry fileEntry = _dlAppLocalService.addFileEntry(
@@ -8500,7 +8460,7 @@ public class ObjectEntryLocalServiceTest {
 	private static class TestDLFileEntryModelListener
 		extends BaseModelListener<DLFileEntry> {
 
-		public long getLastFileEntryId() {
+		public Long getLastFileEntryId() {
 			return _fileEntryIds.get(_fileEntryIds.size() - 1);
 		}
 

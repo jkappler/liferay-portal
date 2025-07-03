@@ -3094,7 +3094,7 @@ public class DefaultObjectEntryManagerImplTest
 			2,
 			_defaultObjectEntryManager.getVersionedObjectEntries(
 				dtoConverterContext, objectEntry1.getExternalReferenceCode(),
-				_objectDefinition1, null, null
+				_objectDefinition1, null, null, null, null
 			).getItems(
 			).size());
 
@@ -3112,7 +3112,7 @@ public class DefaultObjectEntryManagerImplTest
 			1,
 			_defaultObjectEntryManager.getVersionedObjectEntries(
 				dtoConverterContext, objectEntry1.getExternalReferenceCode(),
-				_objectDefinition1, null, null
+				_objectDefinition1, null, null, null, null
 			).getItems(
 			).size());
 
@@ -3134,7 +3134,7 @@ public class DefaultObjectEntryManagerImplTest
 			2,
 			_defaultObjectEntryManager.getVersionedObjectEntries(
 				dtoConverterContext, objectEntry2.getExternalReferenceCode(),
-				_objectDefinition4, _group.getGroupKey(), null
+				_objectDefinition4, _group.getGroupKey(), null, null, null
 			).getItems(
 			).size());
 
@@ -3154,7 +3154,7 @@ public class DefaultObjectEntryManagerImplTest
 			1,
 			_defaultObjectEntryManager.getVersionedObjectEntries(
 				dtoConverterContext, objectEntry2.getExternalReferenceCode(),
-				_objectDefinition4, _group.getGroupKey(), null
+				_objectDefinition4, _group.getGroupKey(), null, null, null
 			).getItems(
 			).size());
 	}
@@ -5296,7 +5296,7 @@ public class DefaultObjectEntryManagerImplTest
 
 		Page<ObjectEntry> page =
 			_defaultObjectEntryManager.getVersionedObjectEntries(
-				dtoConverterContext, objectEntry1.getId(), null);
+				dtoConverterContext, objectEntry1.getId(), null, null, null);
 
 		assertEquals(
 			(List<ObjectEntry>)page.getItems(),
@@ -5306,7 +5306,7 @@ public class DefaultObjectEntryManagerImplTest
 			_objectDefinition1, objectEntry1, 2);
 
 		page = _defaultObjectEntryManager.getVersionedObjectEntries(
-			dtoConverterContext, objectEntry2.getId(), null);
+			dtoConverterContext, objectEntry2.getId(), null, null, null);
 
 		assertEquals(
 			(List<ObjectEntry>)page.getItems(),
@@ -5319,7 +5319,7 @@ public class DefaultObjectEntryManagerImplTest
 
 		page = _defaultObjectEntryManager.getVersionedObjectEntries(
 			dtoConverterContext, objectEntry1.getExternalReferenceCode(),
-			_objectDefinition4, _group.getGroupKey(), null);
+			_objectDefinition4, _group.getGroupKey(), null, null, null);
 
 		assertEquals(
 			(List<ObjectEntry>)page.getItems(),
@@ -5330,7 +5330,7 @@ public class DefaultObjectEntryManagerImplTest
 
 		page = _defaultObjectEntryManager.getVersionedObjectEntries(
 			dtoConverterContext, objectEntry2.getExternalReferenceCode(),
-			_objectDefinition4, _group.getGroupKey(), null);
+			_objectDefinition4, _group.getGroupKey(), null, null, null);
 
 		assertEquals(
 			(List<ObjectEntry>)page.getItems(),
