@@ -12,6 +12,7 @@ import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
@@ -19,9 +20,11 @@ import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermi
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -98,12 +101,17 @@ public class ViewFilesSectionDisplayContext
 
 	@Override
 	protected String getCMSSectionFilterString() {
-		return "cmsRoot eq true and cmsSection eq 'files'";
+		return StringBundler.concat(
+			"cmsRoot eq true and cmsSection eq 'files' and status in (",
+			StringUtil.merge(_statuses, ","), ")");
 	}
 
 	@Override
 	protected String getEmptyStateDescriptionKey() {
 		return "click-new-to-create-your-first-file";
 	}
+
+	private static final List<Integer> _statuses = Arrays.asList(
+		WorkflowConstants.STATUS_APPROVED, WorkflowConstants.STATUS_DRAFT);
 
 }

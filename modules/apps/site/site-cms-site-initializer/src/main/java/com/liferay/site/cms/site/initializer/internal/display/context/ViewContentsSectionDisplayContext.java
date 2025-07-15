@@ -10,16 +10,20 @@ import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -78,12 +82,17 @@ public class ViewContentsSectionDisplayContext
 
 	@Override
 	protected String getCMSSectionFilterString() {
-		return "cmsRoot eq true and cmsSection eq 'contents'";
+		return StringBundler.concat(
+			"cmsRoot eq true and cmsSection eq 'contents' and status in (",
+			StringUtil.merge(_statuses, ","), ")");
 	}
 
 	@Override
 	protected String getEmptyStateDescriptionKey() {
 		return "click-new-to-create-your-first-piece-of-content";
 	}
+
+	private static final List<Integer> _statuses = Arrays.asList(
+		WorkflowConstants.STATUS_APPROVED, WorkflowConstants.STATUS_DRAFT);
 
 }
