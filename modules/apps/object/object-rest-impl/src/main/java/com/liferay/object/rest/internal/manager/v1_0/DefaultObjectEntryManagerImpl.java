@@ -54,6 +54,7 @@ import com.liferay.object.rest.manager.v1_0.util.ObjectEntryManagerUtil;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryFolderLocalService;
+import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectEntryVersionLocalService;
 import com.liferay.object.service.ObjectEntryVersionService;
@@ -112,8 +113,12 @@ import com.liferay.portal.search.aggregation.Aggregations;
 import com.liferay.portal.search.aggregation.bucket.FilterAggregation;
 import com.liferay.portal.search.aggregation.bucket.NestedAggregation;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
+import com.liferay.portal.search.query.BooleanQuery;
+import com.liferay.portal.search.query.NestedQuery;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
+import com.liferay.portal.search.searcher.SearchResponse;
+import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistryUtil;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.aggregation.Facet;
@@ -1066,6 +1071,13 @@ public class DefaultObjectEntryManagerImpl
 				dtoConverterContext, objectDefinition, objectEntry, scopeKey));
 	}
 
+	@Reference
+	protected Searcher searcher;
+
+	@Reference
+	protected com.liferay.portal.search.searcher.SearchRequestBuilderFactory
+		searchRequestBuilderFactory;
+
 	private Map<String, String> _addAction(
 			String actionName, String methodName,
 			com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry,
@@ -1352,15 +1364,21 @@ public class DefaultObjectEntryManagerImpl
 				String language = LocaleUtil.toLanguageId(
 					LocaleUtil.getSiteDefault());
 
+				String value = GetterUtil.getString(i18nValues.get(language));
+
 				i18nValues.put(
 					language,
-					_getNewValue(String.valueOf(i18nValues.get(language))));
+					_getNewValue(
+						titleObjectField.getName(), objectDefinition, value));
 			}
 			else {
 				String value = GetterUtil.getString(
 					values.get(titleObjectField.getName()));
 
-				values.put(titleObjectField.getName(), _getNewValue(value));
+				values.put(
+					titleObjectField.getName(),
+					_getNewValue(
+						titleObjectField.getName(), objectDefinition, value));
 			}
 		}
 
@@ -1559,6 +1577,28 @@ public class DefaultObjectEntryManagerImpl
 			dtoConverterContext, serviceBuilderObjectEntry);
 	}
 
+	private BooleanQuery _getBooleanQuery(String fieldName, String newValue) {
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		String localizedFieldName = Field.getLocalizedName(
+			LocaleUtil.getDefault(), "value");
+
+		BooleanQuery nestedBooleanQuery = _queries.booleanQuery();
+
+		nestedBooleanQuery.addFilterQueryClauses(
+			_queries.matchPhrasePrefix(
+				"nestedFieldArray." + localizedFieldName, newValue));
+		nestedBooleanQuery.addFilterQueryClauses(
+			_queries.term("nestedFieldArray.fieldName", fieldName));
+
+		NestedQuery nestedQuery = _queries.nested(
+			"nestedFieldArray", nestedBooleanQuery);
+
+		booleanQuery.addMustQueryClauses(nestedQuery);
+
+		return booleanQuery;
+	}
+
 	private String _getDateString(Date date) {
 		if (date == null) {
 			return StringPool.BLANK;
@@ -1620,11 +1660,29 @@ public class DefaultObjectEntryManagerImpl
 			objectRelationship.getObjectRelationshipId(), primaryKey);
 	}
 
-	private String _getNewValue(String value) {
-		return StringBundler.concat(
-			value, StringPool.SPACE, StringPool.OPEN_PARENTHESIS,
-			_language.get(LocaleUtil.getSiteDefault(), "copy"),
+	private String _getNewValue(
+		String fieldName, ObjectDefinition objectDefinition, String value) {
+
+		String copy = _language.get(LocaleUtil.getSiteDefault(), "copy");
+
+		String newValue = StringBundler.concat(
+			value, StringPool.SPACE, StringPool.OPEN_PARENTHESIS, copy,
 			StringPool.CLOSE_PARENTHESIS);
+
+		String prefix = value;
+
+		for (int i = 1;; i++) {
+			SearchResponse searchResponse = _getSearchResponse(
+				fieldName, newValue, objectDefinition);
+
+			if (searchResponse.getCount() == 0) {
+				return newValue;
+			}
+
+			newValue = StringBundler.concat(
+				prefix, StringPool.SPACE, StringPool.OPEN_PARENTHESIS, copy,
+				StringPool.SPACE, i, StringPool.CLOSE_PARENTHESIS);
+		}
 	}
 
 	private ObjectEntry _getObjectEntry(
@@ -1865,6 +1923,29 @@ public class DefaultObjectEntryManagerImpl
 		}
 
 		return relatedObjectDefinition;
+	}
+
+	private SearchResponse _getSearchResponse(
+		String fieldName, String newValue, ObjectDefinition objectDefinition) {
+
+		return searcher.search(
+			searchRequestBuilderFactory.builder(
+			).entryClassNames(
+				objectDefinition.getClassName()
+			).emptySearchEnabled(
+				true
+			).withSearchContext(
+				searchContext -> {
+					searchContext.setAttribute(
+						Field.STATUS, WorkflowConstants.STATUS_ANY);
+					searchContext.setAttribute(
+						"objectDefinitionId",
+						objectDefinition.getObjectDefinitionId());
+					searchContext.setCompanyId(objectDefinition.getCompanyId());
+				}
+			).query(
+				_getBooleanQuery(fieldName, newValue)
+			).build());
 	}
 
 	private int _getStartPosition(Pagination pagination) {
@@ -2614,6 +2695,9 @@ public class DefaultObjectEntryManagerImpl
 
 	@Reference
 	private ObjectEntryFolderLocalService _objectEntryFolderLocalService;
+
+	@Reference
+	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Reference
 	private ObjectEntryManagerRegistry _objectEntryManagerRegistry;
