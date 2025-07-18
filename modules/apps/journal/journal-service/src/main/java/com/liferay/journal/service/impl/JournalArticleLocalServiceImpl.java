@@ -7,7 +7,9 @@ package com.liferay.journal.service.impl;
 
 import com.liferay.asset.display.page.model.AssetDisplayPageEntry;
 import com.liferay.asset.display.page.model.AssetDisplayPageEntryTable;
+import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
 import com.liferay.asset.display.page.service.AssetDisplayPageEntryLocalService;
+import com.liferay.asset.display.page.util.AssetDisplayPageUtil;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetEntryTable;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
@@ -52,6 +54,8 @@ import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
 import com.liferay.friendly.url.model.FriendlyURLEntryLocalizationTable;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.journal.configuration.JournalGroupServiceConfiguration;
 import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.constants.JournalActivityKeys;
@@ -133,6 +137,7 @@ import com.liferay.portal.kernel.notifications.UserNotificationDefinition;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
+import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.capabilities.TemporaryFileEntriesCapability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -207,6 +212,10 @@ import com.liferay.trash.model.TrashVersion;
 import com.liferay.trash.service.TrashEntryLocalService;
 import com.liferay.trash.service.TrashVersionLocalService;
 import com.liferay.upload.AttachmentContentUpdater;
+
+import jakarta.portlet.PortletRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -7205,7 +7214,26 @@ public class JournalArticleLocalServiceImpl
 			long userId, JournalArticle article, ServiceContext serviceContext)
 		throws PortalException {
 
-		Map<String, Serializable> workflowContext = new HashMap<>();
+		String userPortraitURL = StringPool.BLANK;
+		String userURL = StringPool.BLANK;
+
+		if (serviceContext.getThemeDisplay() != null) {
+			User user = _userLocalService.getUser(userId);
+
+			userPortraitURL = user.getPortraitURL(
+				serviceContext.getThemeDisplay());
+			userURL = user.getDisplayURL(serviceContext.getThemeDisplay());
+		}
+
+		Map<String, Serializable> workflowContext =
+			HashMapBuilder.<String, Serializable>put(
+				WorkflowConstants.CONTEXT_URL,
+				_getArticlePreviewURL(article, serviceContext)
+			).put(
+				WorkflowConstants.CONTEXT_USER_PORTRAIT_URL, userPortraitURL
+			).put(
+				WorkflowConstants.CONTEXT_USER_URL, userURL
+			).build();
 
 		WorkflowHandlerRegistryUtil.startWorkflowInstance(
 			article.getCompanyId(), article.getGroupId(), userId,
@@ -7826,6 +7854,62 @@ public class JournalArticleLocalServiceImpl
 		}
 
 		return StringPool.BLANK;
+	}
+
+	private String _getArticlePreviewURL(
+			JournalArticle article, ServiceContext serviceContext)
+		throws PortalException {
+
+		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+
+		if (themeDisplay == null) {
+			return StringPool.BLANK;
+		}
+
+		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+			JournalArticle.class.getName(), article.getResourcePrimKey());
+
+		if (AssetDisplayPageUtil.hasAssetDisplayPage(
+				themeDisplay.getScopeGroupId(), assetEntry)) {
+
+			ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
+				new ClassPKInfoItemIdentifier(assetEntry.getClassPK());
+
+			classPKInfoItemIdentifier.setVersion(
+				String.valueOf(article.getVersion()));
+
+			String previewURL =
+				_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
+					new InfoItemReference(
+						assetEntry.getClassName(), classPKInfoItemIdentifier),
+					themeDisplay);
+
+			previewURL = HttpComponentsUtil.addParameter(
+				previewURL, "p_l_mode", Constants.PREVIEW);
+
+			return HttpComponentsUtil.addParameter(
+				previewURL, "version", article.getVersion());
+		}
+
+		HttpServletRequest httpServletRequest = serviceContext.getRequest();
+
+		if (httpServletRequest == null) {
+			return StringPool.BLANK;
+		}
+
+		return PortletURLBuilder.create(
+			_portal.getControlPanelPortletURL(
+				httpServletRequest, JournalPortletKeys.JOURNAL,
+				PortletRequest.RENDER_PHASE)
+		).setMVCPath(
+			"/preview_article_content.jsp"
+		).setParameter(
+			"articleId", article.getArticleId()
+		).setParameter(
+			"groupId", article.getGroupId()
+		).setParameter(
+			"version", article.getVersion()
+		).buildString();
 	}
 
 	private String _getArticleURL(JournalArticle article)
@@ -8493,6 +8577,10 @@ public class JournalArticleLocalServiceImpl
 	@Reference
 	private AssetDisplayPageEntryLocalService
 		_assetDisplayPageEntryLocalService;
+
+	@Reference
+	private AssetDisplayPageFriendlyURLProvider
+		_assetDisplayPageFriendlyURLProvider;
 
 	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;
