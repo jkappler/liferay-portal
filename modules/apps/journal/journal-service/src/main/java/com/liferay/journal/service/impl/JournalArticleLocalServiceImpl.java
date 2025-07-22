@@ -7,6 +7,7 @@ package com.liferay.journal.service.impl;
 
 import com.liferay.asset.display.page.model.AssetDisplayPageEntry;
 import com.liferay.asset.display.page.model.AssetDisplayPageEntryTable;
+import com.liferay.asset.display.page.portlet.AssetDisplayPageEntryFormProcessor;
 import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
 import com.liferay.asset.display.page.service.AssetDisplayPageEntryLocalService;
 import com.liferay.asset.display.page.util.AssetDisplayPageUtil;
@@ -588,6 +589,12 @@ public class JournalArticleLocalServiceImpl
 			serviceContext.getAssetTagNames(),
 			serviceContext.getAssetLinkEntryIds(),
 			serviceContext.getAssetPriority());
+
+		// Asset display page
+
+		_assetDisplayPageEntryFormProcessor.process(
+			JournalArticle.class.getName(), article.getResourcePrimKey(),
+			serviceContext);
 
 		// Dynamic data mapping
 
@@ -5114,6 +5121,12 @@ public class JournalArticleLocalServiceImpl
 				serviceContext.getAssetTagNames(),
 				serviceContext.getAssetLinkEntryIds(),
 				serviceContext.getAssetPriority());
+
+			// Asset display page
+
+			_assetDisplayPageEntryFormProcessor.process(
+				JournalArticle.class.getName(), article.getResourcePrimKey(),
+				serviceContext);
 		}
 
 		// Dynamic data mapping
@@ -8573,6 +8586,10 @@ public class JournalArticleLocalServiceImpl
 
 	@Reference
 	private AssetCategoryLocalService _assetCategoryLocalService;
+
+	@Reference
+	private AssetDisplayPageEntryFormProcessor
+		_assetDisplayPageEntryFormProcessor;
 
 	@Reference
 	private AssetDisplayPageEntryLocalService
