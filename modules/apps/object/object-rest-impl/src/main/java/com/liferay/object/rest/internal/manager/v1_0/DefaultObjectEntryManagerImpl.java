@@ -949,6 +949,10 @@ public class DefaultObjectEntryManagerImpl
 
 				searchContext.setAttribute(
 					"entryClassName", ObjectEntryVersion.class.getName());
+
+				searchContext.setAttribute(
+					"objectDefinitionId",
+					serviceBuilderObjectEntry.getObjectDefinitionId());
 			},
 			sorts,
 			document -> _objectEntryDTOConverter.toDTO(
