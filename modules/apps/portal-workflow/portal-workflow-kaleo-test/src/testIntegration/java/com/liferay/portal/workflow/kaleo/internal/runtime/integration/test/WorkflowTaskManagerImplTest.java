@@ -1071,6 +1071,28 @@ public class WorkflowTaskManagerImplTest extends BaseWorkflowManagerTestCase {
 	}
 
 	@Test
+	public void testNotificationWithTemplateVariables() throws Exception {
+		_activateWorkflow(
+			JournalFolder.class.getName(),
+			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			JournalArticleConstants.DDM_STRUCTURE_ID_ALL,
+			_URL_CONSTANT_SINGLE_APPROVER, 1);
+
+		JournalArticle article = _addJournalArticle(
+			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
+
+		Assert.assertEquals(
+			WorkflowConstants.STATUS_PENDING, article.getStatus());
+
+		_checkUserNotificationEventsByUsers(1, _adminUser);
+
+		_deactivateWorkflow(
+			JournalFolder.class.getName(),
+			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			JournalArticleConstants.DDM_STRUCTURE_ID_ALL);
+	}
+
+	@Test
 	public void testPreventNotifyingAncestorSites() throws Exception {
 
 		// Notifiy ancestor sites
@@ -1906,6 +1928,26 @@ public class WorkflowTaskManagerImplTest extends BaseWorkflowManagerTestCase {
 		}
 	}
 
+	private void _createUrlConstantWorkflow() throws Exception {
+		try {
+			_workflowDefinitionManager.getWorkflowDefinition(
+				_adminUser.getCompanyId(), _URL_CONSTANT_SINGLE_APPROVER, 1);
+		}
+		catch (NoSuchModelException noSuchModelException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchModelException);
+			}
+
+			String content = readFileToJSON(
+				"single-approver-url-constant-workflow-definition.xml");
+
+			_workflowDefinitionManager.deployWorkflowDefinition(
+				null, _adminUser.getCompanyId(), _adminUser.getUserId(),
+				_URL_CONSTANT_SINGLE_APPROVER, _URL_CONSTANT_SINGLE_APPROVER,
+				content.getBytes());
+		}
+	}
+
 	private User _createUser(String roleName) throws Exception {
 		return _createUser(roleName, _group, true);
 	}
@@ -2145,6 +2187,7 @@ public class WorkflowTaskManagerImplTest extends BaseWorkflowManagerTestCase {
 			"single-approver-scripted-assignment-3-workflow-definition.xml",
 			_SCRIPTED_SINGLE_APPROVER_3);
 		_createSiteMemberWorkflow();
+		_createUrlConstantWorkflow();
 	}
 
 	private List<User> _sort(List<User> users) {
@@ -2237,6 +2280,9 @@ public class WorkflowTaskManagerImplTest extends BaseWorkflowManagerTestCase {
 
 	private static final String _SITE_MEMBER_SINGLE_APPROVER =
 		"Site Member Single Approver";
+
+	private static final String _URL_CONSTANT_SINGLE_APPROVER =
+		"Url Constant Single Approver";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		WorkflowTaskManagerImplTest.class);
