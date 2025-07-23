@@ -50,9 +50,6 @@ public class ViewContentsSectionDisplayContext
 			language, objectDefinitionService,
 			objectDefinitionSettingLocalService,
 			objectEntryFolderModelResourcePermission, portal);
-
-		themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
 	}
 
 	@Override
@@ -106,7 +103,4 @@ public class ViewContentsSectionDisplayContext
 	protected String getEmptyStateDescriptionKey() {
 		return "click-new-to-create-your-first-piece-of-content";
 	}
-
-	protected final ThemeDisplay themeDisplay;
-
 }
