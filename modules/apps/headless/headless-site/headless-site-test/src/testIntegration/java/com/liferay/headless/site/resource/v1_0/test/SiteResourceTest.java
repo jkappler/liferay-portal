@@ -14,6 +14,8 @@ import com.liferay.headless.site.client.pagination.Pagination;
 import com.liferay.headless.site.client.problem.Problem;
 import com.liferay.headless.site.client.resource.v1_0.SiteResource;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
@@ -28,6 +30,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -167,6 +170,87 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 
 	@Override
 	@Test
+	public void testGetSitesPageWithPagination() throws Exception {
+		Page<Site> sitesPage = null;
+
+		try {
+			sitesPage = siteResource.getSitesPage(null, null);
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			_log.error(problem.getStatus());
+			_log.error(problem.getTitle());
+			_log.error(problem.getDetail());
+			_log.error(problem.toString());
+		}
+
+		int totalCount = GetterUtil.getInteger(sitesPage.getTotalCount());
+
+		Site site1 = testGetSitesPage_addSite(randomSite());
+
+		Site site2 = testGetSitesPage_addSite(randomSite());
+
+		Site site3 = testGetSitesPage_addSite(randomSite());
+
+		int pageSizeLimit = 500;
+
+		if (totalCount >= (pageSizeLimit - 2)) {
+			Page<Site> page1 = siteResource.getSitesPage(
+				null,
+				Pagination.of(
+					(int)Math.ceil((totalCount + 1.0) / pageSizeLimit),
+					pageSizeLimit));
+
+			Assert.assertEquals(totalCount + 3, page1.getTotalCount());
+
+			assertContains(site1, (List<Site>)page1.getItems());
+
+			Page<Site> page2 = siteResource.getSitesPage(
+				null,
+				Pagination.of(
+					(int)Math.ceil((totalCount + 2.0) / pageSizeLimit),
+					pageSizeLimit));
+
+			assertContains(site2, (List<Site>)page2.getItems());
+
+			Page<Site> page3 = siteResource.getSitesPage(
+				null,
+				Pagination.of(
+					(int)Math.ceil((totalCount + 3.0) / pageSizeLimit),
+					pageSizeLimit));
+
+			assertContains(site3, (List<Site>)page3.getItems());
+		}
+		else {
+			Page<Site> page1 = siteResource.getSitesPage(
+				null, Pagination.of(1, totalCount + 2));
+
+			List<Site> sites1 = (List<Site>)page1.getItems();
+
+			Assert.assertEquals(
+				sites1.toString(), totalCount + 2, sites1.size());
+
+			Page<Site> page2 = siteResource.getSitesPage(
+				null, Pagination.of(2, totalCount + 2));
+
+			Assert.assertEquals(totalCount + 3, page2.getTotalCount());
+
+			List<Site> sites2 = (List<Site>)page2.getItems();
+
+			Assert.assertEquals(sites2.toString(), 1, sites2.size());
+
+			Page<Site> page3 = siteResource.getSitesPage(
+				null, Pagination.of(1, (int)totalCount + 3));
+
+			assertContains(site1, (List<Site>)page3.getItems());
+			assertContains(site2, (List<Site>)page3.getItems());
+			assertContains(site3, (List<Site>)page3.getItems());
+		}
+	}
+
+	@Override
+	@Test
 	public void testPostSite() throws Exception {
 		super.testPostSite();
 
@@ -294,8 +378,8 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 
 		Group group = _groupLocalService.getGroup(postSite.getId());
 
-		group.setActive(active);
 		group.setSite(site);
+		group.setActive(active);
 
 		_groupLocalService.updateGroup(group);
 
@@ -713,6 +797,9 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 	private static final String _CLASS_NAME_EXCEPTION_MAPPER =
 		"com.liferay.portal.vulcan.internal.jaxrs.exception.mapper." +
 			"ExceptionMapper";
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		SiteResourceTest.class);
 
 	@DeleteAfterTestRun
 	private DepotEntry _depotEntry;
