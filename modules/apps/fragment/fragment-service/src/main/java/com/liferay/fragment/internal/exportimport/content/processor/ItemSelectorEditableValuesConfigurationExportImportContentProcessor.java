@@ -90,6 +90,10 @@ public class ItemSelectorEditableValuesConfigurationExportImportContentProcessor
 			String ddmTemplateKey = templateJSONObject.getString("templateKey");
 
 			if (Validator.isNull(ddmTemplateKey)) {
+
+				ExportImportContentProcessorUtil.replaceImportContentReferences(
+					configurationValueJSONObject, portletDataContext);
+
 				return;
 			}
 
