@@ -21,6 +21,7 @@ export default function SaveButtons({
 	defaultLanguageId: initialDefaultLanguageId,
 	displayDate,
 	editingDefaultValues,
+	enablePublishWithPermissions,
 	permissionsURL,
 	portletNamespace,
 	publishButtonLabel,
@@ -96,7 +97,7 @@ export default function SaveButtons({
 			return;
 		}
 
-		if (articleId && !showPublishModal) {
+		if (!enablePublishWithPermissions || (articleId && !showPublishModal)) {
 			handleButtonClick(action);
 
 			await validateRequiredFields(formId);
@@ -287,9 +288,11 @@ export default function SaveButtons({
 								? Liferay.Language.get(
 										'submit-for-workflow-with-permissions'
 									)
-								: Liferay.Language.get(
-										'publish-with-permissions'
-									)}
+								: enablePublishWithPermissions
+									? Liferay.Language.get(
+											'publish-with-permissions'
+										)
+									: Liferay.Language.get('publish')}
 					</ClayDropDown.Item>
 
 					<ClayDropDown.Item

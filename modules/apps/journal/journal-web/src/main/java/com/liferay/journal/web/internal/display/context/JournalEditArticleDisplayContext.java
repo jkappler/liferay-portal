@@ -33,6 +33,7 @@ import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.URLItemSelectorReturnType;
 import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCriterion;
+import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.constants.JournalPortletKeys;
@@ -52,6 +53,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUt
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -1139,6 +1141,8 @@ public class JournalEditArticleDisplayContext {
 			"editingDefaultValues",
 			getClassNameId() != JournalArticleConstants.CLASS_NAME_ID_DEFAULT
 		).put(
+			"enablePublishWithPermissions", _isEnablePublishWithPermissions()
+		).put(
 			"permissionsURL", getPermissionsURL()
 		).put(
 			"publishButtonLabel",
@@ -1764,6 +1768,15 @@ public class JournalEditArticleDisplayContext {
 		return false;
 	}
 
+	private boolean _isEnablePublishWithPermissions() throws PortalException {
+		JournalServiceConfiguration journalServiceConfiguration =
+			ConfigurationProviderUtil.getCompanyConfiguration(
+				JournalServiceConfiguration.class,
+				_themeDisplay.getCompanyId());
+
+		return journalServiceConfiguration.enablePublishWithPermissions();
+	}
+
 	private boolean _isShowHeader() {
 		if (_showHeader != null) {
 			return _showHeader;
@@ -1776,6 +1789,10 @@ public class JournalEditArticleDisplayContext {
 	}
 
 	private boolean _isShowPublishModal() throws PortalException {
+		if (!_isEnablePublishWithPermissions()) {
+			return false;
+		}
+
 		if ((_article == null) || (_article.getId() == 0)) {
 			return true;
 		}
