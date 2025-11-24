@@ -9,6 +9,7 @@ import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
+import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.headless.common.spi.odata.entity.EntityFieldsUtil;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
 import com.liferay.headless.object.dto.v1_0.ObjectEntryFolder;
@@ -66,10 +67,14 @@ import org.osgi.service.component.annotations.ServiceScope;
  */
 @Component(
 	properties = "OSGI-INF/liferay/rest/v1_0/object-entry-folder.properties",
+	property ={"export.import.vulcan.batch.engine.task.item.delegate=true",
+	"batch.engine.task.item.delegate.name=object-entry-folder"},
 	scope = ServiceScope.PROTOTYPE, service = ObjectEntryFolderResource.class
 )
 public class ObjectEntryFolderResourceImpl
-	extends BaseObjectEntryFolderResourceImpl {
+	extends BaseObjectEntryFolderResourceImpl
+	implements ExportImportVulcanBatchEngineTaskItemDelegate
+		<ObjectEntryFolder> {
 
 	@Override
 	public void deleteObjectEntryFolder(Long objectEntryFolderId)
@@ -112,6 +117,41 @@ public class ObjectEntryFolderResourceImpl
 					com.liferay.object.model.ObjectEntryFolder.class.getName()),
 				contextCompany.getCompanyId(), _expandoBridgeIndexer,
 				_expandoColumnLocalService, _expandoTableLocalService));
+	}
+
+	@Override
+	public ExportImportDescriptor getExportImportDescriptor() {
+		return new ExportImportDescriptor() {
+
+			@Override
+			public String getLabelLanguageKey() {
+				return "objectEntryFolders";
+			}
+
+			@Override
+			public String getModelClassName() {
+				return com.liferay.object.model.ObjectEntryFolder.class.
+					getName();
+			}
+
+			@Override
+			public String getPortletId() {
+				return "Attila";
+			}
+
+			@Override
+			public String getResourceClassName() {
+				return ObjectEntryFolderResourceImpl.class.getName();
+			}
+
+			@Override
+			public ExportImportVulcanBatchEngineTaskItemDelegate.Scope
+				getScope() {
+
+				return Scope.SITE;
+			}
+
+		};
 	}
 
 	@Override
