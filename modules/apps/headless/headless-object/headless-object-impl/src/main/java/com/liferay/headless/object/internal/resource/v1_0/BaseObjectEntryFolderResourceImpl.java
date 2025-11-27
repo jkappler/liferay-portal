@@ -1332,8 +1332,15 @@ public abstract class BaseObjectEntryFolderResourceImpl
 			Map<String, Serializable> parameters, String search)
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		if (parameters.containsKey("siteId")) {
+			return getScopeScopeKeyObjectEntryFoldersPage(
+				parameters.get("siteId").toString(),false, search, null, filter,
+				pagination, sorts);
+		}
+		else {
+			throw new NotSupportedException(
+				"One of the following parameters must be specified: [siteId]");
+		}
 	}
 
 	@Override
