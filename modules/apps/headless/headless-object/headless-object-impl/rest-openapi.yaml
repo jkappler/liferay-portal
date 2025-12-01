@@ -118,6 +118,10 @@ components:
                     description:
                         The localized object entry folder's label.
                     type: object
+                name:
+                    description:
+                        The object entry folder's name.
+                    type: string
                 numberOfObjectEntries:
                     description:
                         The number of object entries in this object entry folder.
