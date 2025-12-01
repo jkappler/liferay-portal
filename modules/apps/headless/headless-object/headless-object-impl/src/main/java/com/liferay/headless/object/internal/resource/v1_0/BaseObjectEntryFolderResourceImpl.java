@@ -492,7 +492,7 @@ public abstract class BaseObjectEntryFolderResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PATCH' 'http://localhost:8080/o/headless-object/v1.0/object-entry-folders/{objectEntryFolderId}' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PATCH' 'http://localhost:8080/o/headless-object/v1.0/object-entry-folders/{objectEntryFolderId}' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "name": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
 		description = "Updates only the fields received in the request body, leaving any other fields untouched."
@@ -545,6 +545,10 @@ public abstract class BaseObjectEntryFolderResourceImpl
 				objectEntryFolder.getLabel_i18n());
 		}
 
+		if (objectEntryFolder.getName() != null) {
+			existingObjectEntryFolder.setName(objectEntryFolder.getName());
+		}
+
 		if (objectEntryFolder.
 				getParentObjectEntryFolderExternalReferenceCode() != null) {
 
@@ -586,7 +590,7 @@ public abstract class BaseObjectEntryFolderResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PATCH' 'http://localhost:8080/o/headless-object/v1.0/scopes/{scopeKey}/object-entry-folder/by-external-reference-code/{externalReferenceCode}' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PATCH' 'http://localhost:8080/o/headless-object/v1.0/scopes/{scopeKey}/object-entry-folder/by-external-reference-code/{externalReferenceCode}' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "name": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -646,6 +650,10 @@ public abstract class BaseObjectEntryFolderResourceImpl
 		if (objectEntryFolder.getLabel_i18n() != null) {
 			existingObjectEntryFolder.setLabel_i18n(
 				objectEntryFolder.getLabel_i18n());
+		}
+
+		if (objectEntryFolder.getName() != null) {
+			existingObjectEntryFolder.setName(objectEntryFolder.getName());
 		}
 
 		if (objectEntryFolder.
@@ -859,7 +867,7 @@ public abstract class BaseObjectEntryFolderResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/headless-object/v1.0/scopes/{scopeKey}/object-entry-folders' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-object/v1.0/scopes/{scopeKey}/object-entry-folders' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "name": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -1022,7 +1030,7 @@ public abstract class BaseObjectEntryFolderResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/headless-object/v1.0/object-entry-folders/{objectEntryFolderId}' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/headless-object/v1.0/object-entry-folders/{objectEntryFolderId}' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "name": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -1219,7 +1227,7 @@ public abstract class BaseObjectEntryFolderResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/headless-object/v1.0/scopes/{scopeKey}/object-entry-folder/by-external-reference-code/{externalReferenceCode}' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/headless-object/v1.0/scopes/{scopeKey}/object-entry-folder/by-external-reference-code/{externalReferenceCode}' -d $'{"description": ___, "externalReferenceCode": ___, "label": ___, "label_i18n": ___, "name": ___, "parentObjectEntryFolderExternalReferenceCode": ___, "parentObjectEntryFolderId": ___, "permissions": ___, "scope": ___, "status": ___, "title": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -1332,15 +1340,8 @@ public abstract class BaseObjectEntryFolderResourceImpl
 			Map<String, Serializable> parameters, String search)
 		throws Exception {
 
-		if (parameters.containsKey("siteId")) {
-			return getScopeScopeKeyObjectEntryFoldersPage(
-				parameters.get("siteId").toString(),false, search, null, filter,
-				pagination, sorts);
-		}
-		else {
-			throw new NotSupportedException(
-				"One of the following parameters must be specified: [siteId]");
-		}
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	@Override

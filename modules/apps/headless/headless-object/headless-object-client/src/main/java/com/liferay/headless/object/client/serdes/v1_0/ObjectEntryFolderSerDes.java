@@ -166,6 +166,20 @@ public class ObjectEntryFolderSerDes {
 			sb.append(_toJSON(objectEntryFolder.getLabel_i18n()));
 		}
 
+		if (objectEntryFolder.getName() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"name\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(objectEntryFolder.getName()));
+
+			sb.append("\"");
+		}
+
 		if (objectEntryFolder.getNumberOfObjectEntries() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -444,6 +458,13 @@ public class ObjectEntryFolderSerDes {
 				String.valueOf(objectEntryFolder.getLabel_i18n()));
 		}
 
+		if (objectEntryFolder.getName() == null) {
+			map.put("name", null);
+		}
+		else {
+			map.put("name", String.valueOf(objectEntryFolder.getName()));
+		}
+
 		if (objectEntryFolder.getNumberOfObjectEntries() == null) {
 			map.put("numberOfObjectEntries", null);
 		}
@@ -615,6 +636,9 @@ public class ObjectEntryFolderSerDes {
 			else if (Objects.equals(jsonParserFieldName, "label_i18n")) {
 				return true;
 			}
+			else if (Objects.equals(jsonParserFieldName, "name")) {
+				return false;
+			}
 			else if (Objects.equals(
 						jsonParserFieldName, "numberOfObjectEntries")) {
 
@@ -730,6 +754,11 @@ public class ObjectEntryFolderSerDes {
 				if (jsonParserFieldValue != null) {
 					objectEntryFolder.setLabel_i18n(
 						(Map<String, String>)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "name")) {
+				if (jsonParserFieldValue != null) {
+					objectEntryFolder.setName((String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(

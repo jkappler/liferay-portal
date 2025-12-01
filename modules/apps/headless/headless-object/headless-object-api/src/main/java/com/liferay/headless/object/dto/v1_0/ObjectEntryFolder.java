@@ -459,6 +459,47 @@ public class ObjectEntryFolder implements Serializable {
 	private Supplier<Map<String, String>> _label_i18nSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "The object entry folder's name."
+	)
+	public String getName() {
+		if (_nameSupplier != null) {
+			name = _nameSupplier.get();
+
+			_nameSupplier = null;
+		}
+
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+
+		_nameSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
+		_nameSupplier = () -> {
+			try {
+				return nameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(description = "The object entry folder's name.")
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String name;
+
+	@JsonIgnore
+	private Supplier<String> _nameSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The number of object entries in this object entry folder."
 	)
 	public Integer getNumberOfObjectEntries() {
@@ -1262,6 +1303,22 @@ public class ObjectEntryFolder implements Serializable {
 			sb.append("\"label_i18n\": ");
 
 			sb.append(_toJSON(label_i18n));
+		}
+
+		String name = getName();
+
+		if (name != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"name\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(name));
+
+			sb.append("\"");
 		}
 
 		Integer numberOfObjectEntries = getNumberOfObjectEntries();
