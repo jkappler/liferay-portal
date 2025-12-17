@@ -50,6 +50,8 @@ test('CMS loads and sections are shown', async ({
 
 	await contentsPage.fillData([{label: 'Title', value: title}]);
 
+	await page.waitForTimeout(1000);
+
 	await contentsPage.saveContent();
 
 	await contentsPage.goto();
