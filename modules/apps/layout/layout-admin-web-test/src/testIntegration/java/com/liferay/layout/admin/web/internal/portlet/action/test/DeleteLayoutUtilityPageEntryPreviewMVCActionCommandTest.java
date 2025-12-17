@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.context.ContextUserReplace;
@@ -133,8 +134,8 @@ public class DeleteLayoutUtilityPageEntryPreviewMVCActionCommandTest {
                 null, ServiceContextTestUtil.getServiceContext(
                     _group.getGroupId()));
 
-        User user = UserTestUtil.addGroupUser(
-            _group, RoleConstants.POWER_USER);
+		User user = UserLocalServiceUtil.getGuestUser(
+			TestPropsValues.getCompanyId());
 
         try (ContextUserReplace contextUserReplace = new ContextUserReplace(
                 user, PermissionCheckerFactoryUtil.create(user))) {
