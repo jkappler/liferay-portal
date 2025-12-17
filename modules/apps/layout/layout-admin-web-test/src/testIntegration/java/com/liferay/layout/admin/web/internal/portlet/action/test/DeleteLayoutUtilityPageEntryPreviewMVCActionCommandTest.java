@@ -7,19 +7,25 @@ package com.liferay.layout.admin.web.internal.portlet.action.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
+import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.utility.page.kernel.constants.LayoutUtilityPageEntryConstants;
 import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
 import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.TestInfo;
@@ -28,6 +34,7 @@ import com.liferay.portal.kernel.test.portlet.MockLiferayPortletActionRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletActionResponse;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
@@ -120,6 +127,12 @@ public class DeleteLayoutUtilityPageEntryPreviewMVCActionCommandTest {
         Assert.assertEquals(0, layoutUtilityPageEntry.getPreviewFileEntryId());
     }
 
+	@Inject
+	private UserLocalService _userLocalService;
+
+	@Inject
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
     @Test
     @TestInfo("LPD-74557")
     public void testDeleteLayoutUtilityPageEntryPreviewWithoutPermissions()
@@ -134,11 +147,22 @@ public class DeleteLayoutUtilityPageEntryPreviewMVCActionCommandTest {
                 null, ServiceContextTestUtil.getServiceContext(
                     _group.getGroupId()));
 
-		User user = UserLocalServiceUtil.getGuestUser(
-			TestPropsValues.getCompanyId());
+		Role role = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
+		User user = UserTestUtil.addUser();
+
+		_userLocalService.addRoleUser(role.getRoleId(), user.getUserId());
+
+		_resourcePermissionLocalService.setResourcePermissions(
+			_group.getCompanyId(), DLFileEntry.class.getName(),
+			ResourceConstants.SCOPE_INDIVIDUAL,
+			String.valueOf(layoutUtilityPageEntry.getLayoutUtilityPageEntryId()),
+			role.getRoleId(),
+			new String[] {
+				ActionKeys.VIEW
+			});
 
         try (ContextUserReplace contextUserReplace = new ContextUserReplace(
-                user, PermissionCheckerFactoryUtil.create(user))) {
+                user)) {
 
             Assert.assertThrows(
                 PrincipalException.class,
