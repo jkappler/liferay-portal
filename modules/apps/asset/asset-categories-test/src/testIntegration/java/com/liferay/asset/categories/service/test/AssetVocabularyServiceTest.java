@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.SystemEventLocalService;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.test.context.ContextUserReplace;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -240,6 +241,27 @@ public class AssetVocabularyServiceTest {
 		Assert.assertNull(
 			_assetVocabularyLocalService.fetchAssetVocabulary(
 				vocabulary.getVocabularyId()));
+	}
+
+	@Test
+	public void testDeleteVocabularySystemEvent() throws Exception {
+		AssetVocabulary vocabulary = AssetTestUtil.addVocabulary(
+			_group.getGroupId());
+
+		AssetTestUtil.addCategory(
+			_group.getGroupId(), vocabulary.getVocabularyId());
+
+		int originalSystemEventsCount =
+			_systemEventLocalService.getSystemEventsCount();
+
+		_assetVocabularyLocalService.deleteVocabulary(
+			vocabulary.getVocabularyId());
+
+		int newOriginalSystemEventsCount =
+			_systemEventLocalService.getSystemEventsCount();
+
+		Assert.assertEquals(
+			originalSystemEventsCount + 2, newOriginalSystemEventsCount);
 	}
 
 	@Test(expected = DuplicateVocabularyExternalReferenceCodeException.class)
@@ -743,5 +765,8 @@ public class AssetVocabularyServiceTest {
 
 	@Inject
 	private RoleLocalService _roleLocalService;
+
+	@Inject
+	private SystemEventLocalService _systemEventLocalService;
 
 }
