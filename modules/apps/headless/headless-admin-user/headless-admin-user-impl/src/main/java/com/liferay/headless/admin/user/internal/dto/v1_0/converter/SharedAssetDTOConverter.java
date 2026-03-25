@@ -32,8 +32,13 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.security.auth.GuestOrUserUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -52,8 +57,12 @@ import com.liferay.sharing.security.permission.SharingEntryAction;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -97,8 +106,15 @@ public class SharedAssetDTOConverter
 			{
 				setActionIds(
 					() -> TransformUtil.transformToArray(
-						SharingEntryAction.getSharingEntryActions(
-							sharingEntry.getActionIds()),
+						_addPermissions(
+							new ArrayList<>(
+								SharingEntryAction.getSharingEntryActions(
+									sharingEntry.getActionIds())),
+							GuestOrUserUtil.getPermissionChecker(),
+							sharingEntry,
+							new String[] {
+								ActionKeys.ADD_DISCUSSION, ActionKeys.UPDATE
+							}),
 						SharingEntryAction::getActionId, String.class));
 				setAssetType(
 					() -> {
@@ -184,6 +200,46 @@ public class SharedAssetDTOConverter
 					});
 			}
 		};
+	}
+
+	private List<SharingEntryAction> _addPermissions(
+			List<SharingEntryAction> sharingEntryActions,
+			PermissionChecker permissionChecker, SharingEntry sharingEntry,
+			String[] actionIds)
+		throws PortalException {
+
+		if (permissionChecker == null) {
+			return sharingEntryActions;
+		}
+
+		Set<String> targetActionIds = new HashSet<>();
+
+		for (String actionId : actionIds) {
+			if (!SharingEntryAction.isSupportedActionId(actionId)) {
+				continue;
+			}
+
+			SharingEntryAction sharingEntryAction =
+				SharingEntryAction.parseFromActionId(actionId);
+
+			if (!sharingEntryActions.contains(sharingEntryAction)) {
+				targetActionIds.add(actionId);
+			}
+		}
+
+		if (targetActionIds.isEmpty()) {
+			return sharingEntryActions;
+		}
+
+		Set<String> permittedActionIds = _hasPermissions(
+			permissionChecker, sharingEntry, targetActionIds);
+
+		for (String actionId : permittedActionIds) {
+			sharingEntryActions.add(
+				SharingEntryAction.parseFromActionId(actionId));
+		}
+
+		return sharingEntryActions;
 	}
 
 	private FileEntry _getFileEntry(long classPK) {
@@ -353,6 +409,64 @@ public class SharedAssetDTOConverter
 		return fileEntry.getMimeType();
 	}
 
+	private Set<String> _hasPermissions(
+			PermissionChecker permissionChecker, SharingEntry sharingEntry,
+			Set<String> actionIds)
+		throws PortalException {
+
+		Set<String> permittedActionIds = new HashSet<>();
+
+		ObjectEntry objectEntry = null;
+
+		if (!StringUtil.equals(
+				DLFileEntry.class.getName(), sharingEntry.getClassName()) &&
+			!StringUtil.equals(
+				ObjectEntryFolder.class.getName(),
+				sharingEntry.getClassName())) {
+
+			objectEntry = _objectEntryLocalService.fetchObjectEntry(
+				sharingEntry.getClassPK());
+		}
+
+		for (String actionId : actionIds) {
+			ResourceAction resourceAction =
+				_resourceActionLocalService.fetchResourceAction(
+					sharingEntry.getClassName(), actionId);
+
+			if (resourceAction == null) {
+				continue;
+			}
+
+			boolean hasPermission = false;
+
+			if (StringUtil.equals(
+					DLFileEntry.class.getName(), sharingEntry.getClassName())) {
+
+				hasPermission = _dlFileEntryModelResourcePermission.contains(
+					permissionChecker, sharingEntry.getClassPK(), actionId);
+			}
+			else if (StringUtil.equals(
+						ObjectEntryFolder.class.getName(),
+						sharingEntry.getClassName())) {
+
+				hasPermission =
+					_objectEntryFolderModelResourcePermission.contains(
+						permissionChecker, sharingEntry.getClassPK(), actionId);
+			}
+			else if (objectEntry != null) {
+				hasPermission = _objectEntryService.hasModelResourcePermission(
+					objectEntry.getObjectDefinitionId(),
+					objectEntry.getObjectEntryId(), actionId);
+			}
+
+			if (hasPermission) {
+				permittedActionIds.add(actionId);
+			}
+		}
+
+		return permittedActionIds;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		SharedAssetDTOConverter.class);
 
@@ -364,6 +478,12 @@ public class SharedAssetDTOConverter
 
 	@Reference
 	private DLFileEntryLocalService _dLFileEntryLocalService;
+
+	@Reference(
+		target = "(model.class.name=com.liferay.document.library.kernel.model.DLFileEntry)"
+	)
+	private ModelResourcePermission<DLFileEntry>
+		_dlFileEntryModelResourcePermission;
 
 	@Reference
 	private DLMimeTypeDisplayContext _dlMimeTypeDisplayContext;
@@ -377,6 +497,12 @@ public class SharedAssetDTOConverter
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
+	@Reference(
+		target = "(model.class.name=com.liferay.object.model.ObjectEntryFolder)"
+	)
+	private ModelResourcePermission<ObjectEntryFolder>
+		_objectEntryFolderModelResourcePermission;
+
 	@Reference
 	private ObjectEntryLocalService _objectEntryLocalService;
 
@@ -388,6 +514,9 @@ public class SharedAssetDTOConverter
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private ResourceActionLocalService _resourceActionLocalService;
 
 	@Reference
 	private SharingConfigurationFactory _sharingConfigurationFactory;
