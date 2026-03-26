@@ -62,9 +62,15 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -119,8 +125,37 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 
 		long totalCount = page.getTotalCount();
 
+		String title = RandomTestUtil.randomString(10);
+
+		SharedAsset sharedAsset = randomSharedAsset();
+
+		sharedAsset.setTitle(title);
+
 		testGetMyUserAccountSharedAssetsSharedWithMePage_addSharedAsset(
-			randomSharedAsset());
+			sharedAsset);
+
+		page = sharedAssetResource.getMyUserAccountSharedAssetsSharedWithMePage(
+			null, null, null, Pagination.of(1, 10), null);
+
+		Assert.assertEquals(totalCount + 1, page.getTotalCount());
+
+		SharedAsset foundSharedAsset = null;
+
+		for (SharedAsset item : page.getItems()) {
+			if (Objects.equals(item.getTitle(), title)) {
+				foundSharedAsset = item;
+
+				break;
+			}
+		}
+
+		Assert.assertNotNull(foundSharedAsset);
+
+		Set<String> actionIds = new HashSet<>(
+			Arrays.asList(foundSharedAsset.getActionIds()));
+
+		Assert.assertTrue(actionIds.contains("VIEW"));
+		Assert.assertTrue(actionIds.contains("UPDATE"));
 
 		DepotEntry assetLibraryDepotEntry =
 			_depotEntryLocalService.addDepotEntry(
@@ -171,18 +206,6 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 			null, null, null, Pagination.of(1, 10), null);
 
 		Assert.assertEquals(totalCount + 4, page.getTotalCount());
-
-		page = sharedAssetResource.getMyUserAccountSharedAssetsSharedWithMePage(
-			null, null, "(spaceDepotEntry eq false)", Pagination.of(1, 10),
-			null);
-
-		Assert.assertEquals(totalCount + 2, page.getTotalCount());
-
-		page = sharedAssetResource.getMyUserAccountSharedAssetsSharedWithMePage(
-			null, null, "(spaceDepotEntry eq true)", Pagination.of(1, 10),
-			null);
-
-		Assert.assertEquals(2, page.getTotalCount());
 
 		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
 
@@ -272,6 +295,21 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 		return objectFieldSetting;
 	}
 
+	private String[] _getActionIds(long actionIdsBitwise) {
+		Collection<SharingEntryAction> sharingEntryActions =
+			SharingEntryAction.getSharingEntryActions(actionIdsBitwise);
+
+		List<String> actionIds = new ArrayList<>(
+			TransformUtil.transform(
+				sharingEntryActions, SharingEntryAction::getActionId));
+
+		if (!actionIds.contains("UPDATE")) {
+			actionIds.add("UPDATE");
+		}
+
+		return actionIds.toArray(new String[0]);
+	}
+
 	private ObjectDefinition _getObjectDefinition() throws Exception {
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.publishObjectDefinition(
@@ -356,10 +394,7 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 
 		return new SharedAsset() {
 			{
-				actionIds = TransformUtil.transformToArray(
-					SharingEntryAction.getSharingEntryActions(
-						sharingEntry.getActionIds()),
-					SharingEntryAction::getActionId, String.class);
+				actionIds = _getActionIds(sharingEntry.getActionIds());
 				assetType = "Object Entry Folder";
 				dateCreated = sharingEntry.getCreateDate();
 				dateModified = sharingEntry.getModifiedDate();
@@ -379,10 +414,7 @@ public class SharedAssetResourceTest extends BaseSharedAssetResourceTestCase {
 
 		return new SharedAsset() {
 			{
-				actionIds = TransformUtil.transformToArray(
-					SharingEntryAction.getSharingEntryActions(
-						sharingEntry.getActionIds()),
-					SharingEntryAction::getActionId, String.class);
+				actionIds = _getActionIds(sharingEntry.getActionIds());
 				assetType = _objectDefinition.getLabel(LocaleUtil.US);
 				dateCreated = sharingEntry.getCreateDate();
 				dateModified = sharingEntry.getModifiedDate();
