@@ -40,6 +40,32 @@ interface StatusLabelProps {
 }
 
 const StatusLabel = ({expirationDate, label}: StatusLabelProps) => {
+	if (label === 'expired' && expirationDate) {
+		const formattedDate = formatExpirationDate(expirationDate);
+		const formattedDateLong = formatExpirationDateLong(expirationDate);
+
+		if (formattedDate && formattedDateLong) {
+			const ariaLabel = sub(
+				Liferay.Language.get('expired.expired-on-x'),
+				formattedDateLong
+			);
+
+			return (
+				<ClayTooltipProvider>
+					<span
+						aria-label={ariaLabel}
+						tabIndex={0}
+						title={formattedDate}
+					>
+						<Label displayType={mapLabelToLabelDisplayType[label]}>
+							{Liferay.Language.get(label)}
+						</Label>
+					</span>
+				</ClayTooltipProvider>
+			);
+		}
+	}
+
 	if (!isExpiringSoon(label, expirationDate)) {
 		return (
 			<Label displayType={mapLabelToLabelDisplayType[label]}>
