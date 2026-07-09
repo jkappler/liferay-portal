@@ -6,10 +6,17 @@
 package com.liferay.site.cms.site.initializer.internal.servlet;
 
 import com.liferay.diff.DiffHtml;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
+import com.liferay.list.type.model.ListTypeEntry;
+import com.liferay.list.type.service.ListTypeEntryLocalService;
+import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.model.ObjectEntryVersion;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectEntryVersionLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONException;
@@ -20,6 +27,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.GetterUtil;
 
 import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -75,13 +83,23 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 		try {
 			long objectEntryId = jsonObject.getLong("objectEntryId");
 
-			_objectEntryService.getObjectEntry(objectEntryId);
+			com.liferay.object.model.ObjectEntry objectEntry =
+				_objectEntryService.getObjectEntry(objectEntryId);
+
+			Map<String, ObjectField> objectFields = new HashMap<>();
+
+			for (ObjectField objectField :
+					_objectFieldLocalService.getObjectFields(
+						objectEntry.getObjectDefinitionId())) {
+
+				objectFields.put(objectField.getName(), objectField);
+			}
 
 			String languageId = jsonObject.getString("languageId");
 
-			Map<String, String> sourceFieldValues = _getFieldValues(
+			Map<String, Object> sourceFieldValues = _getFieldValues(
 				languageId, objectEntryId, jsonObject.getInt("sourceVersion"));
-			Map<String, String> targetFieldValues = _getFieldValues(
+			Map<String, Object> targetFieldValues = _getFieldValues(
 				languageId, objectEntryId, jsonObject.getInt("targetVersion"));
 
 			JSONObject diffsJSONObject = _jsonFactory.createJSONObject();
@@ -91,10 +109,12 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 			fieldNames.addAll(targetFieldValues.keySet());
 
 			for (String fieldName : fieldNames) {
-				String source = sourceFieldValues.getOrDefault(
-					fieldName, StringPool.BLANK);
-				String target = targetFieldValues.getOrDefault(
-					fieldName, StringPool.BLANK);
+				ObjectField objectField = objectFields.get(fieldName);
+
+				String source = _toDisplayValue(
+					sourceFieldValues.get(fieldName), objectField, languageId);
+				String target = _toDisplayValue(
+					targetFieldValues.get(fieldName), objectField, languageId);
 
 				if (source.equals(target)) {
 					continue;
@@ -124,9 +144,11 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 		}
 	}
 
-	private Map<String, String> _getFieldValues(
+	private Map<String, Object> _getFieldValues(
 			String languageId, long objectEntryId, int version)
 		throws Exception {
+
+		Map<String, Object> fieldValues = new HashMap<>();
 
 		ObjectEntryVersion objectEntryVersion =
 			_objectEntryVersionLocalService.getObjectEntryVersion(
@@ -143,8 +165,6 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 			properties = (Map<String, Object>)nestedProperties;
 		}
 
-		Map<String, String> fieldValues = new HashMap<>();
-
 		for (Map.Entry<String, Object> entry : properties.entrySet()) {
 			String name = entry.getKey();
 
@@ -157,17 +177,114 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 			Object localizedValues = properties.get(name + "_i18n");
 
 			if (localizedValues instanceof Map) {
-				value = ((Map<String, Object>)localizedValues).get(languageId);
+				Map<String, Object> localizedValuesMap =
+					(Map<String, Object>)localizedValues;
+
+				value = localizedValuesMap.get(languageId);
 			}
 
-			if (value == null) {
-				value = StringPool.BLANK;
-			}
+			fieldValues.put(name, value);
+		}
 
-			fieldValues.put(name, String.valueOf(value));
+		Map<String, String> friendlyUrlPathI18n =
+			objectEntry.getFriendlyUrlPath_i18n();
+
+		if ((friendlyUrlPathI18n != null) &&
+			friendlyUrlPathI18n.containsKey(languageId)) {
+
+			fieldValues.put(
+				"objectEntryFriendlyURL", friendlyUrlPathI18n.get(languageId));
+		}
+		else {
+			fieldValues.put(
+				"objectEntryFriendlyURL", objectEntry.getFriendlyUrlPath());
 		}
 
 		return fieldValues;
+	}
+
+	private String _toAttachmentFileName(Object value) {
+		Object idObject = value;
+
+		if (value instanceof Map) {
+			Map<?, ?> valueMap = (Map<?, ?>)value;
+
+			idObject = valueMap.get("id");
+		}
+
+		long fileEntryId = GetterUtil.getLong(idObject);
+
+		if (fileEntryId == 0) {
+			return String.valueOf(value);
+		}
+
+		DLFileEntry dlFileEntry = _dlFileEntryLocalService.fetchDLFileEntry(
+			fileEntryId);
+
+		if (dlFileEntry == null) {
+			return String.valueOf(value);
+		}
+
+		return dlFileEntry.getFileName();
+	}
+
+	private String _toDisplayValue(
+		Object value, ObjectField objectField, String languageId) {
+
+		String businessType =
+			(objectField == null) ? null : objectField.getBusinessType();
+
+		if (ObjectFieldConstants.BUSINESS_TYPE_BOOLEAN.equals(businessType)) {
+			return String.valueOf(GetterUtil.getBoolean(value));
+		}
+
+		if (value == null) {
+			return StringPool.BLANK;
+		}
+
+		if (ObjectFieldConstants.BUSINESS_TYPE_PICKLIST.equals(businessType)) {
+			return _toPicklistLabel(objectField, languageId, value);
+		}
+
+		if (ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT.equals(
+				businessType)) {
+
+			return _toAttachmentFileName(value);
+		}
+
+		return String.valueOf(value);
+	}
+
+	private String _toPicklistLabel(
+		ObjectField objectField, String languageId, Object value) {
+
+		Object keyObject = value;
+
+		if (value instanceof Map) {
+			Map<?, ?> valueMap = (Map<?, ?>)value;
+
+			keyObject = valueMap.get("key");
+		}
+
+		if (keyObject == null) {
+			return StringPool.BLANK;
+		}
+
+		String key = String.valueOf(keyObject);
+
+		if (key.isEmpty()) {
+			return StringPool.BLANK;
+		}
+
+		ListTypeEntry listTypeEntry =
+			_listTypeEntryLocalService.fetchListTypeEntry(
+				objectField.getListTypeDefinitionId(), key);
+
+		if (listTypeEntry == null) {
+			return key;
+		}
+
+		return listTypeEntry.getName(languageId);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -177,12 +294,21 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 	private DiffHtml _diffHtml;
 
 	@Reference
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+
+	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private ListTypeEntryLocalService _listTypeEntryLocalService;
 
 	@Reference
 	private ObjectEntryService _objectEntryService;
 
 	@Reference
 	private ObjectEntryVersionLocalService _objectEntryVersionLocalService;
+
+	@Reference
+	private ObjectFieldLocalService _objectFieldLocalService;
 
 }

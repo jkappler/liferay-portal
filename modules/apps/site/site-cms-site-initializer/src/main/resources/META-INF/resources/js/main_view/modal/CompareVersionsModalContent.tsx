@@ -34,18 +34,20 @@ type VersionsState =
 	| {items: VersionItem[]; status: 'loaded'};
 
 const BASE_DIFF_STYLES = `
-	.form-group:has(.cms-compare-versions-diff) .ck-editor {
+	[data-field-name]:has(.cms-compare-versions-diff) .ck-editor,
+	[data-field-name]:has(.cms-compare-versions-diff) .form-control:not(.cms-compare-versions-diff) {
 		display: none;
 	}
 	.cms-compare-versions-diff {
-		background-color: #fff;
-		border: 1px solid #e7e7ed;
-		border-radius: 4px;
-		min-height: 200px;
-		padding: 12px 16px;
+		height: auto;
 	}
 	.cms-compare-versions-diff .diff-html-changed {
 		border-bottom: 2px dotted blue;
+	}
+	.cms-compare-versions-diff-changed {
+		border-radius: 4px;
+		display: inline-block;
+		padding: 2px 6px;
 	}
 `;
 
@@ -59,6 +61,9 @@ const DIFF_STYLES_BY_TYPE: Record<DiffType, string> = {
 		.cms-compare-versions-diff .diff-html-added {
 			background-color: #cfc;
 		}
+		.cms-compare-versions-diff-changed {
+			background-color: #cfc;
+		}
 	`,
 	removals: `
 		.cms-compare-versions-diff .diff-html-added {
@@ -67,6 +72,9 @@ const DIFF_STYLES_BY_TYPE: Record<DiffType, string> = {
 		.cms-compare-versions-diff .diff-html-removed {
 			background-color: #fdc6c6;
 			text-decoration: line-through;
+		}
+		.cms-compare-versions-diff-changed {
+			background-color: #fdc6c6;
 		}
 	`,
 };
@@ -103,6 +111,11 @@ function injectContentDiffs(
 	document
 		.querySelectorAll('.cms-compare-versions-diff')
 		.forEach((element) => element.remove());
+	document
+		.querySelectorAll('.cms-compare-versions-diff-changed')
+		.forEach((element) =>
+			element.classList.remove('cms-compare-versions-diff-changed')
+		);
 
 	let style = document.getElementById('cms-compare-versions-diff-styles');
 
@@ -113,17 +126,33 @@ function injectContentDiffs(
 	}
 
 	Object.entries(diffs).forEach(([fieldName, diffHtml]) => {
-		const wrapper = document.querySelector(
-			`[data-field-name="ObjectField_${fieldName}"]`
-		);
+		const wrapper =
+			document.querySelector(
+				`[data-field-name="ObjectField_${fieldName}"]`
+			) ??
+			document.querySelector(
+				`[data-field-name="ObjectEntry_${fieldName}"]`
+			);
 
 		if (!wrapper) {
 			return;
 		}
 
+		const booleanControl =
+			wrapper.querySelector('.toggle-switch') ??
+			wrapper
+				.querySelector('input[type="checkbox"]')
+				?.closest('.custom-control, .form-check, label');
+
+		if (booleanControl) {
+			booleanControl.classList.add('cms-compare-versions-diff-changed');
+
+			return;
+		}
+
 		const container = document.createElement('div');
 
-		container.className = 'cms-compare-versions-diff';
+		container.className = 'form-control cms-compare-versions-diff';
 		container.innerHTML = diffHtml;
 
 		const formGroup = wrapper.querySelector('.form-group') ?? wrapper;
@@ -247,8 +276,8 @@ export default function CompareVersionsModalContent({
 				rightVersion !== null ? (
 					<div className="cms-compare-versions-panes">
 						<CompareVersionPane
-							diffs={diffs}
 							diffType="removals"
+							diffs={diffs}
 							languageId={languageId}
 							objectEntryId={objectEntryId}
 							onLanguageIdChange={setLanguageId}
@@ -258,8 +287,8 @@ export default function CompareVersionsModalContent({
 						/>
 
 						<CompareVersionPane
-							diffs={diffs}
 							diffType="additions"
+							diffs={diffs}
 							languageId={languageId}
 							objectEntryId={objectEntryId}
 							onLanguageIdChange={setLanguageId}
@@ -275,8 +304,8 @@ export default function CompareVersionsModalContent({
 }
 
 function CompareVersionPane({
-	diffs,
 	diffType,
+	diffs,
 	languageId,
 	objectEntryId,
 	onLanguageIdChange,
@@ -284,8 +313,8 @@ function CompareVersionPane({
 	selectedVersion,
 	versions,
 }: {
-	diffs: Diffs | null;
 	diffType: DiffType;
+	diffs: Diffs | null;
 	languageId: string;
 	objectEntryId: number;
 	onLanguageIdChange: (languageId: string) => void;
