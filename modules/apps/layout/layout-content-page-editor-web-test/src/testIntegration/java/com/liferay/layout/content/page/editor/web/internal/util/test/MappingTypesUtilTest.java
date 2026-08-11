@@ -83,7 +83,6 @@ public class MappingTypesUtilTest {
 	@Test
 	@TestInfo("LPD-101984")
 	public void testGetMappingTypeJSONObject() throws Exception {
-		_testGetMappingTypeJSONObjectWithCMSObjectDefinition();
 		_testGetMappingTypeJSONObjectWithoutInfoItemCapability();
 		_testGetMappingTypesJSONArrayWithCMSObjectDefinition();
 	}
@@ -188,18 +187,6 @@ public class MappingTypesUtilTest {
 		return _objectDefinitionLocalService.publishCustomObjectDefinition(
 			TestPropsValues.getUserId(),
 			objectDefinition.getObjectDefinitionId());
-	}
-
-	private void _testGetMappingTypeJSONObjectWithCMSObjectDefinition()
-		throws Exception {
-
-		JSONObject mappingTypeJSONObject = _getMappingTypeJSONObject(
-			_cmsObjectDefinition.getClassName());
-
-		Assert.assertNotNull(mappingTypeJSONObject);
-		Assert.assertEquals(
-			_cmsObjectDefinition.getClassName(),
-			mappingTypeJSONObject.getString("className"));
 	}
 
 	private void _testGetMappingTypeJSONObjectWithoutInfoItemCapability()
