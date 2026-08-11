@@ -72,10 +72,10 @@ public class MappingTypesUtilTest {
 					EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES,
 				TestPropsValues.getCompanyId(), TestPropsValues.getUserId());
 
-		_cmsObjectDefinition = _publishObjectDefinition(
+		ObjectDefinition cmsObjectDefinition = _publishObjectDefinition(
 			_addCMSObjectDefinition(objectFolder.getObjectFolderId()));
 
-		_objectDefinition = _publishObjectDefinition(
+		ObjectDefinition objectDefinition = _publishObjectDefinition(
 			ObjectDefinitionTestUtil.addCustomObjectDefinition(
 				ObjectDefinitionTestUtil.getRandomName()));
 
@@ -86,10 +86,10 @@ public class MappingTypesUtilTest {
 
 		Assert.assertFalse(
 			_hasClassName(
-				_cmsObjectDefinition.getClassName(), mappingTypesJSONArray));
+				cmsObjectDefinition.getClassName(), mappingTypesJSONArray));
 		Assert.assertTrue(
 			_hasClassName(
-				_objectDefinition.getClassName(), mappingTypesJSONArray));
+				objectDefinition.getClassName(), mappingTypesJSONArray));
 	}
 
 	private ObjectDefinition _addCMSObjectDefinition(long objectFolderId)
@@ -194,8 +194,6 @@ public class MappingTypesUtilTest {
 			objectDefinition.getObjectDefinitionId());
 	}
 
-	private ObjectDefinition _cmsObjectDefinition;
-
 	@Inject
 	private CompanyLocalService _companyLocalService;
 
@@ -203,8 +201,6 @@ public class MappingTypesUtilTest {
 
 	@Inject
 	private InfoItemServiceRegistry _infoItemServiceRegistry;
-
-	private ObjectDefinition _objectDefinition;
 
 	@Inject
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;

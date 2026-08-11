@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Locator, Page} from '@playwright/test';
+import {FrameLocator, Locator, Page} from '@playwright/test';
 
 import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
 import {hoverAndExpectToBeVisible} from '../../utils/hoverAndExpectToBeVisible';
@@ -11,6 +11,7 @@ import {hoverAndExpectToBeVisible} from '../../utils/hoverAndExpectToBeVisible';
 export class ElementVariationsPage {
 	readonly audienceInput: Locator;
 	readonly audiencesPriorityModal: Locator;
+	readonly experiencePicker: Locator;
 	readonly hideToggle: Locator;
 	readonly htmlInput: Locator;
 	readonly javaScriptInput: Locator;
@@ -19,6 +20,7 @@ export class ElementVariationsPage {
 	readonly newVariationButton: Locator;
 	readonly page: Page;
 	readonly pageElementPicker: Locator;
+	readonly preview: FrameLocator;
 	readonly saveButton: Locator;
 	readonly sidebar: Locator;
 
@@ -27,6 +29,8 @@ export class ElementVariationsPage {
 		this.audiencesPriorityModal = page.locator(
 			'.element-variations__audiences-priority-modal'
 		);
+		this.sidebar = page.locator('.element-variations__sidebar');
+		this.experiencePicker = this.sidebar.getByLabel('Experience');
 		this.hideToggle = page.getByText('Hide Page Element');
 		this.htmlInput = page.getByLabel('HTML', {exact: true});
 		this.javaScriptInput = page.getByLabel('JavaScript', {exact: true});
@@ -43,8 +47,8 @@ export class ElementVariationsPage {
 			);
 		this.page = page;
 		this.pageElementPicker = page.getByLabel('Page Element');
+		this.preview = page.frameLocator('iframe[title="Element Variations"]');
 		this.saveButton = page.getByRole('button', {exact: true, name: 'Save'});
-		this.sidebar = page.locator('.element-variations__sidebar');
 	}
 
 	async createElementVariation({
