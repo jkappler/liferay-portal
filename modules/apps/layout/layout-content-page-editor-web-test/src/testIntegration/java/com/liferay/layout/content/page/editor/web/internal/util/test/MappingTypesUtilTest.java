@@ -43,7 +43,6 @@ import jakarta.portlet.Portlet;
 import java.util.Collections;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -62,8 +61,9 @@ public class MappingTypesUtilTest {
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
 
-	@Before
-	public void setUp() throws Exception {
+	@Test
+	@TestInfo("LPD-101984")
+	public void testGetMappingTypeJSONObject() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
 		ObjectFolder objectFolder =
@@ -78,11 +78,7 @@ public class MappingTypesUtilTest {
 		_objectDefinition = _publishObjectDefinition(
 			ObjectDefinitionTestUtil.addCustomObjectDefinition(
 				ObjectDefinitionTestUtil.getRandomName()));
-	}
 
-	@Test
-	@TestInfo("LPD-101984")
-	public void testGetMappingTypeJSONObject() throws Exception {
 		_testGetMappingTypeJSONObjectWithoutInfoItemCapability();
 		_testGetMappingTypesJSONArrayWithCMSObjectDefinition();
 	}

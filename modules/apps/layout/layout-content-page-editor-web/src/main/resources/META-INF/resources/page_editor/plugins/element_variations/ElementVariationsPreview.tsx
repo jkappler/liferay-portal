@@ -20,6 +20,25 @@ import getElementVariationScript from './getElementVariationScript';
 
 const HIGHLIGHT_STYLE_ELEMENT_ID = 'lfr-element-variation-highlight';
 
+function getPreviewURL(
+	previewURL: string,
+	languageId: string,
+	segmentsExperienceId?: number
+): string {
+	const url = new URL(previewURL);
+
+	url.searchParams.set('languageId', languageId);
+
+	if (segmentsExperienceId !== undefined) {
+		url.searchParams.set(
+			'segmentsExperienceId',
+			String(segmentsExperienceId)
+		);
+	}
+
+	return url.toString();
+}
+
 export interface ElementVariationsPreviewRef {
 	reload: () => void;
 }
@@ -32,6 +51,7 @@ interface Props {
 	itemNames: Record<string, string>;
 	languageId: string;
 	previewURL: string;
+	segmentsExperienceId?: number;
 }
 
 const ElementVariationsPreview = forwardRef<ElementVariationsPreviewRef, Props>(
@@ -44,6 +64,7 @@ const ElementVariationsPreview = forwardRef<ElementVariationsPreviewRef, Props>(
 			itemNames,
 			languageId,
 			previewURL: initialPreviewURL,
+			segmentsExperienceId,
 		},
 		ref
 	) {
@@ -55,8 +76,8 @@ const ElementVariationsPreview = forwardRef<ElementVariationsPreviewRef, Props>(
 		} | null>(null);
 
 		const [previewReady, setPreviewReady] = useState(false);
-		const [previewURL, setPreviewURL] = useState(
-			() => `${initialPreviewURL}&languageId=${languageId}`
+		const [previewURL, setPreviewURL] = useState(() =>
+			getPreviewURL(initialPreviewURL, languageId, segmentsExperienceId)
 		);
 
 		useImperativeHandle(
