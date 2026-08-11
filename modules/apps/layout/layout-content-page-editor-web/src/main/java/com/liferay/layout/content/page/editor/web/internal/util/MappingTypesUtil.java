@@ -63,8 +63,8 @@ public class MappingTypesUtil {
 
 			if (!scopeGroup.isCMS() &&
 				_isCMS(
-					themeDisplay.getCompanyId(),
-					infoItemClassDetails.getClassName())) {
+					infoItemClassDetails.getClassName(),
+					themeDisplay.getCompanyId())) {
 
 				continue;
 			}
@@ -194,7 +194,7 @@ public class MappingTypesUtil {
 		);
 	}
 
-	private static boolean _isCMS(long companyId, String className) {
+	private static boolean _isCMS(String className, long companyId) {
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionLocalServiceUtil.fetchObjectDefinitionByClassName(
 				companyId, className);
