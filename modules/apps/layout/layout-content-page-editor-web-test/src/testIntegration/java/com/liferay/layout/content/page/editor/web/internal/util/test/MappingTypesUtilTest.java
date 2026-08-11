@@ -82,40 +82,10 @@ public class MappingTypesUtilTest {
 
 	@Test
 	@TestInfo("LPD-101984")
-	public void testGetMappingTypeJSONObjectWithCMSObjectDefinition()
-		throws Exception {
-
-		JSONObject mappingTypeJSONObject = _getMappingTypeJSONObject(
-			_cmsObjectDefinition.getClassName());
-
-		Assert.assertNotNull(mappingTypeJSONObject);
-		Assert.assertEquals(
-			_cmsObjectDefinition.getClassName(),
-			mappingTypeJSONObject.getString("className"));
-	}
-
-	@Test
-	@TestInfo("LPD-101984")
-	public void testGetMappingTypeJSONObjectWithoutInfoItemCapability()
-		throws Exception {
-
-		Assert.assertNull(
-			_getMappingTypeJSONObject(RandomTestUtil.randomString()));
-	}
-
-	@Test
-	@TestInfo("LPD-101984")
-	public void testGetMappingTypesJSONArrayWithCMSObjectDefinition()
-		throws Exception {
-
-		JSONArray mappingTypesJSONArray = _getMappingTypesJSONArray();
-
-		Assert.assertFalse(
-			_hasClassName(
-				_cmsObjectDefinition.getClassName(), mappingTypesJSONArray));
-		Assert.assertTrue(
-			_hasClassName(
-				_objectDefinition.getClassName(), mappingTypesJSONArray));
+	public void testGetMappingTypeJSONObject() throws Exception {
+		_testGetMappingTypeJSONObjectWithCMSObjectDefinition();
+		_testGetMappingTypeJSONObjectWithoutInfoItemCapability();
+		_testGetMappingTypesJSONArrayWithCMSObjectDefinition();
 	}
 
 	private ObjectDefinition _addCMSObjectDefinition(long objectFolderId)
@@ -218,6 +188,38 @@ public class MappingTypesUtilTest {
 		return _objectDefinitionLocalService.publishCustomObjectDefinition(
 			TestPropsValues.getUserId(),
 			objectDefinition.getObjectDefinitionId());
+	}
+
+	private void _testGetMappingTypeJSONObjectWithCMSObjectDefinition()
+		throws Exception {
+
+		JSONObject mappingTypeJSONObject = _getMappingTypeJSONObject(
+			_cmsObjectDefinition.getClassName());
+
+		Assert.assertNotNull(mappingTypeJSONObject);
+		Assert.assertEquals(
+			_cmsObjectDefinition.getClassName(),
+			mappingTypeJSONObject.getString("className"));
+	}
+
+	private void _testGetMappingTypeJSONObjectWithoutInfoItemCapability()
+		throws Exception {
+
+		Assert.assertNull(
+			_getMappingTypeJSONObject(RandomTestUtil.randomString()));
+	}
+
+	private void _testGetMappingTypesJSONArrayWithCMSObjectDefinition()
+		throws Exception {
+
+		JSONArray mappingTypesJSONArray = _getMappingTypesJSONArray();
+
+		Assert.assertFalse(
+			_hasClassName(
+				_cmsObjectDefinition.getClassName(), mappingTypesJSONArray));
+		Assert.assertTrue(
+			_hasClassName(
+				_objectDefinition.getClassName(), mappingTypesJSONArray));
 	}
 
 	private ObjectDefinition _cmsObjectDefinition;
