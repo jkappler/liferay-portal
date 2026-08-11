@@ -220,8 +220,14 @@ const ElementVariationsPreview = forwardRef<ElementVariationsPreviewRef, Props>(
 		useEffect(() => {
 			setPreviewReady(false);
 
-			setPreviewURL(`${initialPreviewURL}&languageId=${languageId}`);
-		}, [initialPreviewURL, languageId]);
+			setPreviewURL(
+				getPreviewURL(
+					initialPreviewURL,
+					languageId,
+					segmentsExperienceId
+				)
+			);
+		}, [initialPreviewURL, languageId, segmentsExperienceId]);
 
 		return (
 			<div className="d-flex flex-column flex-grow-1 position-relative">

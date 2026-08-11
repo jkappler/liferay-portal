@@ -79,8 +79,17 @@ public class MappingTypesUtilTest {
 			ObjectDefinitionTestUtil.addCustomObjectDefinition(
 				ObjectDefinitionTestUtil.getRandomName()));
 
-		_testGetMappingTypeJSONObjectWithoutInfoItemCapability();
-		_testGetMappingTypesJSONArrayWithCMSObjectDefinition();
+		Assert.assertNull(
+			_getMappingTypeJSONObject(RandomTestUtil.randomString()));
+
+		JSONArray mappingTypesJSONArray = _getMappingTypesJSONArray();
+
+		Assert.assertFalse(
+			_hasClassName(
+				_cmsObjectDefinition.getClassName(), mappingTypesJSONArray));
+		Assert.assertTrue(
+			_hasClassName(
+				_objectDefinition.getClassName(), mappingTypesJSONArray));
 	}
 
 	private ObjectDefinition _addCMSObjectDefinition(long objectFolderId)
@@ -183,26 +192,6 @@ public class MappingTypesUtilTest {
 		return _objectDefinitionLocalService.publishCustomObjectDefinition(
 			TestPropsValues.getUserId(),
 			objectDefinition.getObjectDefinitionId());
-	}
-
-	private void _testGetMappingTypeJSONObjectWithoutInfoItemCapability()
-		throws Exception {
-
-		Assert.assertNull(
-			_getMappingTypeJSONObject(RandomTestUtil.randomString()));
-	}
-
-	private void _testGetMappingTypesJSONArrayWithCMSObjectDefinition()
-		throws Exception {
-
-		JSONArray mappingTypesJSONArray = _getMappingTypesJSONArray();
-
-		Assert.assertFalse(
-			_hasClassName(
-				_cmsObjectDefinition.getClassName(), mappingTypesJSONArray));
-		Assert.assertTrue(
-			_hasClassName(
-				_objectDefinition.getClassName(), mappingTypesJSONArray));
 	}
 
 	private ObjectDefinition _cmsObjectDefinition;
