@@ -5,6 +5,7 @@
 
 import ClayAlert from '@clayui/alert';
 import {Option, Picker} from '@clayui/core';
+import ClayEmptyState from '@clayui/empty-state';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import ClayModal from '@clayui/modal';
 import classNames from 'classnames';
@@ -14,6 +15,7 @@ import React, {useEffect, useState} from 'react';
 import '../../../css/components/CompareVersionsModal.scss';
 import StatusLabel from '../../common/components/StatusLabel';
 import {IAssetObjectEntry} from '../../common/types/AssetType';
+import {getImage} from '../../common/utils/getImage';
 import VersionService from '../info_panel/services/VersionService';
 import {VIEW_CONTENT_VERSION_URL} from '../info_panel/util/constants';
 
@@ -132,6 +134,38 @@ function CompareVersionPane({
 		'loading'
 	);
 
+	if (selectedVersion === null) {
+		const emptyStateImage = getImage('compare_versions_empty_state.svg');
+
+		return (
+			<div
+				className={classNames(
+					'cms-compare-versions-pane d-flex flex-column',
+					className
+				)}
+			>
+				<ClayEmptyState
+					className="justify-content-center"
+					description={Liferay.Language.get(
+						'choose-a-target-version-to-start-the-comparison'
+					)}
+					imgSrc={emptyStateImage}
+					imgSrcReducedMotion={emptyStateImage}
+					small
+					title={Liferay.Language.get(
+						'select-a-version-for-comparison'
+					)}
+				>
+					<VersionPicker
+						onVersionChange={onVersionChange}
+						selectedVersion={selectedVersion}
+						versions={versions}
+					/>
+				</ClayEmptyState>
+			</div>
+		);
+	}
+
 	const selectedItem = getVersionItem(versions, selectedVersion);
 
 	return (
@@ -142,39 +176,14 @@ function CompareVersionPane({
 			)}
 		>
 			<div className="align-items-center c-gap-3 d-flex p-3">
-				<Picker
-					aria-label={
-						selectedVersion === null
-							? Liferay.Language.get(
-									'select-a-version-for-comparison'
-								)
-							: sub(
-									Liferay.Language.get(
-										'select-a-version.-current-version-x'
-									),
-									selectedVersion
-								)
-					}
-					as={PickerTrigger}
-					items={versions.map((item) => ({
-						label: getVersionLabel(getVersionNumber(item)),
-						value: String(getVersionNumber(item)),
-					}))}
-					onSelectionChange={(key) => {
+				<VersionPicker
+					onVersionChange={(version) => {
 						setIframeStatus('loading');
-						onVersionChange(Number(key));
+						onVersionChange(version);
 					}}
-					placeholder={`--${Liferay.Language.get('not-selected')}--`}
-					selectedKey={
-						selectedVersion === null
-							? undefined
-							: String(selectedVersion)
-					}
-				>
-					{(item: {label: string; value: string}) => (
-						<Option key={item.value}>{item.label}</Option>
-					)}
-				</Picker>
+					selectedVersion={selectedVersion}
+					versions={versions}
+				/>
 
 				{selectedItem ? (
 					<>
@@ -195,18 +204,16 @@ function CompareVersionPane({
 			</div>
 
 			<div className="cms-compare-versions-pane-content d-flex flex-column flex-grow-1 mx-2">
-				{selectedVersion !== null && iframeStatus === 'loading' ? (
+				{iframeStatus === 'loading' ? (
 					<ClayLoadingIndicator className="my-5" />
 				) : null}
 
-				{selectedVersion !== null ? (
-					<iframe
-						className="border-0 flex-grow-1 w-100"
-						onLoad={() => setIframeStatus('loaded')}
-						src={`${VIEW_CONTENT_VERSION_URL}/compare_content_item?objectEntryId=${objectEntryId}&p_p_state=pop_up&version=${selectedVersion}`}
-						title={getVersionLabel(selectedVersion)}
-					/>
-				) : null}
+				<iframe
+					className="border-0 flex-grow-1 w-100"
+					onLoad={() => setIframeStatus('loaded')}
+					src={`${VIEW_CONTENT_VERSION_URL}/compare_content_item?objectEntryId=${objectEntryId}&p_p_state=pop_up&version=${selectedVersion}`}
+					title={getVersionLabel(selectedVersion)}
+				/>
 			</div>
 		</div>
 	);
@@ -224,3 +231,44 @@ const PickerTrigger = React.forwardRef<HTMLButtonElement, any>(
 		</button>
 	)
 );
+
+function VersionPicker({
+	onVersionChange,
+	selectedVersion,
+	versions,
+}: {
+	onVersionChange: (version: number) => void;
+	selectedVersion: number | null;
+	versions: VersionItem[];
+}) {
+	const items = versions.map((item) => ({
+		label: getVersionLabel(getVersionNumber(item)),
+		value: String(getVersionNumber(item)),
+	}));
+
+	return (
+		<Picker
+			aria-label={
+				selectedVersion === null
+					? Liferay.Language.get('select-a-version-for-comparison')
+					: sub(
+							Liferay.Language.get(
+								'select-a-version.-current-version-x'
+							),
+							selectedVersion
+						)
+			}
+			as={PickerTrigger}
+			items={items}
+			onSelectionChange={(key) => onVersionChange(Number(key))}
+			placeholder={`--${Liferay.Language.get('not-selected')}--`}
+			selectedKey={
+				selectedVersion === null ? undefined : String(selectedVersion)
+			}
+		>
+			{(item: {label: string; value: string}) => (
+				<Option key={item.value}>{item.label}</Option>
+			)}
+		</Picker>
+	);
+}
