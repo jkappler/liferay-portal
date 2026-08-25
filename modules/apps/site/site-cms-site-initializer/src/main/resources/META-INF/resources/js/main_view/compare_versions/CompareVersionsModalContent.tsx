@@ -4,13 +4,15 @@
  */
 
 import ClayAlert from '@clayui/alert';
-import {Option, Picker} from '@clayui/core';
+import ClayButton from '@clayui/button';
+import {LanguagePicker, Option, Picker} from '@clayui/core';
 import ClayEmptyState from '@clayui/empty-state';
+import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import ClayModal from '@clayui/modal';
 import classNames from 'classnames';
 import {dateUtils, sub} from 'frontend-js-web';
-import React, {useEffect, useState} from 'react';
+import React, {Key, useEffect, useMemo, useRef, useState} from 'react';
 
 import '../../../css/components/CompareVersionsModal.scss';
 import StatusLabel from '../../common/components/StatusLabel';
@@ -21,6 +23,9 @@ import {VIEW_CONTENT_VERSION_URL} from '../info_panel/util/constants';
 
 interface CompareVersionsModalContentProps {
 	apiURL: string;
+	availableLanguageIds: string[];
+	closeModal: () => void;
+	defaultLanguageId: string;
 	initialVersion: number;
 	objectEntryId: number;
 }
@@ -34,6 +39,15 @@ type VersionsState =
 const getVersionLabel = (version: number) =>
 	sub(Liferay.Language.get('version-x'), [version]);
 
+function getIframeLiferay(iframe: HTMLIFrameElement | null) {
+	const contentWindow = iframe?.contentWindow as
+		| (Window & {Liferay: typeof Liferay})
+		| null
+		| undefined;
+
+	return contentWindow?.Liferay;
+}
+
 function getVersionItem(items: VersionItem[], version: number | null) {
 	return items.find((item) => getVersionNumber(item) === version);
 }
@@ -44,14 +58,38 @@ function getVersionNumber(item: VersionItem) {
 
 export default function CompareVersionsModalContent({
 	apiURL,
+	availableLanguageIds,
+	closeModal,
+	defaultLanguageId,
 	initialVersion,
 	objectEntryId,
 }: CompareVersionsModalContentProps) {
+	const [languageId, setLanguageId] = useState<string>(() => {
+		const currentLanguageId = Liferay.ThemeDisplay.getLanguageId();
+
+		return availableLanguageIds.includes(currentLanguageId)
+			? currentLanguageId
+			: defaultLanguageId;
+	});
 	const [leftVersion, setLeftVersion] = useState<number | null>(null);
 	const [rightVersion, setRightVersion] = useState<number | null>(null);
 	const [versionsState, setVersionsState] = useState<VersionsState>({
 		status: 'loading',
 	});
+
+	const locales = useMemo(
+		() =>
+			availableLanguageIds.map((availableLanguageId) => {
+				const label = availableLanguageId.replace('_', '-');
+
+				return {
+					id: availableLanguageId as Liferay.Language.Locale,
+					label,
+					symbol: label.toLowerCase(),
+				};
+			}),
+		[availableLanguageIds]
+	);
 
 	useEffect(() => {
 		const getVersions = async () => {
@@ -77,10 +115,31 @@ export default function CompareVersionsModalContent({
 
 	return (
 		<>
-			<ClayModal.Header
-				closeButtonAriaLabel={Liferay.Language.get('close')}
-			>
-				{Liferay.Language.get('compare-versions')}
+			<ClayModal.Header withTitle={false}>
+				<ClayModal.TitleSection>
+					<ClayModal.Title>
+						{Liferay.Language.get('compare-versions')}
+					</ClayModal.Title>
+				</ClayModal.TitleSection>
+
+				<LanguagePicker
+					classNamesTrigger="ml-auto mr-3"
+					locales={locales}
+					onSelectedLocaleChange={(id: Key) =>
+						setLanguageId(id as string)
+					}
+					selectedLocaleId={languageId}
+					small
+				/>
+
+				<ClayButton
+					aria-label={Liferay.Language.get('close')}
+					className="close"
+					displayType="unstyled"
+					onClick={closeModal}
+				>
+					<ClayIcon symbol="times" />
+				</ClayButton>
 			</ClayModal.Header>
 
 			<ClayModal.Body className="d-flex flex-column p-0">
@@ -97,6 +156,7 @@ export default function CompareVersionsModalContent({
 				{versionsState.status === 'loaded' && leftVersion !== null ? (
 					<div className="cms-compare-versions-panes d-flex flex-grow-1">
 						<CompareVersionPane
+							languageId={languageId}
 							objectEntryId={objectEntryId}
 							onVersionChange={setLeftVersion}
 							selectedVersion={leftVersion}
@@ -105,6 +165,7 @@ export default function CompareVersionsModalContent({
 
 						<CompareVersionPane
 							className="border-left"
+							languageId={languageId}
 							objectEntryId={objectEntryId}
 							onVersionChange={setRightVersion}
 							selectedVersion={rightVersion}
@@ -119,20 +180,34 @@ export default function CompareVersionsModalContent({
 
 function CompareVersionPane({
 	className,
+	languageId,
 	objectEntryId,
 	onVersionChange,
 	selectedVersion,
 	versions,
 }: {
 	className?: string;
+	languageId: string;
 	objectEntryId: number;
 	onVersionChange: (version: number) => void;
 	selectedVersion: number | null;
 	versions: VersionItem[];
 }) {
+	const iframeRef = useRef<HTMLIFrameElement>(null);
+
 	const [iframeStatus, setIframeStatus] = useState<'loaded' | 'loading'>(
 		'loading'
 	);
+
+	useEffect(() => {
+		if (iframeStatus !== 'loaded') {
+			return;
+		}
+
+		const iframeLiferay = getIframeLiferay(iframeRef.current);
+
+		iframeLiferay?.fire('localizationSelect:localeChanged', {languageId});
+	}, [iframeStatus, languageId]);
 
 	if (selectedVersion === null) {
 		const emptyStateImage = getImage('compare_versions_empty_state.svg');
@@ -211,6 +286,7 @@ function CompareVersionPane({
 				<iframe
 					className="border-0 flex-grow-1 w-100"
 					onLoad={() => setIframeStatus('loaded')}
+					ref={iframeRef}
 					src={`${VIEW_CONTENT_VERSION_URL}/compare_content_item?objectEntryId=${objectEntryId}&p_p_state=pop_up&version=${selectedVersion}`}
 					title={getVersionLabel(selectedVersion)}
 				/>
