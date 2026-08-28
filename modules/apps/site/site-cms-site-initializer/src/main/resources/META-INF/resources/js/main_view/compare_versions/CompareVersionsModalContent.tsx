@@ -20,6 +20,12 @@ import {IAssetObjectEntry} from '../../common/types/AssetType';
 import {getImage} from '../../common/utils/getImage';
 import VersionService from '../info_panel/services/VersionService';
 import {VIEW_CONTENT_VERSION_URL} from '../info_panel/util/constants';
+import {
+	DiffType,
+	Diffs,
+	injectContentDiffs,
+	useVersionDiffs,
+} from './useVersionDiffs';
 
 interface CompareVersionsModalContentProps {
 	apiURL: string;
@@ -113,6 +119,13 @@ export default function CompareVersionsModalContent({
 		getVersions();
 	}, [apiURL, initialVersion]);
 
+	const diffs = useVersionDiffs({
+		languageId,
+		leftVersion,
+		objectEntryId,
+		rightVersion,
+	});
+
 	return (
 		<>
 			<ClayModal.Header withTitle={false}>
@@ -158,6 +171,8 @@ export default function CompareVersionsModalContent({
 				{versionsState.status === 'loaded' && leftVersion !== null ? (
 					<div className="cms-compare-versions-panes d-flex flex-column flex-grow-1 flex-md-row">
 						<CompareVersionPane
+							diffType="removals"
+							diffs={diffs && diffs.source}
 							excludedVersion={rightVersion}
 							languageId={languageId}
 							objectEntryId={objectEntryId}
@@ -167,6 +182,8 @@ export default function CompareVersionsModalContent({
 						/>
 
 						<CompareVersionPane
+							diffType="additions"
+							diffs={diffs && diffs.target}
 							excludedVersion={leftVersion}
 							languageId={languageId}
 							objectEntryId={objectEntryId}
@@ -225,6 +242,8 @@ function DiffKeyPopover() {
 }
 
 function CompareVersionPane({
+	diffType,
+	diffs,
 	excludedVersion,
 	languageId,
 	objectEntryId,
@@ -232,6 +251,8 @@ function CompareVersionPane({
 	selectedVersion,
 	versions,
 }: {
+	diffType: DiffType;
+	diffs: Diffs | null;
 	excludedVersion: number | null;
 	languageId: string;
 	objectEntryId: number;
@@ -244,6 +265,12 @@ function CompareVersionPane({
 	const [iframeStatus, setIframeStatus] = useState<'loaded' | 'loading'>(
 		'loading'
 	);
+
+	useEffect(() => {
+		if (iframeStatus === 'loaded' && iframeRef.current) {
+			injectContentDiffs(iframeRef.current, diffs, diffType);
+		}
+	}, [diffs, diffType, iframeStatus]);
 
 	useEffect(() => {
 		if (iframeStatus !== 'loaded') {
