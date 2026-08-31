@@ -9,6 +9,7 @@ import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.depot.service.DepotEntryService;
 import com.liferay.headless.cms.dto.v1_0.AssetStatistics;
 import com.liferay.headless.cms.internal.links.BrokenLinkAssetSearcher;
+import com.liferay.headless.cms.internal.links.SimilarLinkSearcher;
 import com.liferay.headless.cms.internal.util.CMSGroupUtil;
 import com.liferay.headless.cms.resource.v1_0.AssetStatisticsResource;
 import com.liferay.object.constants.ObjectFolderConstants;
@@ -25,11 +26,14 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.search.aggregation.Aggregations;
+import com.liferay.portal.search.aggregation.bucket.Bucket;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.site.cms.site.initializer.constants.CMSWorkflowConstants;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -131,6 +135,8 @@ public class AssetStatisticsResourceImpl
 						selectedSpaceGroupIds, objectDefinitionIds,
 						ObjectEntryTable.INSTANCE.status.eq(
 							WorkflowConstants.STATUS_SCHEDULED)));
+				setSimilarLinksCount(
+					() -> _getSimilarLinksCount(selectedSpaceGroupIds));
 				setTotalCount(
 					() -> _getCount(
 						selectedSpaceGroupIds, objectDefinitionIds,
@@ -209,6 +215,31 @@ public class AssetStatisticsResourceImpl
 		}
 	}
 
+	private long _getSimilarLinksCount(Long[] groupIds) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-82226")) {
+
+			return 0;
+		}
+
+		try {
+			SimilarLinkSearcher similarLinkSearcher = new SimilarLinkSearcher(
+				_aggregations, _searcher, _searchRequestBuilderFactory);
+
+			List<Bucket> buckets = similarLinkSearcher.getBuckets(
+				contextCompany.getCompanyId(), groupIds);
+
+			return buckets.size();
+		}
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("Unable to get the similar links count", exception);
+			}
+
+			return 0;
+		}
+	}
+
 	private AssetStatistics _toAssetStatistics() {
 		return new AssetStatistics() {
 			{
@@ -220,6 +251,7 @@ public class AssetStatisticsResourceImpl
 				setPendingCount(() -> 0L);
 				setReviewDateOverdueCount(() -> 0L);
 				setScheduledCount(() -> 0L);
+				setSimilarLinksCount(() -> 0L);
 				setTotalCount(() -> 0L);
 				setUpcomingReviewCount(() -> 0L);
 			}
@@ -232,6 +264,9 @@ public class AssetStatisticsResourceImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		AssetStatisticsResourceImpl.class);
+
+	@Reference
+	private Aggregations _aggregations;
 
 	@Reference
 	private DepotEntryLocalService _depotEntryLocalService;
