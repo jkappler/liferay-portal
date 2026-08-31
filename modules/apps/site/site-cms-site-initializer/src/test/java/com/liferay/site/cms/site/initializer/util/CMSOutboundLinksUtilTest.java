@@ -24,6 +24,20 @@ public class CMSOutboundLinksUtilTest {
 		LiferayUnitTestRule.INSTANCE;
 
 	@Test
+	public void testGetObjectEntryExternalReferenceCode() {
+		String externalReferenceCode = RandomTestUtil.randomString();
+
+		Assert.assertEquals(
+			externalReferenceCode,
+			CMSOutboundLinksUtil.getObjectEntryExternalReferenceCode(
+				"objectEntryERC_" + externalReferenceCode));
+
+		Assert.assertNull(
+			CMSOutboundLinksUtil.getObjectEntryExternalReferenceCode(
+				"objectEntryId_" + RandomTestUtil.randomLong()));
+	}
+
+	@Test
 	public void testGetObjectEntryExternalReferenceCodeToken() {
 		String externalReferenceCode = RandomTestUtil.randomString();
 
@@ -31,6 +45,21 @@ public class CMSOutboundLinksUtilTest {
 			"objectEntryERC_" + externalReferenceCode,
 			CMSOutboundLinksUtil.getObjectEntryExternalReferenceCodeToken(
 				externalReferenceCode));
+	}
+
+	@Test
+	public void testGetObjectEntryId() {
+		long objectEntryId = RandomTestUtil.randomLong();
+
+		Assert.assertEquals(
+			objectEntryId,
+			CMSOutboundLinksUtil.getObjectEntryId(
+				"objectEntryId_" + objectEntryId));
+
+		Assert.assertEquals(
+			0,
+			CMSOutboundLinksUtil.getObjectEntryId(
+				"objectEntryERC_" + RandomTestUtil.randomString()));
 	}
 
 	@Test
