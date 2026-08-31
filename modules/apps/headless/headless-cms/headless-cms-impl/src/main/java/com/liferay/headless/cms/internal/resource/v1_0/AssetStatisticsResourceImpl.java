@@ -224,7 +224,8 @@ public class AssetStatisticsResourceImpl
 
 		try {
 			SimilarLinkSearcher similarLinkSearcher = new SimilarLinkSearcher(
-				_aggregations, _searcher, _searchRequestBuilderFactory);
+				_aggregations, _objectEntryLocalService, _searcher,
+				_searchRequestBuilderFactory);
 
 			List<Bucket> buckets = similarLinkSearcher.getBuckets(
 				contextCompany.getCompanyId(), groupIds);
