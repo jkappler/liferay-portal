@@ -232,6 +232,7 @@ public class AssetStatisticsResourceTest
 
 		_testGetAssetStatisticsBrokenLinksCount();
 		_testGetAssetStatisticsByAssetLibrary();
+		_testGetAssetStatisticsSimilarLinksCount();
 		_testGetAssetStatisticsWithFreeTier();
 	}
 
@@ -363,6 +364,22 @@ public class AssetStatisticsResourceTest
 		}
 	}
 
+	private void _assertSimilarLinksCount(
+			Long assetLibraryId, long expectedSimilarLinksCount)
+		throws Exception {
+
+		for (AssetStatisticsResource assetStatisticsResource :
+				_assetStatisticsResources) {
+
+			AssetStatistics assetStatistics =
+				assetStatisticsResource.getAssetStatistics(assetLibraryId);
+
+			Assert.assertEquals(
+				expectedSimilarLinksCount,
+				GetterUtil.getLong(assetStatistics.getSimilarLinksCount()));
+		}
+	}
+
 	private AssetStatisticsResource _buildAssetStatisticsResource(User user) {
 		return AssetStatisticsResource.builder(
 		).authentication(
@@ -490,6 +507,58 @@ public class AssetStatisticsResourceTest
 
 		_depotEntryLocalService.deleteDepotEntry(depotEntry1.getDepotEntryId());
 		_depotEntryLocalService.deleteDepotEntry(depotEntry2.getDepotEntryId());
+	}
+
+	private void _testGetAssetStatisticsSimilarLinksCount() throws Exception {
+		DepotEntry depotEntry = _addSpaceDepotEntry(
+			ServiceContextTestUtil.getServiceContext());
+
+		try {
+			ObjectDefinition objectDefinition =
+				_getBasicWebContentObjectDefinition();
+
+			ObjectEntry targetObjectEntry = _addObjectEntry(
+				depotEntry, objectDefinition);
+
+			for (int i = 0; i < 6; i++) {
+				_addObjectEntry(depotEntry, objectDefinition);
+			}
+
+			_assertSimilarLinksCount(depotEntry.getGroupId(), 0);
+
+			String imageHTML = CMSOutboundLinkTestUtil.getImageHTML(
+				targetObjectEntry.getExternalReferenceCode());
+
+			_addObjectEntry(imageHTML, depotEntry, objectDefinition);
+
+			_assertSimilarLinksCount(depotEntry.getGroupId(), 0);
+
+			_addObjectEntry(imageHTML, depotEntry, objectDefinition);
+
+			_assertSimilarLinksCount(depotEntry.getGroupId(), 1);
+
+			_addObjectEntry(imageHTML, depotEntry, objectDefinition);
+
+			_assertSimilarLinksCount(depotEntry.getGroupId(), 1);
+
+			ObjectEntry otherTargetObjectEntry = _addObjectEntry(
+				depotEntry, objectDefinition);
+
+			String otherImageHTML = CMSOutboundLinkTestUtil.getImageHTML(
+				otherTargetObjectEntry.getExternalReferenceCode());
+
+			_addObjectEntry(otherImageHTML, depotEntry, objectDefinition);
+
+			_assertSimilarLinksCount(depotEntry.getGroupId(), 1);
+
+			_addObjectEntry(otherImageHTML, depotEntry, objectDefinition);
+
+			_assertSimilarLinksCount(depotEntry.getGroupId(), 2);
+		}
+		finally {
+			_depotEntryLocalService.deleteDepotEntry(
+				depotEntry.getDepotEntryId());
+		}
 	}
 
 	private void _testGetAssetStatisticsWithFreeTier() throws Exception {
