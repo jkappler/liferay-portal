@@ -15,6 +15,7 @@ import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.bag.ObjectFieldBag;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -94,9 +95,7 @@ public class CMSContentOutboundLinksModelDocumentContributor
 							GetterUtil.getLong(value), objectEntry);
 
 						if (classPK > 0) {
-							outboundLinks.add(
-								CMSOutboundLinksUtil.getObjectEntryIdToken(
-									classPK));
+							_addOutboundLink(classPK, outboundLinks);
 						}
 					}
 				}
@@ -108,9 +107,7 @@ public class CMSContentOutboundLinksModelDocumentContributor
 						indexedValues.get(objectField.getName()));
 
 					if (objectEntryId != 0) {
-						outboundLinks.add(
-							CMSOutboundLinksUtil.getObjectEntryIdToken(
-								objectEntryId));
+						_addOutboundLink(objectEntryId, outboundLinks);
 					}
 				}
 				else if (Objects.equals(
@@ -147,6 +144,24 @@ public class CMSContentOutboundLinksModelDocumentContributor
 					exception);
 			}
 		}
+	}
+
+	private void _addOutboundLink(
+		long objectEntryId, Set<String> outboundLinks) {
+
+		ObjectEntry objectEntry = _objectEntryLocalService.fetchObjectEntry(
+			objectEntryId);
+
+		if (objectEntry == null) {
+			outboundLinks.add(
+				CMSOutboundLinksUtil.getObjectEntryIdToken(objectEntryId));
+
+			return;
+		}
+
+		outboundLinks.add(
+			CMSOutboundLinksUtil.getObjectEntryExternalReferenceCodeToken(
+				objectEntry.getExternalReferenceCode()));
 	}
 
 	private long _getClassPK(long fileEntryId, ObjectEntry objectEntry) {
@@ -233,5 +248,8 @@ public class CMSContentOutboundLinksModelDocumentContributor
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Reference
+	private ObjectEntryLocalService _objectEntryLocalService;
 
 }
