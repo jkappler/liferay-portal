@@ -49,6 +49,10 @@ components:
                     format: int64
                     readOnly: true
                     type: integer
+                similarLinksCount:
+                    format: int64
+                    readOnly: true
+                    type: integer
                 totalCount:
                     format: int64
                     readOnly: true
@@ -97,6 +101,29 @@ components:
         ResetAssetPermissionAction:
             allOf:
                 -   $ref: "#/components/schemas/AssetPermissionAction"
+        SimilarLink:
+            properties:
+                actions:
+                    additionalProperties:
+                        additionalProperties:
+                            type: string
+                        type: object
+                    readOnly: true
+                    type: object
+                href:
+                    readOnly: true
+                    type: string
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                referringAssetsCount:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                title:
+                    readOnly: true
+                    type: string
 info:
     license:
         name: Apache 2.0
@@ -226,3 +253,34 @@ paths:
                                     $ref: "#/components/schemas/BrokenLinkAsset"
                                 type: array
             tags: ["BrokenLinkAsset"]
+    "/similar-links":
+        get:
+            operationId: getSimilarLinksPage
+            parameters:
+                -   in: query
+                    name: assetLibraryId
+                    schema:
+                        format: int64
+                        type: integer
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/SimilarLink"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/SimilarLink"
+                                type: array
+            tags: ["SimilarLink"]
