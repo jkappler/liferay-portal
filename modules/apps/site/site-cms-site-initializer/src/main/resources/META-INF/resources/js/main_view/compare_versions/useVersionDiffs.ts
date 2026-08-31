@@ -105,9 +105,13 @@ function applyFieldDiffs(diffs: Diffs, diffType: DiffType, document: Document) {
 			return;
 		}
 
+		const control = field.querySelector('.form-control');
+
 		const container = document.createElement('div');
 
-		container.className = 'form-control cms-compare-versions-diff';
+		container.className = `${
+			control?.className ?? 'form-control'
+		} cms-compare-versions-diff`;
 		container.innerHTML = diffHtml;
 
 		const formGroup = field.querySelector('.form-group') ?? field;
