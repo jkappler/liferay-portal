@@ -15,6 +15,9 @@ import {dateUtils, sub} from 'frontend-js-web';
 import React, {Key, useEffect, useMemo, useRef, useState} from 'react';
 
 import '../../../css/components/CompareVersionsModal.scss';
+
+import {isNullOrUndefined} from '@liferay/layout-js-components-web';
+
 import StatusLabel from '../../common/components/StatusLabel';
 import {IAssetObjectEntry} from '../../common/types/AssetType';
 import {getImage} from '../../common/utils/getImage';
@@ -36,7 +39,7 @@ interface CompareVersionsModalContentProps {
 	objectEntryId: number;
 }
 
-type VersionItem = IAssetObjectEntry;
+type VersionItem = IAssetObjectEntry & {defaultLanguageId?: string};
 
 type VersionsState =
 	| {status: 'error' | 'loading'}
@@ -60,6 +63,21 @@ function getVersionItem(items: VersionItem[], version: number | null) {
 
 function getVersionNumber(item: VersionItem) {
 	return item.systemProperties.version.number;
+}
+
+function versionHasLanguage(item: VersionItem, languageId: string) {
+	if (languageId === item.defaultLanguageId) {
+		return true;
+	}
+
+	return Object.entries(item).some(
+		([key, value]) =>
+			key.endsWith('_i18n') &&
+			key !== 'friendlyUrlPath_i18n' &&
+			!isNullOrUndefined(value) &&
+			typeof value === 'object' &&
+			languageId in value
+	);
 }
 
 export default function CompareVersionsModalContent({
@@ -266,6 +284,19 @@ function CompareVersionPane({
 		'loading'
 	);
 
+	const selectedItem = getVersionItem(versions, selectedVersion);
+
+	const hasTranslation =
+		selectedVersion === null ||
+		!selectedItem ||
+		versionHasLanguage(selectedItem, languageId);
+
+	useEffect(() => {
+		if (!hasTranslation) {
+			setIframeStatus('loading');
+		}
+	}, [hasTranslation]);
+
 	useEffect(() => {
 		if (iframeStatus === 'loaded' && iframeRef.current) {
 			injectContentDiffs(iframeRef.current, diffs, diffType);
@@ -283,34 +314,30 @@ function CompareVersionPane({
 	}, [iframeStatus, languageId]);
 
 	if (selectedVersion === null) {
-		const emptyStateImage = getImage('compare_versions_empty_state.svg');
-
 		return (
 			<div className="cms-compare-versions-pane d-flex flex-column">
-				<ClayEmptyState
-					className="justify-content-center"
-					description={Liferay.Language.get(
-						'choose-a-target-version-to-start-the-comparison'
-					)}
-					imgSrc={emptyStateImage}
-					imgSrcReducedMotion={emptyStateImage}
-					small
-					title={Liferay.Language.get(
-						'select-a-version-for-comparison'
-					)}
-				>
-					<VersionPicker
-						excludedVersion={excludedVersion}
-						onVersionChange={onVersionChange}
-						selectedVersion={selectedVersion}
-						versions={versions}
-					/>
-				</ClayEmptyState>
+				<div className="align-items-center d-flex flex-column flex-grow-1 justify-content-center mt-n8 text-center">
+					<ClayEmptyState
+						description={Liferay.Language.get(
+							'choose-a-target-version-to-start-the-comparison'
+						)}
+						imgSrc={getImage('compare_versions_empty_state.svg')}
+						small
+						title={Liferay.Language.get(
+							'select-a-version-for-comparison'
+						)}
+					>
+						<VersionPicker
+							excludedVersion={excludedVersion}
+							onVersionChange={onVersionChange}
+							selectedVersion={selectedVersion}
+							versions={versions}
+						/>
+					</ClayEmptyState>
+				</div>
 			</div>
 		);
 	}
-
-	const selectedItem = getVersionItem(versions, selectedVersion);
 
 	return (
 		<div className="cms-compare-versions-pane d-flex flex-column">
@@ -343,19 +370,32 @@ function CompareVersionPane({
 				) : null}
 			</div>
 
-			<div className="cms-compare-versions-pane-content d-flex flex-column flex-grow-1 mx-2">
-				{iframeStatus === 'loading' ? (
-					<ClayLoadingIndicator className="my-5" />
-				) : null}
+			{hasTranslation ? (
+				<div className="cms-compare-versions-pane-content d-flex flex-column flex-grow-1 mx-2">
+					{iframeStatus === 'loading' ? (
+						<ClayLoadingIndicator className="my-5" />
+					) : null}
 
-				<iframe
-					className="border-0 flex-grow-1 w-100"
-					onLoad={() => setIframeStatus('loaded')}
-					ref={iframeRef}
-					src={`${VIEW_CONTENT_VERSION_URL}/compare_content_item?objectEntryId=${objectEntryId}&p_p_state=pop_up&version=${selectedVersion}`}
-					title={getVersionLabel(selectedVersion)}
-				/>
-			</div>
+					<iframe
+						className="border-0 flex-grow-1 w-100"
+						onLoad={() => setIframeStatus('loaded')}
+						ref={iframeRef}
+						src={`${VIEW_CONTENT_VERSION_URL}/compare_content_item?objectEntryId=${objectEntryId}&p_p_state=pop_up&version=${selectedVersion}`}
+						title={getVersionLabel(selectedVersion)}
+					/>
+				</div>
+			) : (
+				<div className="align-items-center d-flex flex-column flex-grow-1 justify-content-center mt-n8 text-center">
+					<ClayEmptyState
+						description={Liferay.Language.get(
+							'this-version-does-not-have-a-translation-in-the-selected-language.-try-a-different-version-or-language'
+						)}
+						imgSrc={getImage('no_translation_empty_state.svg')}
+						small
+						title={Liferay.Language.get('no-translation-available')}
+					/>
+				</div>
+			)}
 		</div>
 	);
 }
