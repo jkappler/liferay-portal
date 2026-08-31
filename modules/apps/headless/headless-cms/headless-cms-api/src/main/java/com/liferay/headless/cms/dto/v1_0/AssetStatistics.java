@@ -375,6 +375,47 @@ public class AssetStatistics implements Serializable {
 	private Supplier<Long> _scheduledCountSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema
+	public Long getSimilarLinksCount() {
+		if (_similarLinksCountSupplier != null) {
+			similarLinksCount = _similarLinksCountSupplier.get();
+
+			_similarLinksCountSupplier = null;
+		}
+
+		return similarLinksCount;
+	}
+
+	public void setSimilarLinksCount(Long similarLinksCount) {
+		this.similarLinksCount = similarLinksCount;
+
+		_similarLinksCountSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setSimilarLinksCount(
+		UnsafeSupplier<Long, Exception> similarLinksCountUnsafeSupplier) {
+
+		_similarLinksCountSupplier = () -> {
+			try {
+				return similarLinksCountUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Long similarLinksCount;
+
+	@JsonIgnore
+	private Supplier<Long> _similarLinksCountSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
 	public Long getTotalCount() {
 		if (_totalCountSupplier != null) {
 			totalCount = _totalCountSupplier.get();
@@ -579,6 +620,18 @@ public class AssetStatistics implements Serializable {
 			sb.append(scheduledCount);
 		}
 
+		Long similarLinksCount = getSimilarLinksCount();
+
+		if (similarLinksCount != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"similarLinksCount\": ");
+
+			sb.append(similarLinksCount);
+		}
+
 		Long totalCount = getTotalCount();
 
 		if (totalCount != null) {
@@ -704,4 +757,4 @@ public class AssetStatistics implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-178751699
+// LIFERAY-REST-BUILDER-HASH:-538819514

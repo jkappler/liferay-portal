@@ -13,11 +13,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
-import com.liferay.headless.cms.client.dto.v1_0.AssetStatistics;
+import com.liferay.headless.cms.client.dto.v1_0.SimilarLink;
 import com.liferay.headless.cms.client.http.HttpInvoker;
 import com.liferay.headless.cms.client.pagination.Page;
-import com.liferay.headless.cms.client.resource.v1_0.AssetStatisticsResource;
-import com.liferay.headless.cms.client.serdes.v1_0.AssetStatisticsSerDes;
+import com.liferay.headless.cms.client.pagination.Pagination;
+import com.liferay.headless.cms.client.resource.v1_0.SimilarLinkResource;
+import com.liferay.headless.cms.client.serdes.v1_0.SimilarLinkSerDes;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
@@ -32,6 +33,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
@@ -74,7 +76,7 @@ import org.junit.Test;
  * @generated
  */
 @Generated("")
-public abstract class BaseAssetStatisticsResourceTestCase {
+public abstract class BaseSimilarLinkResourceTestCase {
 
 	@ClassRule
 	@Rule
@@ -97,12 +99,12 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 		testCompany = CompanyLocalServiceUtil.getCompany(
 			testGroup.getCompanyId());
 
-		_assetStatisticsResource.setContextCompany(testCompany);
+		_similarLinkResource.setContextCompany(testCompany);
 
 		_testCompanyAdminUser = UserTestUtil.getAdminUser(
 			testCompany.getCompanyId());
 
-		assetStatisticsResource = AssetStatisticsResource.builder(
+		similarLinkResource = SimilarLinkResource.builder(
 		).authentication(
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
@@ -124,23 +126,23 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 	public void testClientSerDesToDTO() throws Exception {
 		ObjectMapper objectMapper = getClientSerDesObjectMapper();
 
-		AssetStatistics assetStatistics1 = randomAssetStatistics();
+		SimilarLink similarLink1 = randomSimilarLink();
 
-		String json = objectMapper.writeValueAsString(assetStatistics1);
+		String json = objectMapper.writeValueAsString(similarLink1);
 
-		AssetStatistics assetStatistics2 = AssetStatisticsSerDes.toDTO(json);
+		SimilarLink similarLink2 = SimilarLinkSerDes.toDTO(json);
 
-		Assert.assertTrue(equals(assetStatistics1, assetStatistics2));
+		Assert.assertTrue(equals(similarLink1, similarLink2));
 	}
 
 	@Test
 	public void testClientSerDesToJSON() throws Exception {
 		ObjectMapper objectMapper = getClientSerDesObjectMapper();
 
-		AssetStatistics assetStatistics = randomAssetStatistics();
+		SimilarLink similarLink = randomSimilarLink();
 
-		String json1 = objectMapper.writeValueAsString(assetStatistics);
-		String json2 = AssetStatisticsSerDes.toJSON(assetStatistics);
+		String json1 = objectMapper.writeValueAsString(similarLink);
+		String json2 = SimilarLinkSerDes.toJSON(similarLink);
 
 		Assert.assertEquals(
 			objectMapper.readTree(json1), objectMapper.readTree(json2));
@@ -168,38 +170,146 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 	public void testEscapeRegexInStringFields() throws Exception {
 		String regex = "^[0-9]+(\\.[0-9]{1,2})\"?";
 
-		AssetStatistics assetStatistics = randomAssetStatistics();
+		SimilarLink similarLink = randomSimilarLink();
 
-		String json = AssetStatisticsSerDes.toJSON(assetStatistics);
+		similarLink.setHref(regex);
+		similarLink.setTitle(regex);
+
+		String json = SimilarLinkSerDes.toJSON(similarLink);
 
 		Assert.assertFalse(json.contains(regex));
 
-		assetStatistics = AssetStatisticsSerDes.toDTO(json);
+		similarLink = SimilarLinkSerDes.toDTO(json);
+
+		Assert.assertEquals(regex, similarLink.getHref());
+		Assert.assertEquals(regex, similarLink.getTitle());
 	}
 
 	@Test
-	public void testGetAssetStatistics() throws Exception {
-		Assert.assertTrue(false);
+	public void testGetSimilarLinksPage() throws Exception {
+		Page<SimilarLink> page = similarLinkResource.getSimilarLinksPage(
+			null, Pagination.of(1, 10));
+
+		long totalCount = page.getTotalCount();
+
+		SimilarLink similarLink1 = testGetSimilarLinksPage_addSimilarLink(
+			randomSimilarLink());
+
+		SimilarLink similarLink2 = testGetSimilarLinksPage_addSimilarLink(
+			randomSimilarLink());
+
+		page = similarLinkResource.getSimilarLinksPage(
+			null, Pagination.of(1, (int)totalCount + 2));
+
+		Assert.assertEquals(totalCount + 2, page.getTotalCount());
+
+		assertContains(similarLink1, (List<SimilarLink>)page.getItems());
+		assertContains(similarLink2, (List<SimilarLink>)page.getItems());
+		assertValid(page, testGetSimilarLinksPage_getExpectedActions());
+	}
+
+	protected Map<String, Map<String, String>>
+			testGetSimilarLinksPage_getExpectedActions()
+		throws Exception {
+
+		Map<String, Map<String, String>> expectedActions = new HashMap<>();
+
+		return expectedActions;
 	}
 
 	@Test
-	public void testGraphQLGetAssetStatistics() throws Exception {
-		Assert.assertTrue(false);
+	public void testGetSimilarLinksPageWithPagination() throws Exception {
+		Page<SimilarLink> similarLinksPage =
+			similarLinkResource.getSimilarLinksPage(null, null);
+
+		int totalCount = GetterUtil.getInteger(
+			similarLinksPage.getTotalCount());
+
+		SimilarLink similarLink1 = testGetSimilarLinksPage_addSimilarLink(
+			randomSimilarLink());
+
+		SimilarLink similarLink2 = testGetSimilarLinksPage_addSimilarLink(
+			randomSimilarLink());
+
+		SimilarLink similarLink3 = testGetSimilarLinksPage_addSimilarLink(
+			randomSimilarLink());
+
+		// See com.liferay.portal.vulcan.internal.configuration.HeadlessAPICompanyConfiguration#pageSizeLimit
+
+		int pageSizeLimit = 500;
+
+		if (totalCount >= (pageSizeLimit - 2)) {
+			Page<SimilarLink> page1 = similarLinkResource.getSimilarLinksPage(
+				null,
+				Pagination.of(
+					(int)Math.ceil((totalCount + 1.0) / pageSizeLimit),
+					pageSizeLimit));
+
+			Assert.assertEquals(totalCount + 3, page1.getTotalCount());
+
+			assertContains(similarLink1, (List<SimilarLink>)page1.getItems());
+
+			Page<SimilarLink> page2 = similarLinkResource.getSimilarLinksPage(
+				null,
+				Pagination.of(
+					(int)Math.ceil((totalCount + 2.0) / pageSizeLimit),
+					pageSizeLimit));
+
+			assertContains(similarLink2, (List<SimilarLink>)page2.getItems());
+
+			Page<SimilarLink> page3 = similarLinkResource.getSimilarLinksPage(
+				null,
+				Pagination.of(
+					(int)Math.ceil((totalCount + 3.0) / pageSizeLimit),
+					pageSizeLimit));
+
+			assertContains(similarLink3, (List<SimilarLink>)page3.getItems());
+		}
+		else {
+			Page<SimilarLink> page1 = similarLinkResource.getSimilarLinksPage(
+				null, Pagination.of(1, totalCount + 2));
+
+			List<SimilarLink> similarLinks1 =
+				(List<SimilarLink>)page1.getItems();
+
+			Assert.assertEquals(
+				similarLinks1.toString(), totalCount + 2, similarLinks1.size());
+
+			Page<SimilarLink> page2 = similarLinkResource.getSimilarLinksPage(
+				null, Pagination.of(2, totalCount + 2));
+
+			Assert.assertEquals(totalCount + 3, page2.getTotalCount());
+
+			List<SimilarLink> similarLinks2 =
+				(List<SimilarLink>)page2.getItems();
+
+			Assert.assertEquals(
+				similarLinks2.toString(), 1, similarLinks2.size());
+
+			Page<SimilarLink> page3 = similarLinkResource.getSimilarLinksPage(
+				null, Pagination.of(1, (int)totalCount + 3));
+
+			assertContains(similarLink1, (List<SimilarLink>)page3.getItems());
+			assertContains(similarLink2, (List<SimilarLink>)page3.getItems());
+			assertContains(similarLink3, (List<SimilarLink>)page3.getItems());
+		}
 	}
 
-	@Test
-	public void testGraphQLGetAssetStatisticsNotFound() throws Exception {
-		Assert.assertTrue(true);
+	protected SimilarLink testGetSimilarLinksPage_addSimilarLink(
+			SimilarLink similarLink)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	protected void assertContains(
-		AssetStatistics assetStatistics,
-		List<AssetStatistics> assetStatisticses) {
+		SimilarLink similarLink, List<SimilarLink> similarLinks) {
 
 		boolean contains = false;
 
-		for (AssetStatistics item : assetStatisticses) {
-			if (equals(assetStatistics, item)) {
+		for (SimilarLink item : similarLinks) {
+			if (equals(similarLink, item)) {
 				contains = true;
 
 				break;
@@ -207,8 +317,7 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 		}
 
 		Assert.assertTrue(
-			assetStatisticses + " does not contain " + assetStatistics,
-			contains);
+			similarLinks + " does not contain " + similarLink, contains);
 	}
 
 	protected void assertHttpResponseStatusCode(
@@ -220,40 +329,36 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 	}
 
 	protected void assertEquals(
-		AssetStatistics assetStatistics1, AssetStatistics assetStatistics2) {
+		SimilarLink similarLink1, SimilarLink similarLink2) {
 
 		Assert.assertTrue(
-			assetStatistics1 + " does not equal " + assetStatistics2,
-			equals(assetStatistics1, assetStatistics2));
+			similarLink1 + " does not equal " + similarLink2,
+			equals(similarLink1, similarLink2));
 	}
 
 	protected void assertEquals(
-		List<AssetStatistics> assetStatisticses1,
-		List<AssetStatistics> assetStatisticses2) {
+		List<SimilarLink> similarLinks1, List<SimilarLink> similarLinks2) {
 
-		Assert.assertEquals(
-			assetStatisticses1.size(), assetStatisticses2.size());
+		Assert.assertEquals(similarLinks1.size(), similarLinks2.size());
 
-		for (int i = 0; i < assetStatisticses1.size(); i++) {
-			AssetStatistics assetStatistics1 = assetStatisticses1.get(i);
-			AssetStatistics assetStatistics2 = assetStatisticses2.get(i);
+		for (int i = 0; i < similarLinks1.size(); i++) {
+			SimilarLink similarLink1 = similarLinks1.get(i);
+			SimilarLink similarLink2 = similarLinks2.get(i);
 
-			assertEquals(assetStatistics1, assetStatistics2);
+			assertEquals(similarLink1, similarLink2);
 		}
 	}
 
 	protected void assertEqualsIgnoringOrder(
-		List<AssetStatistics> assetStatisticses1,
-		List<AssetStatistics> assetStatisticses2) {
+		List<SimilarLink> similarLinks1, List<SimilarLink> similarLinks2) {
 
-		Assert.assertEquals(
-			assetStatisticses1.size(), assetStatisticses2.size());
+		Assert.assertEquals(similarLinks1.size(), similarLinks2.size());
 
-		for (AssetStatistics assetStatistics1 : assetStatisticses1) {
+		for (SimilarLink similarLink1 : similarLinks1) {
 			boolean contains = false;
 
-			for (AssetStatistics assetStatistics2 : assetStatisticses2) {
-				if (equals(assetStatistics1, assetStatistics2)) {
+			for (SimilarLink similarLink2 : similarLinks2) {
+				if (equals(similarLink1, similarLink2)) {
 					contains = true;
 
 					break;
@@ -261,37 +366,30 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 			}
 
 			Assert.assertTrue(
-				assetStatisticses2 + " does not contain " + assetStatistics1,
-				contains);
+				similarLinks2 + " does not contain " + similarLink1, contains);
 		}
 	}
 
-	protected void assertValid(AssetStatistics assetStatistics)
-		throws Exception {
-
+	protected void assertValid(SimilarLink similarLink) throws Exception {
 		boolean valid = true;
+
+		if (similarLink.getId() == null) {
+			valid = false;
+		}
 
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
 
-			if (Objects.equals("approvedCount", additionalAssertFieldName)) {
-				if (assetStatistics.getApprovedCount() == null) {
+			if (Objects.equals("actions", additionalAssertFieldName)) {
+				if (similarLink.getActions() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("brokenLinksCount", additionalAssertFieldName)) {
-				if (assetStatistics.getBrokenLinksCount() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("expiredCount", additionalAssertFieldName)) {
-				if (assetStatistics.getExpiredCount() == null) {
+			if (Objects.equals("href", additionalAssertFieldName)) {
+				if (similarLink.getHref() == null) {
 					valid = false;
 				}
 
@@ -299,71 +397,17 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 			}
 
 			if (Objects.equals(
-					"expiringSoonCount", additionalAssertFieldName)) {
+					"referringAssetsCount", additionalAssertFieldName)) {
 
-				if (assetStatistics.getExpiringSoonCount() == null) {
+				if (similarLink.getReferringAssetsCount() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("inDraftCount", additionalAssertFieldName)) {
-				if (assetStatistics.getInDraftCount() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("pendingCount", additionalAssertFieldName)) {
-				if (assetStatistics.getPendingCount() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals(
-					"reviewDateOverdueCount", additionalAssertFieldName)) {
-
-				if (assetStatistics.getReviewDateOverdueCount() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("scheduledCount", additionalAssertFieldName)) {
-				if (assetStatistics.getScheduledCount() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals(
-					"similarLinksCount", additionalAssertFieldName)) {
-
-				if (assetStatistics.getSimilarLinksCount() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("totalCount", additionalAssertFieldName)) {
-				if (assetStatistics.getTotalCount() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals(
-					"upcomingReviewCount", additionalAssertFieldName)) {
-
-				if (assetStatistics.getUpcomingReviewCount() == null) {
+			if (Objects.equals("title", additionalAssertFieldName)) {
+				if (similarLink.getTitle() == null) {
 					valid = false;
 				}
 
@@ -378,20 +422,19 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 		Assert.assertTrue(valid);
 	}
 
-	protected void assertValid(Page<AssetStatistics> page) {
+	protected void assertValid(Page<SimilarLink> page) {
 		assertValid(page, Collections.emptyMap());
 	}
 
 	protected void assertValid(
-		Page<AssetStatistics> page,
+		Page<SimilarLink> page,
 		Map<String, Map<String, String>> expectedActions) {
 
 		boolean valid = false;
 
-		java.util.Collection<AssetStatistics> assetStatisticses =
-			page.getItems();
+		java.util.Collection<SimilarLink> similarLinks = page.getItems();
 
-		int size = assetStatisticses.size();
+		int size = similarLinks.size();
 
 		if ((page.getLastPage() > 0) && (page.getPage() > 0) &&
 			(page.getPageSize() > 0) && (page.getTotalCount() > 0) &&
@@ -429,9 +472,11 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 	protected List<GraphQLField> getGraphQLFields() throws Exception {
 		List<GraphQLField> graphQLFields = new ArrayList<>();
 
+		graphQLFields.add(new GraphQLField("id"));
+
 		for (java.lang.reflect.Field field :
 				getDeclaredFields(
-					com.liferay.headless.cms.dto.v1_0.AssetStatistics.class)) {
+					com.liferay.headless.cms.dto.v1_0.SimilarLink.class)) {
 
 			if (!ArrayUtil.contains(
 					getAdditionalAssertFieldNames(), field.getName())) {
@@ -480,19 +525,19 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 	}
 
 	protected boolean equals(
-		AssetStatistics assetStatistics1, AssetStatistics assetStatistics2) {
+		SimilarLink similarLink1, SimilarLink similarLink2) {
 
-		if (assetStatistics1 == assetStatistics2) {
+		if (similarLink1 == similarLink2) {
 			return true;
 		}
 
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
 
-			if (Objects.equals("approvedCount", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						assetStatistics1.getApprovedCount(),
-						assetStatistics2.getApprovedCount())) {
+			if (Objects.equals("actions", additionalAssertFieldName)) {
+				if (!equals(
+						(Map)similarLink1.getActions(),
+						(Map)similarLink2.getActions())) {
 
 					return false;
 				}
@@ -500,10 +545,9 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("brokenLinksCount", additionalAssertFieldName)) {
+			if (Objects.equals("href", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						assetStatistics1.getBrokenLinksCount(),
-						assetStatistics2.getBrokenLinksCount())) {
+						similarLink1.getHref(), similarLink2.getHref())) {
 
 					return false;
 				}
@@ -511,45 +555,9 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("expiredCount", additionalAssertFieldName)) {
+			if (Objects.equals("id", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						assetStatistics1.getExpiredCount(),
-						assetStatistics2.getExpiredCount())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals(
-					"expiringSoonCount", additionalAssertFieldName)) {
-
-				if (!Objects.deepEquals(
-						assetStatistics1.getExpiringSoonCount(),
-						assetStatistics2.getExpiringSoonCount())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("inDraftCount", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						assetStatistics1.getInDraftCount(),
-						assetStatistics2.getInDraftCount())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("pendingCount", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						assetStatistics1.getPendingCount(),
-						assetStatistics2.getPendingCount())) {
+						similarLink1.getId(), similarLink2.getId())) {
 
 					return false;
 				}
@@ -558,11 +566,11 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 			}
 
 			if (Objects.equals(
-					"reviewDateOverdueCount", additionalAssertFieldName)) {
+					"referringAssetsCount", additionalAssertFieldName)) {
 
 				if (!Objects.deepEquals(
-						assetStatistics1.getReviewDateOverdueCount(),
-						assetStatistics2.getReviewDateOverdueCount())) {
+						similarLink1.getReferringAssetsCount(),
+						similarLink2.getReferringAssetsCount())) {
 
 					return false;
 				}
@@ -570,47 +578,9 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("scheduledCount", additionalAssertFieldName)) {
+			if (Objects.equals("title", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						assetStatistics1.getScheduledCount(),
-						assetStatistics2.getScheduledCount())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals(
-					"similarLinksCount", additionalAssertFieldName)) {
-
-				if (!Objects.deepEquals(
-						assetStatistics1.getSimilarLinksCount(),
-						assetStatistics2.getSimilarLinksCount())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("totalCount", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						assetStatistics1.getTotalCount(),
-						assetStatistics2.getTotalCount())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals(
-					"upcomingReviewCount", additionalAssertFieldName)) {
-
-				if (!Objects.deepEquals(
-						assetStatistics1.getUpcomingReviewCount(),
-						assetStatistics2.getUpcomingReviewCount())) {
+						similarLink1.getTitle(), similarLink2.getTitle())) {
 
 					return false;
 				}
@@ -674,13 +644,13 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 	protected java.util.Collection<EntityField> getEntityFields()
 		throws Exception {
 
-		if (!(_assetStatisticsResource instanceof EntityModelResource)) {
+		if (!(_similarLinkResource instanceof EntityModelResource)) {
 			throw new UnsupportedOperationException(
 				"Resource is not an instance of EntityModelResource");
 		}
 
 		EntityModelResource entityModelResource =
-			(EntityModelResource)_assetStatisticsResource;
+			(EntityModelResource)_similarLinkResource;
 
 		EntityModel entityModel = entityModelResource.getEntityModel(
 			new MultivaluedHashMap());
@@ -713,8 +683,7 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 	}
 
 	protected String getFilterString(
-		EntityField entityField, String operator,
-		AssetStatistics assetStatistics) {
+		EntityField entityField, String operator, SimilarLink similarLink) {
 
 		StringBundler sb = new StringBundler();
 
@@ -726,59 +695,111 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 		sb.append(operator);
 		sb.append(" ");
 
-		if (entityFieldName.equals("approvedCount")) {
+		if (entityFieldName.equals("actions")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("brokenLinksCount")) {
+		if (entityFieldName.equals("href")) {
+			Object object = similarLink.getHref();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("id")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("expiredCount")) {
+		if (entityFieldName.equals("referringAssetsCount")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("expiringSoonCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
+		if (entityFieldName.equals("title")) {
+			Object object = similarLink.getTitle();
 
-		if (entityFieldName.equals("inDraftCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
+			String value = String.valueOf(object);
 
-		if (entityFieldName.equals("pendingCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
 
-		if (entityFieldName.equals("reviewDateOverdueCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
 
-		if (entityFieldName.equals("scheduledCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
 
-		if (entityFieldName.equals("similarLinksCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
 
-		if (entityFieldName.equals("totalCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
 
-		if (entityFieldName.equals("upcomingReviewCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
 		}
 
 		throw new IllegalArgumentException(
@@ -825,38 +846,28 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 			invoke(queryGraphQLField.toString()));
 	}
 
-	protected AssetStatistics randomAssetStatistics() throws Exception {
-		return new AssetStatistics() {
+	protected SimilarLink randomSimilarLink() throws Exception {
+		return new SimilarLink() {
 			{
-				approvedCount = RandomTestUtil.randomLong();
-				brokenLinksCount = RandomTestUtil.randomLong();
-				expiredCount = RandomTestUtil.randomLong();
-				expiringSoonCount = RandomTestUtil.randomLong();
-				inDraftCount = RandomTestUtil.randomLong();
-				pendingCount = RandomTestUtil.randomLong();
-				reviewDateOverdueCount = RandomTestUtil.randomLong();
-				scheduledCount = RandomTestUtil.randomLong();
-				similarLinksCount = RandomTestUtil.randomLong();
-				totalCount = RandomTestUtil.randomLong();
-				upcomingReviewCount = RandomTestUtil.randomLong();
+				href = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				id = RandomTestUtil.randomLong();
+				referringAssetsCount = RandomTestUtil.randomLong();
+				title = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
 	}
 
-	protected AssetStatistics randomIrrelevantAssetStatistics()
-		throws Exception {
+	protected SimilarLink randomIrrelevantSimilarLink() throws Exception {
+		SimilarLink randomIrrelevantSimilarLink = randomSimilarLink();
 
-		AssetStatistics randomIrrelevantAssetStatistics =
-			randomAssetStatistics();
-
-		return randomIrrelevantAssetStatistics;
+		return randomIrrelevantSimilarLink;
 	}
 
-	protected AssetStatistics randomPatchAssetStatistics() throws Exception {
-		return randomAssetStatistics();
+	protected SimilarLink randomPatchSimilarLink() throws Exception {
+		return randomSimilarLink();
 	}
 
-	protected AssetStatisticsResource assetStatisticsResource;
+	protected SimilarLinkResource similarLinkResource;
 	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
 	protected com.liferay.portal.kernel.model.Company testCompany;
 	protected com.liferay.portal.kernel.model.Group testGroup;
@@ -1055,15 +1066,15 @@ public abstract class BaseAssetStatisticsResourceTestCase {
 	}
 
 	private static final com.liferay.portal.kernel.log.Log _log =
-		LogFactoryUtil.getLog(BaseAssetStatisticsResourceTestCase.class);
+		LogFactoryUtil.getLog(BaseSimilarLinkResourceTestCase.class);
 
 	private static Format _format;
 
 	private com.liferay.portal.kernel.model.User _testCompanyAdminUser;
 
 	@Inject
-	private com.liferay.headless.cms.resource.v1_0.AssetStatisticsResource
-		_assetStatisticsResource;
+	private com.liferay.headless.cms.resource.v1_0.SimilarLinkResource
+		_similarLinkResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:1348477191
+// LIFERAY-REST-BUILDER-HASH:378313032

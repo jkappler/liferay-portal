@@ -11,10 +11,12 @@ import com.liferay.headless.cms.internal.resource.v1_0.AssetPermissionActionReso
 import com.liferay.headless.cms.internal.resource.v1_0.AssetStatisticsResourceImpl;
 import com.liferay.headless.cms.internal.resource.v1_0.AssetUsageResourceImpl;
 import com.liferay.headless.cms.internal.resource.v1_0.BrokenLinkAssetResourceImpl;
+import com.liferay.headless.cms.internal.resource.v1_0.SimilarLinkResourceImpl;
 import com.liferay.headless.cms.resource.v1_0.AssetPermissionActionResource;
 import com.liferay.headless.cms.resource.v1_0.AssetStatisticsResource;
 import com.liferay.headless.cms.resource.v1_0.AssetUsageResource;
 import com.liferay.headless.cms.resource.v1_0.BrokenLinkAssetResource;
+import com.liferay.headless.cms.resource.v1_0.SimilarLinkResource;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.vulcan.graphql.servlet.ServletData;
 
@@ -49,6 +51,8 @@ public class ServletDataImpl implements ServletData {
 			_assetUsageResourceComponentServiceObjects);
 		Query.setBrokenLinkAssetResourceComponentServiceObjects(
 			_brokenLinkAssetResourceComponentServiceObjects);
+		Query.setSimilarLinkResourceComponentServiceObjects(
+			_similarLinkResourceComponentServiceObjects);
 	}
 
 	public String getApplicationName() {
@@ -106,6 +110,11 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							BrokenLinkAssetResourceImpl.class,
 							"getBrokenLinkAssetsPage"));
+					put(
+						"query#similarLinks",
+						new ObjectValuePair<>(
+							SimilarLinkResourceImpl.class,
+							"getSimilarLinksPage"));
 				}
 			};
 
@@ -125,5 +134,9 @@ public class ServletDataImpl implements ServletData {
 	private ComponentServiceObjects<BrokenLinkAssetResource>
 		_brokenLinkAssetResourceComponentServiceObjects;
 
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<SimilarLinkResource>
+		_similarLinkResourceComponentServiceObjects;
+
 }
-// LIFERAY-REST-BUILDER-HASH:1309969940
+// LIFERAY-REST-BUILDER-HASH:1606540111

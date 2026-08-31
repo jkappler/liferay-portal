@@ -8,9 +8,11 @@ package com.liferay.headless.cms.internal.graphql.query.v1_0;
 import com.liferay.headless.cms.dto.v1_0.AssetStatistics;
 import com.liferay.headless.cms.dto.v1_0.AssetUsage;
 import com.liferay.headless.cms.dto.v1_0.BrokenLinkAsset;
+import com.liferay.headless.cms.dto.v1_0.SimilarLink;
 import com.liferay.headless.cms.resource.v1_0.AssetStatisticsResource;
 import com.liferay.headless.cms.resource.v1_0.AssetUsageResource;
 import com.liferay.headless.cms.resource.v1_0.BrokenLinkAssetResource;
+import com.liferay.headless.cms.resource.v1_0.SimilarLinkResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -68,10 +70,18 @@ public class Query {
 			brokenLinkAssetResourceComponentServiceObjects;
 	}
 
+	public static void setSimilarLinkResourceComponentServiceObjects(
+		ComponentServiceObjects<SimilarLinkResource>
+			similarLinkResourceComponentServiceObjects) {
+
+		_similarLinkResourceComponentServiceObjects =
+			similarLinkResourceComponentServiceObjects;
+	}
+
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {assetStatistics(assetLibraryId: ___){approvedCount, brokenLinksCount, expiredCount, expiringSoonCount, inDraftCount, pendingCount, reviewDateOverdueCount, scheduledCount, totalCount, upcomingReviewCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {assetStatistics(assetLibraryId: ___){approvedCount, brokenLinksCount, expiredCount, expiringSoonCount, inDraftCount, pendingCount, reviewDateOverdueCount, scheduledCount, similarLinksCount, totalCount, upcomingReviewCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public AssetStatistics assetStatistics(
@@ -132,6 +142,27 @@ public class Query {
 					Pagination.of(page, pageSize),
 					_sortsBiFunction.apply(
 						brokenLinkAssetResource, sortsString))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {similarLinks(assetLibraryId: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public SimilarLinkPage similarLinks(
+			@GraphQLName("assetLibraryId") @NotEmpty String assetLibraryId,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_similarLinkResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			similarLinkResource -> new SimilarLinkPage(
+				similarLinkResource.getSimilarLinksPage(
+					Long.valueOf(assetLibraryId),
+					Pagination.of(page, pageSize))));
 	}
 
 	@GraphQLName("AssetStatisticsPage")
@@ -233,6 +264,39 @@ public class Query {
 
 	}
 
+	@GraphQLName("SimilarLinkPage")
+	public class SimilarLinkPage {
+
+		public SimilarLinkPage(Page similarLinkPage) {
+			actions = similarLinkPage.getActions();
+
+			items = similarLinkPage.getItems();
+			lastPage = similarLinkPage.getLastPage();
+			page = similarLinkPage.getPage();
+			pageSize = similarLinkPage.getPageSize();
+			totalCount = similarLinkPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<SimilarLink> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R
 			_applyComponentServiceObjects(
 				ComponentServiceObjects<T> componentServiceObjects,
@@ -309,12 +373,32 @@ public class Query {
 		brokenLinkAssetResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private void _populateResourceContext(
+			SimilarLinkResource similarLinkResource)
+		throws Exception {
+
+		similarLinkResource.setContextAcceptLanguage(_acceptLanguage);
+		similarLinkResource.setContextCompany(_company);
+		similarLinkResource.setContextHttpServletRequest(_httpServletRequest);
+		similarLinkResource.setContextHttpServletResponse(_httpServletResponse);
+		similarLinkResource.setContextUriInfo(_uriInfo);
+		similarLinkResource.setContextUser(_user);
+		similarLinkResource.setGroupLocalService(_groupLocalService);
+		similarLinkResource.setResourceActionLocalService(
+			_resourceActionLocalService);
+		similarLinkResource.setResourcePermissionLocalService(
+			_resourcePermissionLocalService);
+		similarLinkResource.setRoleLocalService(_roleLocalService);
+	}
+
 	private static ComponentServiceObjects<AssetStatisticsResource>
 		_assetStatisticsResourceComponentServiceObjects;
 	private static ComponentServiceObjects<AssetUsageResource>
 		_assetUsageResourceComponentServiceObjects;
 	private static ComponentServiceObjects<BrokenLinkAssetResource>
 		_brokenLinkAssetResourceComponentServiceObjects;
+	private static ComponentServiceObjects<SimilarLinkResource>
+		_similarLinkResourceComponentServiceObjects;
 
 	private AcceptLanguage _acceptLanguage;
 	private com.liferay.portal.kernel.model.Company _company;
@@ -333,4 +417,4 @@ public class Query {
 	private com.liferay.portal.kernel.model.User _user;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-802839611
+// LIFERAY-REST-BUILDER-HASH:-437414642
