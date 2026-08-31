@@ -138,6 +138,7 @@ public class CMSContentOutboundLinksModelDocumentContributorTest {
 	@Test
 	public void testContribute() throws Exception {
 		_testContributeWhenObjectDefinitionIsNotCMS();
+		_testContributeWhenReferencesShareTarget();
 		_testContributeWithAttachmentWhenFileEntryIsForeignOwned();
 		_testContributeWithAttachmentWhenFileEntryIsSelfOwned();
 		_testContributeWithAttachmentWhenObjectEntryIsCopied();
@@ -329,6 +330,42 @@ public class CMSContentOutboundLinksModelDocumentContributorTest {
 		Assert.assertNull(document.getField("outboundLinks"));
 	}
 
+	private void _testContributeWhenReferencesShareTarget() throws Exception {
+		ObjectDefinition attachmentObjectDefinition = _addCMSObjectDefinition(
+			Collections.singletonList(
+				_buildAttachmentObjectField(
+					ObjectFieldSettingConstants.
+						VALUE_USER_COMPUTER_TO_CMS_BASIC_DOCUMENT)));
+
+		ObjectEntry attachmentObjectEntry = _addAttachmentObjectEntry(
+			attachmentObjectDefinition);
+
+		ObjectDefinition objectDefinition = _addCMSObjectDefinition(
+			Arrays.asList(
+				_buildAttachmentObjectField(
+					ObjectFieldSettingConstants.VALUE_CMS_BASIC_DOCUMENT),
+				_buildRichTextObjectField()));
+
+		ObjectEntry objectEntry = _addObjectEntry(
+			objectDefinition,
+			HashMapBuilder.<String, Serializable>put(
+				_ATTACHMENT_OBJECT_FIELD_NAME,
+				_getFileEntryId(attachmentObjectEntry)
+			).put(
+				_RICH_TEXT_OBJECT_FIELD_NAME,
+				_getImageHTML(attachmentObjectEntry.getExternalReferenceCode())
+			).build());
+
+		Document document = _getDocument(objectDefinition, objectEntry);
+
+		Assert.assertArrayEquals(
+			new String[] {
+				"objectEntryERC_" +
+					attachmentObjectEntry.getExternalReferenceCode()
+			},
+			document.getValues("outboundLinks"));
+	}
+
 	private void _testContributeWithAttachmentWhenFileEntryIsForeignOwned()
 		throws Exception {
 
@@ -357,7 +394,8 @@ public class CMSContentOutboundLinksModelDocumentContributorTest {
 
 		Assert.assertArrayEquals(
 			new String[] {
-				"objectEntryId_" + attachmentObjectEntry.getObjectEntryId()
+				"objectEntryERC_" +
+					attachmentObjectEntry.getExternalReferenceCode()
 			},
 			document.getValues("outboundLinks"));
 	}
@@ -456,8 +494,10 @@ public class CMSContentOutboundLinksModelDocumentContributorTest {
 
 		Assert.assertEquals(
 			SetUtil.fromArray(
-				"objectEntryId_" + attachmentObjectEntry1.getObjectEntryId(),
-				"objectEntryId_" + attachmentObjectEntry2.getObjectEntryId()),
+				"objectEntryERC_" +
+					attachmentObjectEntry1.getExternalReferenceCode(),
+				"objectEntryERC_" +
+					attachmentObjectEntry2.getExternalReferenceCode()),
 			SetUtil.fromArray(document.getValues("outboundLinks")));
 	}
 
@@ -507,7 +547,7 @@ public class CMSContentOutboundLinksModelDocumentContributorTest {
 
 		Assert.assertArrayEquals(
 			new String[] {
-				"objectEntryId_" + parentObjectEntry.getObjectEntryId()
+				"objectEntryERC_" + parentObjectEntry.getExternalReferenceCode()
 			},
 			document.getValues("outboundLinks"));
 	}
