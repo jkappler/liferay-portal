@@ -244,7 +244,11 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 				Map<String, Object> localizedValuesMap =
 					(Map<String, Object>)localizedValues;
 
-				value = localizedValuesMap.get(languageId);
+				Object localizedValue = localizedValuesMap.get(languageId);
+
+				if (localizedValue != null) {
+					value = localizedValue;
+				}
 			}
 
 			fieldValues.put(name, value);
