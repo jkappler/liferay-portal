@@ -7,24 +7,48 @@ package com.liferay.site.cms.site.initializer.util;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.GetterUtil;
 
 /**
  * @author Jürgen Kappler
  */
 public class CMSOutboundLinksUtil {
 
+	public static String getObjectEntryExternalReferenceCode(String token) {
+		return _getValue(_PREFIX_OBJECT_ENTRY_ERC, token);
+	}
+
 	public static String getObjectEntryExternalReferenceCodeToken(
 		String externalReferenceCode) {
 
-		return _getToken("objectEntryERC", externalReferenceCode);
+		return _getToken(_PREFIX_OBJECT_ENTRY_ERC, externalReferenceCode);
+	}
+
+	public static long getObjectEntryId(String token) {
+		return GetterUtil.getLong(_getValue(_PREFIX_OBJECT_ENTRY_ID, token));
 	}
 
 	public static String getObjectEntryIdToken(long objectEntryId) {
-		return _getToken("objectEntryId", String.valueOf(objectEntryId));
+		return _getToken(
+			_PREFIX_OBJECT_ENTRY_ID, String.valueOf(objectEntryId));
 	}
 
 	private static String _getToken(String prefix, String value) {
 		return StringBundler.concat(prefix, StringPool.UNDERLINE, value);
 	}
+
+	private static String _getValue(String prefix, String token) {
+		String tokenPrefix = prefix + StringPool.UNDERLINE;
+
+		if (!token.startsWith(tokenPrefix)) {
+			return null;
+		}
+
+		return token.substring(tokenPrefix.length());
+	}
+
+	private static final String _PREFIX_OBJECT_ENTRY_ERC = "objectEntryERC";
+
+	private static final String _PREFIX_OBJECT_ENTRY_ID = "objectEntryId";
 
 }
