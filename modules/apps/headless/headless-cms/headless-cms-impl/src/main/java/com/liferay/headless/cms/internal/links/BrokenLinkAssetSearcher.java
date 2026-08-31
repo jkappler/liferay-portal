@@ -18,13 +18,11 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.QueriesUtil;
-import com.liferay.portal.search.query.TermsQuery;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.portal.vulcan.pagination.Pagination;
-import com.liferay.site.cms.site.initializer.constants.CMSWorkflowConstants;
 import com.liferay.site.cms.site.initializer.util.CMSOutboundLinksUtil;
 
 import java.util.LinkedHashMap;
@@ -157,7 +155,7 @@ public class BrokenLinkAssetSearcher {
 
 		for (int i = 0; i < values.length; i += _TERMS_QUERY_CHUNK_SIZE) {
 			booleanQuery.addShouldQueryClauses(
-				_getTermsQuery(
+				OutboundLinksSearchUtil.getTermsQuery(
 					"outboundLinks",
 					ArrayUtil.subset(
 						values, i,
@@ -172,39 +170,14 @@ public class BrokenLinkAssetSearcher {
 	private SearchRequestBuilder _getSearchRequestBuilder(
 		long companyId, Long[] groupIds, Set<String> outboundLinkTokens) {
 
-		BooleanQuery booleanQuery = QueriesUtil.booleanQuery();
+		BooleanQuery booleanQuery =
+			OutboundLinksSearchUtil.getCMSAssetsBooleanQuery();
 
 		booleanQuery.addFilterQueryClauses(
-			_getOutboundLinksBooleanQuery(outboundLinkTokens),
-			_getTermsQuery("cms_section", "contents", "files"),
-			_getTermsQuery(
-				Field.STATUS,
-				ArrayUtil.toStringArray(CMSWorkflowConstants.STATUSES)),
-			QueriesUtil.term("rootDescendantNode", false));
-		booleanQuery.addMustNotQueryClauses(
-			QueriesUtil.term(Field.STATUS, WorkflowConstants.STATUS_EXPIRED));
+			_getOutboundLinksBooleanQuery(outboundLinkTokens));
 
-		return _searchRequestBuilderFactory.builder(
-		).companyId(
-			companyId
-		).emptySearchEnabled(
-			true
-		).groupIds(
-			ArrayUtil.toArray(groupIds)
-		).query(
-			booleanQuery
-		).withSearchContext(
-			searchContext -> searchContext.setAttribute(
-				Field.STATUS, WorkflowConstants.STATUS_ANY)
-		);
-	}
-
-	private TermsQuery _getTermsQuery(String fieldName, String... values) {
-		TermsQuery termsQuery = QueriesUtil.terms(fieldName);
-
-		termsQuery.addValues(values);
-
-		return termsQuery;
+		return OutboundLinksSearchUtil.getSearchRequestBuilder(
+			booleanQuery, companyId, groupIds, _searchRequestBuilderFactory);
 	}
 
 	private static final int _MAX_RESULT_WINDOW = 10000;
