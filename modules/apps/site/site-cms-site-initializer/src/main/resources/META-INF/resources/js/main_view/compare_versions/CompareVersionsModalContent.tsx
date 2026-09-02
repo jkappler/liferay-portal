@@ -35,6 +35,7 @@ interface CompareVersionsModalContentProps {
 	availableLanguageIds: string[];
 	closeModal: () => void;
 	defaultLanguageId: string;
+	initialComparedVersion?: number;
 	initialVersion: number;
 	objectEntryId: number;
 }
@@ -85,6 +86,7 @@ export default function CompareVersionsModalContent({
 	availableLanguageIds,
 	closeModal,
 	defaultLanguageId,
+	initialComparedVersion,
 	initialVersion,
 	objectEntryId,
 }: CompareVersionsModalContentProps) {
@@ -131,11 +133,12 @@ export default function CompareVersionsModalContent({
 			const items: VersionItem[] = data.items;
 
 			setLeftVersion(initialVersion);
+			setRightVersion(initialComparedVersion ?? null);
 			setVersionsState({items, status: 'loaded'});
 		};
 
 		getVersions();
-	}, [apiURL, initialVersion]);
+	}, [apiURL, initialComparedVersion, initialVersion]);
 
 	const diffs = useVersionDiffs({
 		languageId,
