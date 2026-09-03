@@ -121,12 +121,19 @@ function applyFieldDiffs(diffs: Diffs, diffType: DiffType, document: Document) {
 		container
 			.querySelectorAll('.cms-compare-versions-attachment')
 			.forEach((image) => {
+				if (image.closest('.diff-html-removed')) {
+					return;
+				}
+
 				image.classList.add(borderColorCssClass);
 
-				formGroup.insertBefore(
-					image.closest('[class*="diff-html"]') ?? image,
-					container
-				);
+				const mark = image.closest('[class*="diff-html"]');
+
+				formGroup.insertBefore(image, container);
+
+				if (mark && !mark.textContent?.trim()) {
+					mark.remove();
+				}
 			});
 	});
 }

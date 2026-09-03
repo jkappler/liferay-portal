@@ -208,6 +208,38 @@ describe('injectContentDiffs', () => {
 		).toBeTruthy();
 	});
 
+	it('moves only its own image out when the image shares the mark with the file name', () => {
+		const iframe = createIframe(createFieldHTML('ObjectField_file'));
+
+		injectContentDiffs(
+			iframe,
+			{
+				file: '<span class="diff-html-removed" style="display: none"><img class="cms-compare-versions-attachment" src="old.png" /> old.png</span><span class="diff-html-added"><img class="cms-compare-versions-attachment" src="new.png" /> new.png</span>',
+			},
+			'additions'
+		);
+
+		const formGroup = iframe.contentDocument!.querySelector(
+			'[data-field-name="ObjectField_file"] .form-group'
+		)!;
+
+		const addedImage = formGroup.querySelector('img[src="new.png"]')!;
+
+		expect(addedImage).toHaveClass('border-success');
+		expect(addedImage.closest('.cms-compare-versions-diff')).toBeNull();
+
+		const removedImage = formGroup.querySelector('img[src="old.png"]')!;
+
+		expect(removedImage.closest('.diff-html-removed')).not.toBeNull();
+		expect(removedImage).not.toHaveClass('border-success');
+
+		const box = formGroup.querySelector('.cms-compare-versions-diff')!;
+
+		expect(box.querySelector('.diff-html-added')).toHaveTextContent(
+			'new.png'
+		);
+	});
+
 	it('hides the structural elements the hidden content leaves empty, unless they hold media', () => {
 		const iframe = createIframe(createFieldHTML('ObjectField_content'));
 

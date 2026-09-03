@@ -289,7 +289,9 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 		String businessType =
 			(objectField == null) ? null : objectField.getBusinessType();
 
-		if (ObjectFieldConstants.BUSINESS_TYPE_DATE.equals(businessType) ||
+		if (ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT.equals(
+				businessType) ||
+			ObjectFieldConstants.BUSINESS_TYPE_DATE.equals(businessType) ||
 			ObjectFieldConstants.BUSINESS_TYPE_DATE_TIME.equals(businessType)) {
 
 			return true;
@@ -303,13 +305,13 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 
 		if (!removed.isEmpty()) {
 			sb.append("<span class=\"diff-html-removed\">");
-			sb.append(HtmlUtil.escape(removed));
+			sb.append(removed);
 			sb.append("</span>");
 		}
 
 		if (!added.isEmpty()) {
 			sb.append("<span class=\"diff-html-added\">");
-			sb.append(HtmlUtil.escape(added));
+			sb.append(added);
 			sb.append("</span>");
 		}
 
@@ -328,14 +330,14 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 		long fileEntryId = GetterUtil.getLong(idObject);
 
 		if (fileEntryId == 0) {
-			return String.valueOf(value);
+			return HtmlUtil.escape(String.valueOf(value));
 		}
 
 		DLFileEntry dlFileEntry = _dlFileEntryLocalService.fetchDLFileEntry(
 			fileEntryId);
 
 		if (dlFileEntry == null) {
-			return String.valueOf(value);
+			return HtmlUtil.escape(String.valueOf(value));
 		}
 
 		String fileName = HtmlUtil.escape(dlFileEntry.getFileName());
@@ -372,7 +374,7 @@ public class DiffHtmlCMSServlet extends BaseCMSServlet {
 				_log.warn(dateTimeParseException);
 			}
 
-			return valueString;
+			return HtmlUtil.escape(valueString);
 		}
 	}
 
