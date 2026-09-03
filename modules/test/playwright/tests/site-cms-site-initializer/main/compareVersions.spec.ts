@@ -10,6 +10,7 @@ import {
 	expect,
 	mergeTests,
 } from '@playwright/test';
+import fs from 'fs';
 import path from 'path';
 
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
@@ -660,5 +661,134 @@ test(
 				'Second'
 			);
 		});
+	}
+);
+
+test(
+	'Compares two versions of a file entry',
+	{tag: '@LPD-104533'},
+	async ({apiHelpers, assetsPage, page}) => {
+		const title = `file compare ${getRandomString()}`;
+
+		const readImageBase64 = (fileName: string) =>
+			fs
+				.readFileSync(path.join(__dirname, 'dependencies', fileName))
+				.toString('base64');
+
+		const firstFileName = `compare_v1_${getRandomString()}.jpg`;
+		const secondFileName = `compare_v2_${getRandomString()}.jpg`;
+
+		const objectEntry =
+			await test.step('Publish two file versions', async () => {
+				const entry = await apiHelpers.objectEntry.postObjectEntry(
+					{
+						file: {
+							fileBase64: readImageBase64(
+								'file_upload_image_1.jpg'
+							),
+							name: firstFileName,
+						},
+						objectEntryFolderExternalReferenceCode: 'L_FILES',
+						title,
+					},
+					'cms/basic-documents',
+					'Default'
+				);
+
+				await apiHelpers.objectEntry.patchObjectEntry(
+					{
+						file: {
+							fileBase64: readImageBase64(
+								'sample_small_wide_400x300.jpg'
+							),
+							name: secondFileName,
+						},
+					},
+					'cms/basic-documents',
+					entry.id
+				);
+
+				return entry;
+			});
+
+		await test.step('Open the file version history', async () => {
+			await assetsPage.gotoFiles();
+
+			await assetsPage.execCardItemAction({
+				action: 'View History',
+				filter: title,
+			});
+
+			await expect(
+				page.getByRole('heading', {name: `"${title}" History`})
+			).toBeVisible();
+		});
+
+		const expectPaneToShowFile = async (
+			version: number,
+			fileName: string
+		) => {
+			const image = page
+				.frameLocator(`iframe[title="Version ${version}"]`)
+				.locator('.cms-compare-versions-attachment:visible');
+
+			await expect(image).toHaveAttribute(
+				'src',
+				new RegExp(`/documents/.*${fileName}`),
+				{timeout: 90000}
+			);
+		};
+
+		await test.step('Compare from the version row action', async () => {
+			await page
+				.getByRole('button', {name: `${title} Actions`})
+				.first()
+				.click();
+
+			await page.getByRole('menuitem', {name: 'Compare to...'}).click();
+
+			await page
+				.getByRole('combobox', {
+					name: 'Select a Version for Comparison',
+				})
+				.click();
+
+			await page.getByRole('option', {name: 'Version 1'}).click();
+
+			await expectPaneToShowFile(2, secondFileName);
+			await expectPaneToShowFile(1, firstFileName);
+
+			await page.keyboard.press('Escape');
+
+			await expect(
+				page.getByRole('heading', {name: `"${title}" History`})
+			).toBeVisible();
+		});
+
+		await test.step('Compare from the management toolbar', async () => {
+			const rowCheckboxes = page.locator(
+				'tbody tr input[title="Select Item"]'
+			);
+
+			await rowCheckboxes.nth(0).check();
+			await rowCheckboxes.nth(1).check();
+
+			const compareButton = page.getByRole('button', {
+				exact: true,
+				name: 'Compare',
+			});
+
+			await expect(compareButton).toBeEnabled();
+
+			await compareButton.click();
+
+			await expectPaneToShowFile(2, secondFileName);
+			await expectPaneToShowFile(1, firstFileName);
+		});
+
+		await apiHelpers.objectEntry.deleteObjectEntry(
+			'cms/basic-documents',
+			String(objectEntry.id)
+		);
 	}
 );
