@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# run-local.sh – Build and run the Forums microservice locally
+# run-local.sh: build and run the Forums microservice locally
 #
 # Usage:
 # ./run-local.sh Build the bootJar and start the Spring Boot app
@@ -12,7 +12,7 @@
 # The microservice receives Liferay Object Action webhooks (new ForumMessage /
 # new ForumThread) and notifies forum subscribers by email and in-portal
 # notification. It must point at the Liferay instance that ISSUES the
-# object-action JWTs — the same instance whose JWKS validates them and whose
+# object-action JWTs, the same instance whose JWKS validates them and whose
 # headless APIs it calls back into. Set LIFERAY_BASE_URL / LIFERAY_DXP_HOST
 # accordingly (see .env.example).
 # ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ EXT_METADATA_DIR="${CONFIGTREE_DIR}/ext-init-metadata"
 
 mkdir -p "${DXP_METADATA_DIR}" "${EXT_METADATA_DIR}"
 
-# DXP metadata – consumed by the spring-boot3 client-extension util library's
+# DXP metadata consumed by the spring-boot3 client-extension util library's
 # OAuth2 resource-server security config (JWT validation).
 printf '%s' "${LIFERAY_DXP_HOST}" > "${DXP_METADATA_DIR}/com.liferay.lxc.dxp.domains"
 printf '%s' "${LIFERAY_DXP_HOST}" > "${DXP_METADATA_DIR}/com.liferay.lxc.dxp.mainDomain"
