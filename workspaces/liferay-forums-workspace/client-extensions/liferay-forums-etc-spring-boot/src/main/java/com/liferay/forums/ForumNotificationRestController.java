@@ -358,7 +358,7 @@ public class ForumNotificationRestController extends BaseRestController {
 		}
 
 		JSONObject dtoJSONObject = payloadJSONObject.optJSONObject(
-			"objectEntryDTOForumMessage");
+			"objectEntryDTOC2M0ForumMessage");
 
 		JSONObject creatorJSONObject =
 			(dtoJSONObject != null) ? dtoJSONObject.optJSONObject("creator") :
@@ -519,7 +519,7 @@ public class ForumNotificationRestController extends BaseRestController {
 		}
 
 		JSONObject dtoJSONObject = payloadJSONObject.optJSONObject(
-			"objectEntryDTOForumMessage");
+			"objectEntryDTOC2M0ForumMessage");
 
 		JSONObject creatorJSONObject =
 			(dtoJSONObject != null) ? dtoJSONObject.optJSONObject("creator") :
