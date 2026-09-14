@@ -169,7 +169,7 @@ public class ForumModerationService {
 			JSONArray permissionsJSONArray = new JSONObject(
 				_liferayApiClient.get(
 					"/o/object-admin/v1.0/object-definitions" +
-						"/by-external-reference-code/FORUM-BAN" +
+						"/by-external-reference-code/C2M0_FORUM_BAN" +
 							"?fields=permissions",
 					authToken)
 			).optJSONArray(
