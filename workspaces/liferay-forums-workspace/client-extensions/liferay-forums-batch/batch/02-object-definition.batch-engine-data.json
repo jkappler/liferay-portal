@@ -412,6 +412,21 @@
 					"type": "oneToMany"
 				}
 			],
+			"objectValidationRules": [
+				{
+					"active": true,
+					"engine": "function#liferay-forums-etc-spring-boot-object-validation-rule-ban",
+					"errorLabel": {
+						"en_US": "Your account has been banned from participating in the forums."
+					},
+					"externalReferenceCode": "C2M0_FORUM_MESSAGE_BAN_VALIDATION",
+					"name": {
+						"en_US": "Ban Enforcement"
+					},
+					"outputType": "fullValidation",
+					"script": ""
+				}
+			],
 			"panelCategoryKey": "",
 			"parameterRequired": false,
 			"pluralLabel": {
@@ -856,6 +871,34 @@
 					"objectDefinitionExternalReferenceCode1": "C2M0_FORUM_THREAD",
 					"objectDefinitionExternalReferenceCode2": "C2M0_FORUM_THREAD_FLAG",
 					"type": "oneToMany"
+				}
+			],
+			"objectValidationRules": [
+				{
+					"active": true,
+					"engine": "function#liferay-forums-etc-spring-boot-object-validation-rule-ban",
+					"errorLabel": {
+						"en_US": "Your account has been banned from participating in the forums."
+					},
+					"externalReferenceCode": "C2M0_FORUM_THREAD_BAN_VALIDATION",
+					"name": {
+						"en_US": "Ban Enforcement"
+					},
+					"outputType": "fullValidation",
+					"script": ""
+				},
+				{
+					"active": true,
+					"engine": "function#liferay-forums-etc-spring-boot-object-validation-rule-priority",
+					"errorLabel": {
+						"en_US": "You are not allowed to set the priority of a discussion."
+					},
+					"externalReferenceCode": "C2M0_FORUM_THREAD_PRIORITY_VALIDATION",
+					"name": {
+						"en_US": "Thread Priority Enforcement"
+					},
+					"outputType": "fullValidation",
+					"script": ""
 				}
 			],
 			"panelCategoryKey": "",
