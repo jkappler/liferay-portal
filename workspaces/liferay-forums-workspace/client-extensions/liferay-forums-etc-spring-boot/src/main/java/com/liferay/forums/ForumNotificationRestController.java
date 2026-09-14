@@ -47,7 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ForumNotificationRestController extends BaseRestController {
 
-	@PostMapping("/object-action/new-reply")
+	@PostMapping("/object/action/new/reply")
 	public ResponseEntity<String> onNewReply(
 			@AuthenticationPrincipal Jwt jwt, @RequestBody String json)
 		throws Exception {
@@ -68,7 +68,7 @@ public class ForumNotificationRestController extends BaseRestController {
 		return new ResponseEntity<>(json, HttpStatus.OK);
 	}
 
-	@PostMapping("/object-action/record-author")
+	@PostMapping("/object/action/record/author")
 	public ResponseEntity<String> onRecordAuthor(
 			@AuthenticationPrincipal Jwt jwt, @RequestBody String json)
 		throws Exception {
@@ -89,7 +89,7 @@ public class ForumNotificationRestController extends BaseRestController {
 		return new ResponseEntity<>(json, HttpStatus.OK);
 	}
 
-	@PostMapping("/object-action/updated-reply")
+	@PostMapping("/object/action/updated/reply")
 	public ResponseEntity<String> onUpdatedReply(
 			@AuthenticationPrincipal Jwt jwt, @RequestBody String json)
 		throws Exception {

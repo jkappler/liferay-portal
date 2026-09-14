@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author Roselaine Marques
  */
-@RequestMapping("/object-validation-rule")
+@RequestMapping("/object/validation/rule")
 @RestController
 public class ObjectValidationRuleRestController extends BaseRestController {
 
