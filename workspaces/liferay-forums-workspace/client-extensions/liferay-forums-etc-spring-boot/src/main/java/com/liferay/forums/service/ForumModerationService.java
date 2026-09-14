@@ -53,7 +53,9 @@ public class ForumModerationService {
 
 	public boolean isBanned(long userId, String authToken) {
 		if (userId <= 0) {
-			return false;
+			_log.error("Unable to check the ban without a user");
+
+			return true;
 		}
 
 		long siteId = resolveSiteId(authToken);
