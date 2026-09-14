@@ -305,7 +305,7 @@ public class ForumNotificationService {
 		).put(
 			"notificationKind", kind
 		).put(
-			"notificationUrl", url
+			"notificationURL", url
 		).put(
 			"recipientUserId", recipientUserId
 		).put(
