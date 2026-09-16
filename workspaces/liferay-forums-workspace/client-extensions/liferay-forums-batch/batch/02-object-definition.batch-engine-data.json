@@ -51,6 +51,10 @@
 			},
 			"portlet": false,
 			"scope": "site",
+			"status": {
+				"code": 0,
+				"label": "approved"
+			},
 			"system": false,
 			"titleObjectFieldName": "externalReferenceCode"
 		},
@@ -84,26 +88,6 @@
 						"en_US": "Description"
 					},
 					"name": "description",
-					"required": false
-				},
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"externalReferenceCode": "DISPLAY_STYLE",
-					"label": {
-						"en_US": "Display Style"
-					},
-					"name": "displayStyle",
-					"required": false
-				},
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"externalReferenceCode": "FRIENDLY_URL",
-					"label": {
-						"en_US": "Friendly URL"
-					},
-					"name": "friendlyURL",
 					"required": false
 				},
 				{
@@ -164,6 +148,10 @@
 			},
 			"portlet": false,
 			"scope": "site",
+			"status": {
+				"code": 0,
+				"label": "approved"
+			},
 			"system": false,
 			"titleObjectFieldName": "name"
 		},
@@ -192,26 +180,6 @@
 				{
 					"DBType": "Boolean",
 					"businessType": "Boolean",
-					"externalReferenceCode": "ALLOW_PINGBACKS",
-					"label": {
-						"en_US": "Allow Pingbacks"
-					},
-					"name": "allowPingbacks",
-					"required": false
-				},
-				{
-					"DBType": "Boolean",
-					"businessType": "Boolean",
-					"externalReferenceCode": "ANONYMOUS",
-					"label": {
-						"en_US": "Anonymous"
-					},
-					"name": "anonymous",
-					"required": false
-				},
-				{
-					"DBType": "Boolean",
-					"businessType": "Boolean",
 					"externalReferenceCode": "ANSWER",
 					"label": {
 						"en_US": "Answer"
@@ -230,26 +198,6 @@
 						"en_US": "Body"
 					},
 					"name": "body",
-					"required": false
-				},
-				{
-					"DBType": "Long",
-					"businessType": "LongInteger",
-					"externalReferenceCode": "CLASS_NAME_ID",
-					"label": {
-						"en_US": "Class Name ID"
-					},
-					"name": "classNameId",
-					"required": false
-				},
-				{
-					"DBType": "Long",
-					"businessType": "LongInteger",
-					"externalReferenceCode": "CLASS_PK",
-					"label": {
-						"en_US": "Class PK"
-					},
-					"name": "classPK",
 					"required": false
 				},
 				{
@@ -297,26 +245,6 @@
 					"required": true
 				},
 				{
-					"DBType": "String",
-					"businessType": "Text",
-					"externalReferenceCode": "TREE_PATH",
-					"label": {
-						"en_US": "Tree Path"
-					},
-					"name": "treePath",
-					"required": false
-				},
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"externalReferenceCode": "URL_SUBJECT",
-					"label": {
-						"en_US": "URL Subject"
-					},
-					"name": "urlSubject",
-					"required": false
-				},
-				{
 					"DBType": "Integer",
 					"businessType": "Integer",
 					"externalReferenceCode": "VOTE_SCORE",
@@ -324,6 +252,61 @@
 						"en_US": "Vote Score"
 					},
 					"name": "voteScore",
+					"required": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "NOTIFICATION_AUTHOR_NAME",
+					"indexed": false,
+					"label": {
+						"en_US": "Notification Author Name"
+					},
+					"name": "notificationAuthorName",
+					"required": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"externalReferenceCode": "NOTIFICATION_BODY_EXCERPT",
+					"indexed": false,
+					"label": {
+						"en_US": "Notification Body Excerpt"
+					},
+					"name": "notificationBodyExcerpt",
+					"required": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "NOTIFICATION_MENTION_RECIPIENT_IDS",
+					"indexed": false,
+					"label": {
+						"en_US": "Notification Mention Recipient Ids"
+					},
+					"name": "notificationMentionRecipientIds",
+					"required": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "NOTIFICATION_REPLY_RECIPIENT_IDS",
+					"indexed": false,
+					"label": {
+						"en_US": "Notification Reply Recipient Ids"
+					},
+					"name": "notificationReplyRecipientIds",
+					"required": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "NOTIFICATION_TOPIC_TITLE",
+					"indexed": false,
+					"label": {
+						"en_US": "Notification Topic Title"
+					},
+					"name": "notificationTopicTitle",
 					"required": false
 				}
 			],
@@ -392,6 +375,10 @@
 			},
 			"portlet": false,
 			"scope": "site",
+			"status": {
+				"code": 0,
+				"label": "approved"
+			},
 			"system": false,
 			"titleObjectFieldName": "subject"
 		},
@@ -444,111 +431,11 @@
 				"en_US": "C2M0 Message Attachments"
 			},
 			"scope": "site",
+			"status": {
+				"code": 0,
+				"label": "approved"
+			},
 			"titleObjectFieldName": "externalReferenceCode"
-		},
-		{
-			"accountEntryRestricted": false,
-			"accountEntryRestrictedObjectFieldName": "",
-			"active": true,
-			"enableCategorization": false,
-			"enableComments": false,
-			"enableFormContainer": true,
-			"enableFriendlyURLCustomization": false,
-			"enableIndexSearch": true,
-			"enableLocalization": false,
-			"enableObjectEntryDraft": false,
-			"enableObjectEntryHistory": false,
-			"enableObjectEntrySchedule": false,
-			"enableObjectEntrySubscription": false,
-			"enableObjectEntryVersioning": false,
-			"externalReferenceCode": "C2M0_NOTIFICATION",
-			"label": {
-				"en_US": "C2M0 Notification"
-			},
-			"modifiable": true,
-			"name": "C2M0Notification",
-			"objectFields": [
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"externalReferenceCode": "AUTHOR_NAME",
-					"label": {
-						"en_US": "Author Name"
-					},
-					"name": "authorName",
-					"required": false
-				},
-				{
-					"DBType": "Clob",
-					"businessType": "LongText",
-					"externalReferenceCode": "BODY_EXCERPT",
-					"label": {
-						"en_US": "Body Excerpt"
-					},
-					"name": "bodyExcerpt",
-					"required": false
-				},
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"externalReferenceCode": "KIND",
-					"label": {
-						"en_US": "Kind"
-					},
-					"name": "kind",
-					"required": false
-				},
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"externalReferenceCode": "RECIPIENT_EMAIL_ADDRESS",
-					"label": {
-						"en_US": "Recipient Email Address"
-					},
-					"name": "recipientEmailAddress",
-					"required": false
-				},
-				{
-					"DBType": "Long",
-					"businessType": "LongInteger",
-					"externalReferenceCode": "RECIPIENT_USER_ID",
-					"label": {
-						"en_US": "Recipient User ID"
-					},
-					"name": "recipientUserId",
-					"required": true
-				},
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"externalReferenceCode": "TOPIC_TITLE",
-					"label": {
-						"en_US": "Topic Title"
-					},
-					"name": "topicTitle",
-					"required": false
-				},
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"externalReferenceCode": "URL",
-					"label": {
-						"en_US": "URL"
-					},
-					"name": "url",
-					"required": false
-				}
-			],
-			"objectFolderExternalReferenceCode": "C2M0_FORUMS",
-			"panelCategoryKey": "",
-			"parameterRequired": false,
-			"pluralLabel": {
-				"en_US": "C2M0 Notifications"
-			},
-			"portlet": false,
-			"scope": "site",
-			"system": false,
-			"titleObjectFieldName": "topicTitle"
 		},
 		{
 			"accountEntryRestricted": false,
@@ -591,6 +478,10 @@
 			},
 			"portlet": false,
 			"scope": "site",
+			"status": {
+				"code": 0,
+				"label": "approved"
+			},
 			"system": false,
 			"titleObjectFieldName": "externalReferenceCode"
 		},
@@ -645,6 +536,10 @@
 			},
 			"portlet": false,
 			"scope": "site",
+			"status": {
+				"code": 0,
+				"label": "approved"
+			},
 			"system": false,
 			"titleObjectFieldName": "externalReferenceCode"
 		},
@@ -715,13 +610,13 @@
 					"required": false
 				},
 				{
-					"DBType": "Integer",
-					"businessType": "Integer",
-					"externalReferenceCode": "VIEW_COUNT",
+					"DBType": "Boolean",
+					"businessType": "Boolean",
+					"externalReferenceCode": "LOCKED",
 					"label": {
-						"en_US": "View Count"
+						"en_US": "Locked"
 					},
-					"name": "viewCount",
+					"name": "locked",
 					"required": false
 				}
 			],
@@ -779,42 +674,12 @@
 			},
 			"portlet": false,
 			"scope": "site",
+			"status": {
+				"code": 0,
+				"label": "approved"
+			},
 			"system": false,
 			"titleObjectFieldName": "messageTitle"
-		},
-		{
-			"accountEntryRestricted": false,
-			"accountEntryRestrictedObjectFieldName": "",
-			"active": true,
-			"enableCategorization": true,
-			"enableComments": false,
-			"enableFormContainer": true,
-			"enableFriendlyURLCustomization": false,
-			"enableIndexSearch": true,
-			"enableLocalization": false,
-			"enableObjectEntryDraft": false,
-			"enableObjectEntryHistory": false,
-			"enableObjectEntrySchedule": false,
-			"enableObjectEntrySubscription": false,
-			"enableObjectEntryVersioning": false,
-			"externalReferenceCode": "C2M0_THREAD_FLAG",
-			"label": {
-				"en_US": "C2M0 Thread Flag"
-			},
-			"modifiable": true,
-			"name": "C2M0ThreadFlag",
-			"objectFields": [
-			],
-			"objectFolderExternalReferenceCode": "C2M0_FORUMS",
-			"panelCategoryKey": "",
-			"parameterRequired": false,
-			"pluralLabel": {
-				"en_US": "C2M0 Thread Flags"
-			},
-			"portlet": false,
-			"scope": "site",
-			"system": false,
-			"titleObjectFieldName": "externalReferenceCode"
 		},
 		{
 			"accountEntryRestricted": false,
@@ -919,6 +784,10 @@
 			},
 			"portlet": false,
 			"scope": "site",
+			"status": {
+				"code": 0,
+				"label": "approved"
+			},
 			"system": false,
 			"titleObjectFieldName": "screenName"
 		},
@@ -963,6 +832,10 @@
 			},
 			"portlet": false,
 			"scope": "site",
+			"status": {
+				"code": 0,
+				"label": "approved"
+			},
 			"system": false,
 			"titleObjectFieldName": "externalReferenceCode"
 		}
