@@ -1,0 +1,42 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "12",
+					"label": "max-categories-to-show",
+					"name": "pageSize",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "/forums-messages",
+					"label": "messages-page-url",
+					"name": "messagesURL",
+					"type": "text"
+				}
+			],
+			"label": "content"
+		},
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "200",
+					"label": "category-query-page-size",
+					"name": "categoryPageSize",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"label": "category-query-sort",
+					"name": "categorySort",
+					"type": "text"
+				}
+			],
+			"label": "category-query"
+		}
+	]
+}

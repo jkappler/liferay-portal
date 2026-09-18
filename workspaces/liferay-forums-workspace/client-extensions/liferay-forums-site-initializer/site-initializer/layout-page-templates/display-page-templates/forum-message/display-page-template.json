@@ -1,0 +1,8 @@
+{
+	"contentType": {
+		"className": "[$OBJECT_DEFINITION_CLASS_NAME:C2M0Message$]"
+	},
+	"defaultTemplate": true,
+	"locked": true,
+	"name": "Forum Message"
+}

@@ -1,0 +1,32 @@
+{
+	"friendlyURL": "/forum-categories-admin",
+	"friendlyURL_i18n": {
+		"en_US": "/forum-categories-admin"
+	},
+	"name_i18n": {
+		"en_US": "Forum Categories Admin"
+	},
+	"permissions": [
+		{
+			"actionIds": [
+				"VIEW"
+			],
+			"roleName": "Forum Category Admin",
+			"scope": 4
+		},
+		{
+			"actionIds": [
+			],
+			"roleName": "Guest",
+			"scope": 4
+		},
+		{
+			"actionIds": [
+			],
+			"roleName": "Site Member",
+			"scope": 4
+		}
+	],
+	"private": false,
+	"type": "content"
+}

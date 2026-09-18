@@ -1,0 +1,16 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "5",
+					"label": "max-related-topics",
+					"name": "maxTopics",
+					"type": "text"
+				}
+			],
+			"label": "content"
+		}
+	]
+}

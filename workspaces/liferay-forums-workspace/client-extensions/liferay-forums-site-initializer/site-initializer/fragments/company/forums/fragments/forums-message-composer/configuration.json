@@ -1,0 +1,35 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "modal",
+					"label": "form-mode",
+					"name": "formMode",
+					"type": "text"
+				}
+			],
+			"label": "content"
+		},
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "50",
+					"label": "category-query-page-size",
+					"name": "categoryPageSize",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"label": "category-query-sort",
+					"name": "categorySort",
+					"type": "text"
+				}
+			],
+			"label": "category-query"
+		}
+	]
+}

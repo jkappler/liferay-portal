@@ -1,0 +1,64 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"defaultValue": true,
+					"label": "show-solutions",
+					"name": "showSolutions",
+					"type": "checkbox"
+				},
+				{
+					"defaultValue": true,
+					"label": "show-discussions",
+					"name": "showDiscussions",
+					"type": "checkbox"
+				},
+				{
+					"defaultValue": true,
+					"label": "show-messages",
+					"name": "showMessages",
+					"type": "checkbox"
+				}
+			],
+			"label": "statistics"
+		},
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"label": "hero-title",
+					"name": "heroTitle",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"label": "hero-description",
+					"name": "heroDescription",
+					"type": "text"
+				}
+			],
+			"label": "headings"
+		},
+		{
+			"fields": [
+				{
+					"defaultValue": true,
+					"label": "show-new-discussion-button",
+					"name": "showNewDiscussionButton",
+					"type": "checkbox"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "/forums-messages",
+					"label": "messages-page-url",
+					"name": "messagesURL",
+					"type": "text"
+				}
+			],
+			"label": "content"
+		}
+	]
+}

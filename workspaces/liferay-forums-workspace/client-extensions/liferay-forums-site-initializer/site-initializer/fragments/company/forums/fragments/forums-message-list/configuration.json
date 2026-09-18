@@ -1,0 +1,48 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "20",
+					"label": "messages-per-page",
+					"name": "pageSize",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "/forums",
+					"label": "community-home-url",
+					"name": "communityURL",
+					"type": "text"
+				},
+				{
+					"defaultValue": true,
+					"label": "show-search-bar",
+					"name": "showSearchBar",
+					"type": "checkbox"
+				}
+			],
+			"label": "content"
+		},
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "200",
+					"label": "category-query-page-size",
+					"name": "categoryPageSize",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"label": "category-query-sort",
+					"name": "categorySort",
+					"type": "text"
+				}
+			],
+			"label": "category-query"
+		}
+	]
+}
