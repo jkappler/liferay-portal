@@ -260,9 +260,11 @@ public class ForumModerationRestController extends BaseRestController {
 	private long _resolveSiteId(
 		JSONObject objectEntryJSONObject, String authToken) {
 
-        return (objectEntryJSONObject != null) ?
-            objectEntryJSONObject.optLong("groupId", 0L) : 0L;
+		if (objectEntryJSONObject != null) {
+			return objectEntryJSONObject.optLong("groupId", 0L);
+		}
 
+		return 0L;
 	}
 
 	private void _revertSelfEdit(
